@@ -6,13 +6,13 @@
     "type": "git",
     "url": "git+https://github.com/heyManNice/jekit-sdk.git"
   },
-  "main": "./index.mjs",
-  "module": "./index.mjs",
+  "main": "./index.js",
+  "module": "./index.js",
   "types": "./index.d.ts",
   "exports": {
     ".": {
       "types": "./index.d.ts",
-      "import": "./index.mjs"
+      "import": "./index.js"
     }
   },
   "peerDependencies": {
