@@ -20,6 +20,7 @@
     "apps/*"
   ],
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.59.0",
     "code-inspector-plugin": "^2.0.6",
     "vue": "^3.5.0"
   }

@@ -1,6 +1,9 @@
 {
     "compilerOptions": {
         "moduleResolution": "bundler",
+        "types": [
+            "vite/client"
+        ],
     },
     "include": [
         "src/**/*"

@@ -13,6 +13,11 @@ export default defineConfig({
             exclude: [
                 'src/tests/**',
             ],
+            bundleTypes: {
+                bundledPackages: [
+                    'jekit-core',
+                ],
+            },
         }),
     ],
     build: {
