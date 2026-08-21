@@ -1,0 +1,24 @@
+{
+  "name": "jekit-react",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "vite build && node ../../tools/postbuild.mjs react"
+  },
+  "dependencies": {
+    "jekit-core": "*"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.15",
+    "tsx": "^4.22.3",
+    "vite": "^8.0.14",
+    "vite-plugin-dts": "^5.0.1"
+  }
+}

@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "bundler",
+        "types": [
+            "vite/client"
+        ],
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*"
+    ],
+}

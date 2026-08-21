@@ -1,0 +1,24 @@
+{
+  "name": "jekit-core",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "npm run test && vite build && node ../../tools/postbuild.mjs core",
+    "test": "vitest --typecheck run tests/"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.13",
+    "vite-plugin-dts": "^5.0.1",
+    "vitest": "^4.1.6"
+  },
+  "dependencies": {
+    "history-events": "^1.0.4"
+  }
+}

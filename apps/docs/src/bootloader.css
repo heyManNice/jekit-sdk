@@ -1,0 +1,116 @@
+@import "https://cdn.jsdelivr.net/npm/@lobehub/webfont-harmony-sans-sc@1.0.0/css/index.css";
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #06e6e2;
+    --color-primary-hover: #00d4cc;
+    --color-secondary: #00bcd4;
+
+    --color-bg: #000713;
+    --color-card-bg: #010F1B;
+    --color-panel-bg: #1a202e;
+    --color-overlay: rgba(0, 0, 0, 0.5);
+
+    --color-text-primary: #DFE2E1;
+    --color-text-secondary: #bbbfc8;
+    --color-text-muted: #718096;
+    --color-text-inverse: #0a0f1a;
+
+    --color-border: #081321;
+    --color-border-light: #374151;
+
+    --color-link: var(--color-primary);
+    --color-link-hover: var(--color-primary-hover);
+
+    --color-success: #00e676;
+    --color-warning: #ffea00;
+    --color-error: #ff5252;
+    --color-info: #00bcd4;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: 'HarmonyOS Sans SC', system-ui, sans-serif;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+*:focus-visible:not(input) {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+    background-color: #00363C;
+    transform: translateY(4px);
+    transition: transform 0.2s ease;
+}
+
+.sr-only{
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+body:has(.loading-overlay) {
+  overflow: hidden;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 52px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 300ms cubic-bezier(0.25, 0.1, 0.25, 1.0) 200ms forwards;
+    opacity: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loading-overlay::before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--color-primary);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-overlay::after {
+    content: "Loading...";
+    margin-left: 12px;
+    color: var(--color-primary);
+    font-size: 1.25rem;
+    font-weight: 500;
+}

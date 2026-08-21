@@ -1,0 +1,8 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        // 关闭 erasableSyntaxOnly：workspace 内 jekit-core 以源码方式被引用，其中使用 TS enum，
+        // 该选项会误报；编辑器仍使用主 tsconfig（保持对应用自身代码的严格检查）。
+        "erasableSyntaxOnly": false
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "scripts": {
+        "dev": "vite --port 5192 --host",
+        "build": "vite build",
+        "start": "npm run build && vite preview --port 5192 --host"
+    },
+    "dependencies": {
+        "vue": "^3.5.41"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^6.0.8",
+        "vite": "^8.2.2"
+    }
+}

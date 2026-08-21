@@ -1,0 +1,16 @@
+{
+    "description": "Jekit 是一个公益性质的免费公共统计基础工具，中文名为见客统计，域名为 jekit.cn。此包是jekit的cdn封装",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/heyManNice/jekit-sdk.git"
+    },
+    "files": [
+        "jekit-cdn.min.js",
+        "README.md",
+        "package.json"
+    ],
+    "sideEffects": true,
+    "unpkg": "./jekit-cdn.min.js",
+    "jsdelivr": "./jekit-cdn.min.js"
+}

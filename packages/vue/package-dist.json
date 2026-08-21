@@ -1,0 +1,21 @@
+{
+    "type": "module",
+    "description": "Jekit 是一个公益性质的免费公共统计基础工具，中文名为见客统计，域名为 jekit.cn。此包是jekit的vue封装",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/heyManNice/jekit-sdk.git"
+    },
+    "main": "./index.mjs",
+    "module": "./index.mjs",
+    "types": "./index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./index.d.ts",
+            "import": "./index.mjs"
+        }
+    },
+    "peerDependencies": {
+        "vue": ">=3.0.0"
+    }
+}
