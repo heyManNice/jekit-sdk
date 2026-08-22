@@ -36,6 +36,7 @@
         "vite": "^8.0.14"
     },
     "dependencies": {
+        "@lobehub/webfont-harmony-sans-sc": "^1.0.0",
         "chart.js": "^4.5.1",
         "framer-motion": "^12.40.0",
         "jekit-core": "*",
