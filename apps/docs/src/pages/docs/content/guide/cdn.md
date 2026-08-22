@@ -12,10 +12,10 @@ title: CDN 引入
 
 ```tsx
 // 以下是备用地址，可按照您的地理位置选择一个适合的使用
-// <script src="https://cdn.jsdelivr.net/npm/jekit-cdn@1.0.1/jekit-cdn.min.js" async></script>
-// <script src="https://cdn.jsdmirror.com/npm/jekit-cdn@1.0.1/jekit-cdn.min.js" async></script>
-// <script src="https://fastly.jsdelivr.net/npm/jekit-cdn@1.0.1/jekit-cdn.min.js" async></script>
-// <script src="https://npm.webcache.cn/jekit-cdn@1.0.1/jekit-cdn.min.js" async></script>
+// <script src="https://cdn.jsdelivr.net/npm/jekit-cdn@1.3.2/jekit-cdn.min.js" async></script>
+// <script src="https://cdn.jsdmirror.com/npm/jekit-cdn@1.3.2/jekit-cdn.min.js" async></script>
+// <script src="https://fastly.jsdelivr.net/npm/jekit-cdn@1.3.2/jekit-cdn.min.js" async></script>
+// <script src="https://npm.webcache.cn/jekit-cdn@1.3.2/jekit-cdn.min.js" async></script>
 ```
 
 - **自动注入方案**: 在目标元素上添加对应的类名即可使用
