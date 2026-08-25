@@ -30,7 +30,7 @@
 body {
     background-color: var(--color-bg);
     color: var(--color-text-primary);
-    font-family: 'HarmonyOS Sans SC', system-ui, sans-serif;
+    font-family: system-ui, sans-serif;
 }
 
 ::-webkit-scrollbar {
