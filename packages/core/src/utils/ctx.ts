@@ -1,11 +1,10 @@
-import { fnv1a32 } from "./hash";
 import {
     whereWasIFromOption,
     visitorStatusOption,
     whichBrowserOption,
     whichOsOption,
 } from "../schema/options";
-import { getCleanRequestUri } from "./uri";
+import { getHashOfPagePath } from "./uri";
 import {
     toBase64,
     fromBase64,
@@ -374,8 +373,8 @@ export function whereWasIFrom(): whereWasIFromOption {
 
 // 获取当前路径和查询的哈希值
 export function getHashOfCurrentPath() {
-    const uri = getCleanRequestUri();
-    return fnv1a32(uri);
+    const { pathname, search, hash } = window.location;
+    return getHashOfPagePath(`${pathname}${search}${hash}`);
 }
 
 // 获取当前网站的TTFB和PLT的数值

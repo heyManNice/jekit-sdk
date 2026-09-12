@@ -13,7 +13,7 @@ import {
     scopeOption,
 } from "../schema/options";
 
-import { fnv1a32 } from "../utils/hash";
+import { getHashOfPagePath } from "../utils/uri";
 
 // 查询站点的维度数据（搜索引擎来源/浏览器/操作系统）
 export async function source(props: {
@@ -24,7 +24,7 @@ export async function source(props: {
 }) {
     const reqBuf = defineBuffer(dto, {
         dimension: props.dimension,
-        theHashOfPath: fnv1a32(props.path),
+        theHashOfPath: getHashOfPagePath(props.path),
         scope: props.scope,
     });
     const res = await fetchArrayResponse(vto, {

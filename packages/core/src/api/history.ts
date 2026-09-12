@@ -16,7 +16,7 @@ import {
     metricOption
 } from "../schema/options";
 
-import { fnv1a32 } from "../utils/hash";
+import { getHashOfPagePath } from "../utils/uri";
 
 // 查询站点某个指标的历史数据
 export async function history(props: {
@@ -27,7 +27,7 @@ export async function history(props: {
     dimensionValue: whereWasIFromOption | whichBrowserOption | whichOsOption;
 }) {
     const reqBuf = defineBuffer(dto, {
-        theHashOfPath: fnv1a32(props.path),
+        theHashOfPath: getHashOfPagePath(props.path),
         range: props.range,
         metric: props.metric,
         dimensionValue: props.dimensionValue

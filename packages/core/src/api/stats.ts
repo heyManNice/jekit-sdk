@@ -7,8 +7,7 @@ import {
     defineBuffer,
     fetchResponse,
 } from "../utils/io";
-
-import { fnv1a32 } from "../utils/hash";
+import { getHashOfPagePath } from "../utils/uri";
 
 // 查询站点的访问统计基本数据
 export async function stats(props: {
@@ -16,7 +15,7 @@ export async function stats(props: {
     path: string;
 }) {
     const reqBuf = defineBuffer(dto, {
-        theHashOfPath: fnv1a32(props.path),
+        theHashOfPath: getHashOfPagePath(props.path),
     });
     const res = await fetchResponse(vto, {
         target: '/stats',
