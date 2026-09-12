@@ -9,10 +9,11 @@ import { fmtDate } from "@/utils/format";
 import { Link } from "react-router";
 
 // 从输入文本中提取 domain 和 path
+// path 必须保留查询参数与 hash，否则带 query / hash 的页面无法被查询
 function parseInput(text: string): { domain: string; path: string } {
     try {
         const url = new URL(text.startsWith("http") ? text : `https://${text}`);
-        return { domain: url.origin, path: url.pathname };
+        return { domain: url.origin, path: `${url.pathname}${url.search}${url.hash}` };
     } catch {
         return { domain: text, path: "/" };
     }

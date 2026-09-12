@@ -8,6 +8,16 @@ title: 原理问题
 ## Jekit 支持 SPA 的虚拟路由吗？
 - 支持。所有的 Jekit 封装都支持 SPA 应用。虚拟路由变化时能触发统计，但不会记录性能。
 
+## Jekit 如何区分不同的页面？
+- Jekit 用一个「页面标识」来区分页面，它由路径（pathname）、hash、查询参数（query）三部分共同决定。
+- **路径一定计入**。例如 `/docs/guide/react` 和 `/docs/guide/vue` 是两个页面。
+- **hash 只计入看起来像路由的**。形如 `#/route`、`#!/route`、`#post/1` 会被视作页面的一部分；而形如 `#section` 的纯锚点会被忽略，所以在文章里点目录跳转不会产生一个新页面。
+- **查询参数默认全部忽略**，只登记下面这些内容定位型参数：
+  `id`、`tid`、`aid`、`pid`、`nid`、`cid`、`post`、`article`、`doc`、`item`、`topic`
+  所以 `/article?id=1` 和 `/article?id=2` 是两个页面，而 `?utm_source=`、`?from=`、`?page=2`、`?sort=` 这类追踪、来源、分页、排序参数不会产生新的页面。
+- 这套规则是全局统一的，上报端与统计面板共用同一份规则，因此不需要你做任何配置。
+- 如果你的站点把内容标识放在了上面清单之外的参数里（例如 `?uid=`、`?photo=`），这些参数会被忽略，站点下所有这类页面会合并成一个页面统计。建议把内容标识放进路径，例如用 `/article/1` 而不是 `/article?id=1`。
+
 ## Jekit 的隐私安全做到什么程度？
 - 这是 Jekit 最值得骄傲的一个特色之一，Jekit 的隐私安全设计超乎想象。
 - Jekit 不会上传 Referrer、Path、Query、Title、Cookie。后端不处理 UserAgent (但浏览器强制上传)。
