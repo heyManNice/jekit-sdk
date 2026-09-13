@@ -115,4 +115,8 @@ async function main() {
     console.log(`✅ 已生成 ${outputFile}，共 ${entries.length} 条记录`);
 }
 
-main().catch(console.error);
+// 失败必须让 npm run build 停下来，否则会带着旧索引继续打包
+main().catch((err) => {
+    console.error(err);
+    process.exitCode = 1;
+});
