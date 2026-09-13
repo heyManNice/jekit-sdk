@@ -11,6 +11,45 @@ import { GITHUB_REPO, GITHUB_BRANCH, DOCS_CONTENT_PATH } from "@/utils/github";
 
 const modules = import.meta.glob('./content/*/*.md', { import: 'default' });
 
+
+// 工具：从正文提取 meta description
+// 文档 import 进来时已被 vite-plugin-md 编译成 HTML（frontmatter 也已剥离），
+// 里面没有现成的描述，只能从正文里挑一段当摘要。
+
+// 低于这个长度的段落多半只是半句话，不足以当摘要
+const MIN_SUMMARY_LENGTH = 12;
+
+function summarizeContent(html: string, limit = 120): string {
+    const doc = new DOMParser().parseFromString(
+        // <br> 会消失得无影无踪，先换成空格，避免两句话被粘在一起
+        html.replace(/<br\s*\/?>/gi, " "),
+        "text/html",
+    );
+
+    for (const p of doc.body.querySelectorAll("p")) {
+        // 列表项与引用块里是问答内容，不适合当整页摘要
+        if (p.closest("li, blockquote")) continue;
+
+        const text = (p.textContent ?? "").replace(/\s+/g, " ").trim();
+
+        // 太短的是铺垫句；含 < 的是行内代码里的标签示例（如 CDN 用法里的 <span>）
+        if (text.length < MIN_SUMMARY_LENGTH || text.includes("<")) continue;
+
+        return text.length > limit ? text.slice(0, limit) + "…" : text;
+    }
+
+    return "";
+}
+
+// 摘要挑不出来时，用一句点到页面的通用描述兜底；
+// 全站共用一句描述对 SEO 不友好，所以这里带上文档标题。
+function describeDoc(html: string, title?: string): string {
+    const summary = summarizeContent(html);
+    if (summary) return summary;
+
+    return title ? `Jekit 官方文档「${title}」：接入方式、配置项与常见问题说明。` : "";
+}
+
 // 工具：拍平侧边栏为有序列表
 
 interface FlatItem {
@@ -119,11 +158,10 @@ export default function DocsContent() {
                 setContent(c);
                 // 从文档索引中查找标题（与博客一致）
                 const found = allDocs.find((e) => e.subPath === subPath);
-                if (found) {
-                    setTitle("文档 - " + found.title);
-                } else {
-                    setTitle("文档 - 查看 Jekit 的接入文档说明");
-                }
+                setTitle({
+                    title: "文档 - " + (found?.title ?? "查看 Jekit 的接入文档说明"),
+                    description: describeDoc(c, found?.title),
+                });
                 setIsLoading(false);
             });
         } else {

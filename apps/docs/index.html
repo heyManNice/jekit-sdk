@@ -5,6 +5,23 @@
     <meta charset="UTF-8">
     <meta name="theme-color" content="#000713">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--
+      标题与元信息运行时由 src/utils/meta.ts 写入，预渲染时会保留进各页面 HTML；
+      这里放的是同值的静态兜底（脚本加载前、以及首页的默认值）。
+      改动描述文案时请同步 meta.ts 里的 DEFAULT_DESCRIPTION。
+    -->
+    <title>首页 - 查看 Jekit 的功能特性和服务器状态</title>
+    <meta name="description" content="Jekit（见客统计）是一个开源、轻量的网站统计服务：无 Cookie、不记录 IP 与来源，几行代码即可为 React、Vue 或任意网页接入访问统计。">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Jekit 见客统计">
+    <meta property="og:title" content="首页 - 查看 Jekit 的功能特性和服务器状态">
+    <meta property="og:description"
+        content="Jekit（见客统计）是一个开源、轻量的网站统计服务：无 Cookie、不记录 IP 与来源，几行代码即可为 React、Vue 或任意网页接入访问统计。">
+    <meta property="og:image" content="https://jekit.cn/images/default-cover.webp">
+    <meta property="og:url" content="https://jekit.cn/">
+    <meta name="twitter:card" content="summary_large_image">
+
     <script type="module" src="/src/bootloader.tsx"></script>
 </head>
 

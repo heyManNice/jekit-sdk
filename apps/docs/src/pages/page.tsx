@@ -107,9 +107,10 @@ function ServerStatus() {
     );
 }
 
-import { usePageTitle } from "@/hooks/use-page-title";
+import { usePageMeta } from "@/hooks/use-page-meta";
 export default function Index() {
-    usePageTitle("首页 - 查看 Jekit 的功能特性和服务器状态");
+    // 首页沿用 utils/meta.ts 里的默认描述
+    usePageMeta({ title: "首页 - 查看 Jekit 的功能特性和服务器状态" });
     return (
         <div className="bg-no-repeat bg-position-[right_0px_top_-72px] bg-size-[950px]" style={{
             backgroundImage: `url(${bgEarth})`,

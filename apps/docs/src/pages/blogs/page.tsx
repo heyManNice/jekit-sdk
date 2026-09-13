@@ -1,4 +1,4 @@
-import { usePageTitle } from "@/hooks/use-page-title";
+import { usePageMeta } from "@/hooks/use-page-meta";
 import { useState, useMemo } from "react";
 import { allEntries, typeMeta } from "./blog-data";
 
@@ -9,7 +9,10 @@ import BlogList from "./views/BlogList";
 import BlogSidebar from "./views/BlogSidebar";
 
 export default function Blogs() {
-    usePageTitle("博客 - 查看 Jekit 的相关文章");
+    usePageMeta({
+        title: "博客 - 查看 Jekit 的相关文章",
+        description: "Jekit 的技术笔记与随笔合集：开源统计服务的实现思路、隐私设计与日常记录。",
+    });
 
     const [activeCategory, setActiveCategory] = useState("全部");
     const [searchQuery, setSearchQuery] = useState("");

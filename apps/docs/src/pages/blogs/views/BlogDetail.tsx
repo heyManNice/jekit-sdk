@@ -89,7 +89,11 @@ export default function BlogDetail() {
             return;
         }
 
-        setTitle(`博客 - ${entry.title}`);
+        setTitle({
+            title: `博客 - ${entry.title}`,
+            description: entry.description,
+            type: "article",
+        });
 
         // 构造 glob key：../content/{type}/{filename}
         const key = `../content/${entry.type}/${entry.filename}`;
