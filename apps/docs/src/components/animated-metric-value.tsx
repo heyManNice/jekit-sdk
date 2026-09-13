@@ -1,6 +1,7 @@
 import { animate } from "framer-motion";
 
 import {
+    Fragment,
     useEffect,
     useMemo,
     useRef,
@@ -57,18 +58,28 @@ function formatNum(value: number, decimals: number): string {
     return decimals > 0 ? value.toFixed(decimals) : String(Math.round(value));
 }
 
+// 文本段里的换行符渲染成 <br/>（多行指标在内部用 \n 连接成一段）
+function renderText(text: string, keyPrefix: string) {
+    return text.split("\n").map((part, index) => (
+        <Fragment key={`${keyPrefix}-${index}`}>
+            {index > 0 && <br />}
+            {part}
+        </Fragment>
+    ));
+}
+
 
 // ==================== 组件 ====================
 
 export function AnimatedMetricValue({
-    value,
+    lines,
     shouldAnimate,
 }: {
-    value: string;
+    lines: string[];
     shouldAnimate: boolean;
 }) {
-    // 1. 解析字符串为段序列
-    const segments = useMemo(() => parse(value), [value]);
+    // 1. 解析文本为段序列（多行用 \n 连接；带动画的指标都是单行）
+    const segments = useMemo(() => parse(lines.join("\n")), [lines]);
 
     // 2. 提取所有数字的目标值
     const targets = useMemo(
@@ -107,9 +118,14 @@ export function AnimatedMetricValue({
         return () => controls.forEach((c) => c.stop());
     }, [shouldAnimate, targets]);
 
-    // 4. 无动画模式 —— 用 dangerouslySetInnerHTML 支持 <br/> 等内联 HTML
+    // 4. 无动画模式 —— 逐行渲染，行间插入 <br/>
     if (!shouldAnimate) {
-        return <div dangerouslySetInnerHTML={{ __html: value }} />;
+        return lines.map((line, index) => (
+            <Fragment key={index}>
+                {index > 0 && <br />}
+                {line}
+            </Fragment>
+        ));
     }
 
     // 5. 有动画 —— 逐段渲染
@@ -117,7 +133,7 @@ export function AnimatedMetricValue({
 
     return segments.map((segment, i) =>
         segment.type === "text"
-            ? <span key={`t-${i}`}>{segment.value}</span>
+            ? renderText(segment.value, `t-${i}`)
             : <span key={`n-${i}`}>{formatNum(animRef.current[numIdx++] ?? 0, segment.decimals)}</span>,
     );
 }

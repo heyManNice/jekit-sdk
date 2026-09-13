@@ -36,7 +36,10 @@ export interface MetricConfigItem {
     icon: IconType;
     animateValue?: boolean;
     compact?: boolean;
-    renderValue: (data: DeviceData | null) => string;
+    // 展示内容：单行指标返回 string，需要换行的指标返回多行数组。
+    // 刻意不返回带 <br/> 的 HTML 字符串 —— HTML 混进数据会让 aria-label
+    // 把标签当正文朗读，也让渲染只能走 dangerouslySetInnerHTML。
+    renderValue: (data: DeviceData | null) => string | string[];
 }
 
 export const metricsConfig: MetricConfigItem[] = [
@@ -118,7 +121,7 @@ export const metricsConfig: MetricConfigItem[] = [
         icon: Server,
         animateValue: false,
         // 首次上线时间为固定值（该字段暂无接口），保持写死展示
-        renderValue: (data) => `${fmtDateTime(data?.serverStartTime)}<br/>2026-08-18 21:18`
+        renderValue: (data) => [fmtDateTime(data?.serverStartTime), "2026-08-18 21:18"]
     },
     {
         key: "backup",
@@ -126,7 +129,7 @@ export const metricsConfig: MetricConfigItem[] = [
         icon: Clock3,
         compact: true,
         animateValue: false,
-        renderValue: (data) => `${fmtDateTime(data?.lastSavedTime)}<br/>${fmtDateTime(data?.lastBackupTime)}`
+        renderValue: (data) => [fmtDateTime(data?.lastSavedTime), fmtDateTime(data?.lastBackupTime)]
     }
 ];
 
@@ -182,7 +185,13 @@ export interface MetricUIItem {
     icon: IconType;
     compact?: boolean;
     animateValue?: boolean;
-    value: string;
+    // 展示行，多行之间由组件补 <br/>
+    lines: string[];
+}
+
+// 单行指标只返回一个字符串，这里统一成行数组
+function toLines(value: string | string[]): string[] {
+    return Array.isArray(value) ? value : [value];
 }
 
 // 根据当前设备数据计算所有指标的展示内容。
@@ -196,7 +205,7 @@ export function useMetricsUI(): MetricUIItem[] {
                 icon: config.icon,
                 compact: config.compact,
                 animateValue: config.animateValue,
-                value: config.renderValue(deviceData),
+                lines: toLines(config.renderValue(deviceData)),
             })),
         [deviceData]
     );

@@ -69,7 +69,8 @@ function ServerStatus() {
     const metricsUI = useMetricsUI();
 
     return (
-        <section className="max-sm:px-5" tabIndex={-1} aria-label={"服务器运行状态面板：" + metricsUI.map(m => `指标 ${m.label.split('/').join('与')}的值是${m.value.split('/').join('和')}`).join("，")}>
+        // 读屏只认纯文本，所以这里用 m.lines（纯文本行）拼接，用「，」代替视觉上的换行
+        <section className="max-sm:px-5" tabIndex={-1} aria-label={"服务器运行状态面板：" + metricsUI.map(m => `指标 ${m.label.split('/').join('与')}的值是${m.lines.join('，')}`).join("，")}>
             {/* 区块标题 */}
             <p className="mb-4 text-md font-semibold tracking-wide text-[#dff9ff] max-md:text-center px-3">
                 Jekit 官方服务器状态
@@ -93,7 +94,7 @@ function ServerStatus() {
                                 {/* 数值 */}
                                 <div className={"text-[#ecffff] font-semibold leading-tight"}>
                                     <AnimatedMetricValue
-                                        value={item.value}
+                                        lines={item.lines}
                                         shouldAnimate={item.animateValue !== false}
                                     />
                                 </div>
