@@ -7,15 +7,15 @@ title: CDN 引入
 - 在顶层 html 文件中引入脚本资源。然后在以下三种方案中任选其一使用。
 
 ```html
-<script src="https://cdn.jekit.cn/1.3.2.js" async></script>
+<script src="https://cdn.jekit.cn/1.5.2.js" async></script>
 ```
 
 ```tsx
 // 以下是备用地址，可按照您的地理位置选择一个适合的使用
-// <script src="https://cdn.jsdelivr.net/npm/jekit-cdn@1.3.2/jekit-cdn.min.js" async></script>
-// <script src="https://cdn.jsdmirror.com/npm/jekit-cdn@1.3.2/jekit-cdn.min.js" async></script>
-// <script src="https://fastly.jsdelivr.net/npm/jekit-cdn@1.3.2/jekit-cdn.min.js" async></script>
-// <script src="https://npm.webcache.cn/jekit-cdn@1.3.2/jekit-cdn.min.js" async></script>
+// <script src="https://cdn.jsdelivr.net/npm/jekit-cdn@1.5.2/jekit-cdn.min.js" async></script>
+// <script src="https://cdn.jsdmirror.com/npm/jekit-cdn@1.5.2/jekit-cdn.min.js" async></script>
+// <script src="https://fastly.jsdelivr.net/npm/jekit-cdn@1.5.2/jekit-cdn.min.js" async></script>
+// <script src="https://npm.webcache.cn/jekit-cdn@1.5.2/jekit-cdn.min.js" async></script>
 ```
 
 - **自动注入方案**: 在目标元素上添加对应的类名即可使用

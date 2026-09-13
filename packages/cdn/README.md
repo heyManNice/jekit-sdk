@@ -5,7 +5,7 @@
 - 在顶层 html 文件中引入脚本资源。然后在以下三种方案中任选其一使用。
 
 ```html
-<script src="https://cdn.jekit.cn/1.3.2.js" async></script>
+<script src="https://cdn.jekit.cn/1.5.2.js" async></script>
 ```
 
 - **自动注入方案**: 在目标元素上添加对应的类名即可使用
