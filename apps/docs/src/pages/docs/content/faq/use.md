@@ -21,3 +21,21 @@ title: 使用问题
 - 例如 `/article?id=1` 和 `/article?id=2` 是两个页面，需要分别查询。
 - 追踪类参数（`?utm_source=`、`?from=` 等）会被自动忽略，所以粘贴带推广参数的分享链接同样能命中同一个页面。
 - 也可以使用 [API 开放平台](/docs/more/api/)，在 `path` 里传入包含查询参数或 hash 的完整路径。
+
+## 如何分享或收藏某个页面的统计链接
+
+- 统计面板的地址支持 `?query=` 参数，把要查询的地址直接跟在后面，打开就会自动查询：
+
+```
+https://jekit.cn/stats/?query=https://example.com/article/1
+```
+
+- 在面板里搜索之后，地址栏会自动带上这个参数，所以**直接复制地址栏的链接**发给别人，对方打开看到的就是同一个查询，适合分享或收藏。
+- 写法约定：`?query=` 之后的内容会被**整体**当作要查询的地址，不做拆分，因此 `&`、`#` 都**不需要转义**，可以直接写：
+
+```
+https://jekit.cn/stats/?query=https://example.com/list?page=2&sort=asc
+https://jekit.cn/stats/?query=https://example.com/app#/detail/1
+```
+
+- 也正因为不做拆分，`?query=` 必须是这个页面地址里**唯一的参数**（它后面的内容都归属于目标地址）。

@@ -93,6 +93,7 @@ export function JekitStats() {
 ## 数据与故障排查
 
 - 查看网站统计：https://jekit.cn/stats/
+- 查看某个地址的统计：https://jekit.cn/stats/?query=<完整地址>（`?query=` 之后整体作为查询地址，`&`、`#` 无需转义）
 - 安装问题：https://jekit.cn/docs/faq/setup/
 - 使用问题：https://jekit.cn/docs/faq/use/
 - 实现原理：https://jekit.cn/docs/faq/impl/
