@@ -42,10 +42,15 @@ export default function DashboardHeader() {
         navigate(buildStatsQueryUrl(location.pathname, url), { replace: true });
     };
 
-    // 支持通过 ?query=xxx 跳转过来直接查询
+    // 支持通过 ?query=xxx 跳转过来直接查询，并保证地址栏始终带着当前查询
     const urlQuery = readStatsQuery(location.search, location.hash);
     useEffect(() => {
-        if (!urlQuery) return;
+        // 地址栏没有 query 参数（例如从其它页面切回统计面板），补上当前查询
+        if (!urlQuery) {
+            const current = formatStatsUrl(domain, path);
+            navigate(buildStatsQueryUrl(location.pathname, current), { replace: true });
+            return;
+        }
 
         const { domain: d, path: p } = parseStatsUrl(urlQuery);
         // 当前查询已经是这个地址（首次加载时 store 已从地址栏初始化过），不必重复触发
@@ -53,7 +58,7 @@ export default function DashboardHeader() {
 
         search(d, p);
         setText(formatStatsUrl(d, p));
-    }, [urlQuery, domain, path, search]);
+    }, [urlQuery, domain, path, search, navigate, location.pathname]);
 
     return (
         <section className="px-3 pt-6 max-sm:px-5">
