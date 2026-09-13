@@ -37,7 +37,7 @@ export default function BlogList({ entries }: BlogListProps) {
                     >
                         <GlowCard className="flex gap-4 p-4 rounded border border-[#081A2B] bg-[#03101C]/90 backdrop-blur-sm">
                             {/* 封面图 */}
-                            <div className="w-32 h-24 shrink-0 rounded-sm overflow-hidden bg-surface">
+                            <div className="w-32 h-24 shrink-0 rounded-sm overflow-hidden bg-panel-bg">
                                 {entry.cover ? (
                                     <img
                                         src={entry.cover}

@@ -80,7 +80,6 @@ export default function BlogDetail() {
             return;
         }
         setIsLoading(true);
-        window.scrollTo(0, 0);
 
         // 从索引中查找对应条目
         const entry = findEntry(filename);

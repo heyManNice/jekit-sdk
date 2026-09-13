@@ -112,9 +112,6 @@ export default function DocsContent() {
         }
         setIsLoading(true);
 
-        // 切换页面时滚动到顶部
-        window.scrollTo(0, 0);
-
         const key = `./content/${subPath}.md`;
         const loader = modules[key] as (() => Promise<string>) | undefined;
         if (loader) {

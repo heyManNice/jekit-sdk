@@ -51,21 +51,24 @@ export const GlowCard = forwardRef<HTMLDivElement, GlowCardProps>(function GlowC
     edgeGlowSize = 250,
     ...rest
 }, ref) {
-    // 手机端直接渲染子元素，禁用光晕效果
-    if (isMobileDevice()) {
-        return <div ref={ref} className={className} {...rest}>{children}</div>;
-    }
+    // 手机端禁用光晕效果的能力判定。
+    // 必须在所有 hooks 之后才能据此提前 return：窗口宽度跨越断点时判定会变化，
+    // 若在 hooks 之前 return，hook 数量随之改变，React 会直接抛错导致整页崩白。
+    // 用 useMemo 固定首次判定，避免同一实例在运行期来回切换形态。
+    const isMobile = useMemo(() => isMobileDevice(), []);
 
     const cardRef = useRef<HTMLDivElement>(null);
     // 全局鼠标位置（视口坐标）
     const [mousePos, setMousePos] = useState({ x: -9999, y: -9999 });
 
-    // 全局追踪鼠标
+    // 全局追踪鼠标（手机端不需要，直接跳过订阅）
     useEffect(() => {
+        if (isMobile) return;
+
         const onMove = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
         window.addEventListener("mousemove", onMove);
         return () => window.removeEventListener("mousemove", onMove);
-    }, []);
+    }, [isMobile]);
 
     // === 计算发光强度 ===
     const { pos, edges, distAlpha } = useMemo(() => {
@@ -124,6 +127,11 @@ export const GlowCard = forwardRef<HTMLDivElement, GlowCardProps>(function GlowC
         }
         return result;
     }, [mousePos]);
+
+    // 手机端直接渲染子元素，不带光晕图层（放在所有 hooks 之后才安全）
+    if (isMobile) {
+        return <div ref={ref} className={className} {...rest}>{children}</div>;
+    }
 
     return (
         <div

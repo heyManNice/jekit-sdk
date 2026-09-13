@@ -43,7 +43,7 @@ function Hero() {
                 </h1>
 
                 {/* 详细信息 */}
-                <p className="text[#A7AFBB] mt-3 leading-loose" tabIndex={-1} aria-label="Jekit 是一个免费的公共统计基础工具，支持 CDN 引入、NPM 引入，支持 Vue 、React。支持公开查看基础计数、历史趋势、来源渠道（搜索引擎和 AI ）、操作系统类别、浏览器类别和网站性能指标（ TTFB 和 PLT ）。">
+                <p className="text-[#A7AFBB] mt-3 leading-loose" tabIndex={-1} aria-label="Jekit 是一个免费的公共统计基础工具，支持 CDN 引入、NPM 引入，支持 Vue 、React。支持公开查看基础计数、历史趋势、来源渠道（搜索引擎和 AI ）、操作系统类别、浏览器类别和网站性能指标（ TTFB 和 PLT ）。">
                     <img src={jekit} className="inline" alt="jekit" style={{ height: '20px' }} /> 是一个免费的公共统计基础工具，支持 <H>CDN</H> 引入、<H>NPM</H> 引入，支持 <H>Vue</H> 、<H>React</H>。支持公开查看基础计数、历史趋势、来源渠道（<H>搜索引擎</H>、<H>AI</H> ）、操作系统类别、浏览器类别和网站性能指标（ <H>TTFB</H>、<H>PLT</H> ）。
                 </p>
 
