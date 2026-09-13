@@ -1,9 +1,10 @@
 import {
-    Search,
-} from "lucide-react";
+    useState,
+} from "react";
 
 import { GlowCard } from "@/components/glow-card";
 import { HelpTooltip } from "@/components/help-tooltip";
+import { SearchHistoryInput } from "@/components/search-history-input";
 import { useQueryStore } from "@/stores/query";
 import { fmtDate } from "@/utils/format";
 import { Link } from "react-router";
@@ -21,11 +22,26 @@ function parseInput(text: string): { domain: string; path: string } {
 
 // 仪表盘头部
 export default function DashboardHeader() {
-    const { domain, path, search, subPageCount, registeredAt, pageLimitForSite } = useQueryStore();
+    const {
+        domain,
+        path,
+        search,
+        history,
+        removeHistory,
+        clearHistory,
+        subPageCount,
+        registeredAt,
+        pageLimitForSite,
+    } = useQueryStore();
+
+    // 搜索框内容，初始为上次查询的地址
+    const [text, setText] = useState(`${domain}${path}`);
 
     const handleSearch = (value: string) => {
         const { domain: d, path: p } = parseInput(value);
         search(d, p);
+        // 回填归一化后的地址，保证输入框内容与实际查询的一致
+        setText(`${d}${p}`);
     };
 
     return (
@@ -54,38 +70,17 @@ export default function DashboardHeader() {
                             ，仅支持查看从网站开始使用日期到今天的数据。
                         </span>
                     </p>
-                    {/* 搜索框 */}
-                    <GlowCard className="mt-5 flex items-stretch gap-0 overflow-hidden rounded border border-[#102336] bg-[#03101C]/90 max-sm:flex-col max-w-180 transition-colors focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/10">
-                        <div className="flex min-w-0 flex-1 items-center gap-3 px-2 py-2">
-                            <span className="sr-only">输入域名或页面路径</span>
-                            <input
-                                type="text"
-                                data-main-content="true"
-                                className="min-w-0 flex-1 bg-transparent text-sm text-text-primary outline-none placeholder:text-text-muted"
-                                defaultValue={`${domain}${path}`}
-                                placeholder="输入 URL，如 http://localhost/stats/"
-                                aria-label="输入域名或页面路径"
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                        handleSearch(e.currentTarget.value);
-                                    }
-                                }}
-                            />
-                            <button
-                                type="button"
-                                className="flex shrink-0 items-center justify-center rounded-full p-1 text-text-secondary transition-colors hover:text-primary"
-                                aria-label="执行搜索"
-                                onClick={() => {
-                                    const input = document.querySelector<HTMLInputElement>(
-                                        "input[aria-label='输入域名或页面路径']",
-                                    );
-                                    if (input) handleSearch(input.value);
-                                }}
-                            >
-                                <Search size={18} />
-                            </button>
-                        </div>
-                    </GlowCard>
+                    {/* 搜索框：带历史记录下拉 */}
+                    <SearchHistoryInput
+                        value={text}
+                        onChange={setText}
+                        onSubmit={handleSearch}
+                        history={history}
+                        onRemoveHistory={removeHistory}
+                        onClearHistory={clearHistory}
+                        placeholder="输入 URL，如 http://localhost/stats/"
+                        ariaLabel="输入域名或页面路径"
+                    />
                 </div>
 
                 {/* 数据起始日期 */}
