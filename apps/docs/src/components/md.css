@@ -279,31 +279,9 @@
 }
 
 /* ===================================================
-   文档元信息（编辑时间 / 修改记录）
-   紧跟在第一个标题下方，靠右对齐
+   文档元信息分隔符（编辑时间与修改记录之间的那个小圆点）
+   布局由使用处的 Tailwind 类负责，这里只管颜色
    =================================================== */
-
-.doc-meta {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    margin-top: 0.25rem;
-    margin-bottom: 1.5rem;
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
-}
-
-.doc-meta a {
-    color: var(--color-text-muted);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    transition: color 0.2s;
-}
-
-.doc-meta a:hover {
-    color: var(--color-primary);
-}
 
 .doc-meta-sep {
     color: var(--color-text-muted);

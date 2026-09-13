@@ -3,12 +3,10 @@
 @theme {
     --color-primary: #06e6e2;
     --color-primary-hover: #00d4cc;
-    --color-secondary: #00bcd4;
 
     --color-bg: #000713;
-    --color-card-bg: #010F1B;
+    /* 博客列表的缩略图占位底色 */
     --color-panel-bg: #1a202e;
-    --color-overlay: rgba(0, 0, 0, 0.5);
 
     --color-text-primary: #DFE2E1;
     --color-text-secondary: #bbbfc8;
@@ -16,15 +14,6 @@
     --color-text-inverse: #0a0f1a;
 
     --color-border: #081321;
-    --color-border-light: #374151;
-
-    --color-link: var(--color-primary);
-    --color-link-hover: var(--color-primary-hover);
-
-    --color-success: #00e676;
-    --color-warning: #ffea00;
-    --color-error: #ff5252;
-    --color-info: #00bcd4;
 }
 
 body {
