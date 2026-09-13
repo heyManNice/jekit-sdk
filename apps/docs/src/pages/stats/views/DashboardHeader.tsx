@@ -1,4 +1,5 @@
 import {
+    useEffect,
     useState,
 } from "react";
 
@@ -7,18 +8,8 @@ import { HelpTooltip } from "@/components/help-tooltip";
 import { SearchHistoryInput } from "@/components/search-history-input";
 import { useQueryStore } from "@/stores/query";
 import { fmtDate } from "@/utils/format";
-import { Link } from "react-router";
-
-// 从输入文本中提取 domain 和 path
-// path 必须保留查询参数与 hash，否则带 query / hash 的页面无法被查询
-function parseInput(text: string): { domain: string; path: string } {
-    try {
-        const url = new URL(text.startsWith("http") ? text : `https://${text}`);
-        return { domain: url.origin, path: `${url.pathname}${url.search}${url.hash}` };
-    } catch {
-        return { domain: text, path: "/" };
-    }
-}
+import { formatStatsUrl, parseStatsUrl, readStatsQuery, buildStatsQueryUrl } from "@/utils/stats-url";
+import { Link, useLocation, useNavigate } from "react-router";
 
 // 仪表盘头部
 export default function DashboardHeader() {
@@ -34,15 +25,35 @@ export default function DashboardHeader() {
         pageLimitForSite,
     } = useQueryStore();
 
+    const location = useLocation();
+    const navigate = useNavigate();
+
     // 搜索框内容，初始为上次查询的地址
-    const [text, setText] = useState(`${domain}${path}`);
+    const [text, setText] = useState(formatStatsUrl(domain, path));
 
     const handleSearch = (value: string) => {
-        const { domain: d, path: p } = parseInput(value);
+        const { domain: d, path: p } = parseStatsUrl(value);
+        const url = formatStatsUrl(d, p);
         search(d, p);
         // 回填归一化后的地址，保证输入框内容与实际查询的一致
-        setText(`${d}${p}`);
+        setText(url);
+        // 同步到地址栏，方便直接分享链接，或刷新后停留在同一个查询
+        // 刻意用原始形态写入（不做编码），与读取端的整体切片保持一致
+        navigate(buildStatsQueryUrl(location.pathname, url), { replace: true });
     };
+
+    // 支持通过 ?query=xxx 跳转过来直接查询
+    const urlQuery = readStatsQuery(location.search, location.hash);
+    useEffect(() => {
+        if (!urlQuery) return;
+
+        const { domain: d, path: p } = parseStatsUrl(urlQuery);
+        // 当前查询已经是这个地址（首次加载时 store 已从地址栏初始化过），不必重复触发
+        if (d === domain && p === path) return;
+
+        search(d, p);
+        setText(formatStatsUrl(d, p));
+    }, [urlQuery, domain, path, search]);
 
     return (
         <section className="px-3 pt-6 max-sm:px-5">

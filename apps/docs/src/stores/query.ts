@@ -1,5 +1,7 @@
 import { create } from "zustand";
 
+import { parseStatsUrl, readStatsQuery } from "@/utils/stats-url";
+
 const STORAGE_KEY = "jekit-stats-query";
 
 // 从 localStorage 恢复上次的搜索值
@@ -25,6 +27,20 @@ function persistQuery(domain: string, path: string) {
     } catch {
         // ignore
     }
+}
+
+// 从地址栏的 ?query= 参数读取初始查询
+// 用于从其它页面或外部链接跳转过来直接查看某个地址的统计，例如 /stats/?query=https://example.com/
+function loadQueryFromUrl(): { domain: string; path: string } | null {
+    try {
+        const raw = readStatsQuery(window.location.search, window.location.hash);
+        if (raw) {
+            return parseStatsUrl(raw);
+        }
+    } catch {
+        // ignore
+    }
+    return null;
 }
 
 const HISTORY_KEY = "jekit-stats-history";
@@ -76,10 +92,12 @@ interface QueryState {
 }
 
 const persisted = loadPersistedQuery();
+// 地址栏带了 ?query= 时以它为准，优先于上次的查询记录
+const initialQuery = loadQueryFromUrl() ?? persisted;
 
 export const useQueryStore = create<QueryState>((set, get) => ({
-    domain: persisted?.domain ?? "https://jekit.cn",
-    path: persisted?.path ?? "/",
+    domain: initialQuery?.domain ?? "https://jekit.cn",
+    path: initialQuery?.path ?? "/",
     version: 0,
     subPageCount: null,
     registeredAt: null,
