@@ -1,7 +1,7 @@
 {
   "name": "jekit-sdk",
   "private": true,
-  "version": "1.4",
+  "version": "1.5",
   "scripts": {
     "dev": "npm run dev --workspace jekit-docs",
     "build:docs": "npm run build --workspace jekit-docs",
