@@ -105,7 +105,6 @@ export function AnimatedMetricValue({
         );
 
         return () => controls.forEach((c) => c.stop());
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [shouldAnimate, targets]);
 
     // 4. 无动画模式 —— 用 dangerouslySetInnerHTML 支持 <br/> 等内联 HTML
