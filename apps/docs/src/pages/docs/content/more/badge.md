@@ -7,7 +7,16 @@ title: 你喜爱的 Badge
 Jekit Badge 可以把公开的统计数据生成为 SVG 徽章，适合放在网站、项目主页或者 README 中。
 无需注册，也不需要额外创建令牌，只需要提供已经接入 Jekit 的网站地址。
 
-![Jekit 站点访问量](https://badge.jekit.cn/flat/pv?url=https://jekit.cn/stats/)
+![站点总访问量](https://badge.jekit.cn/flat/pv?url=https://jekit.cn/stats/)
+![当前页面总访问量](https://badge.jekit.cn/flat/ppv?url=https://jekit.cn/stats/)
+![站点总访客数](https://badge.jekit.cn/flat/uv?url=https://jekit.cn/stats/)
+![当前页面总访客数](https://badge.jekit.cn/flat/puv?url=https://jekit.cn/stats/)
+![站点今日访问量](https://badge.jekit.cn/flat/tpv?url=https://jekit.cn/stats/)
+![当前页面今日访问量](https://badge.jekit.cn/flat/tppv?url=https://jekit.cn/stats/)
+![站点今日访客数](https://badge.jekit.cn/flat/tuv?url=https://jekit.cn/stats/)
+![当前页面今日访客数](https://badge.jekit.cn/flat/tpuv?url=https://jekit.cn/stats/)
+![站点今日 TTFB P75](https://badge.jekit.cn/flat/ttfb?url=https://jekit.cn/stats/)
+![站点今日 PLT P75](https://badge.jekit.cn/flat/plt?url=https://jekit.cn/stats/)
 
 ## 如何使用？
 
