@@ -7,16 +7,16 @@ title: 你喜爱的 Badge
 Jekit Badge 可以把公开的统计数据生成为 SVG 徽章，适合放在网站、项目主页或者 README 中。
 无需注册，也不需要额外创建令牌，只需要提供已经接入 Jekit 的网站地址。
 
-![站点总访问量](https://badge.jekit.cn/flat/pv?url=https://jekit.cn/stats/)
-![当前页面总访问量](https://badge.jekit.cn/flat/ppv?url=https://jekit.cn/stats/)
-![站点总访客数](https://badge.jekit.cn/flat/uv?url=https://jekit.cn/stats/)
-![当前页面总访客数](https://badge.jekit.cn/flat/puv?url=https://jekit.cn/stats/)
-![站点今日访问量](https://badge.jekit.cn/flat/tpv?url=https://jekit.cn/stats/)
-![当前页面今日访问量](https://badge.jekit.cn/flat/tppv?url=https://jekit.cn/stats/)
-![站点今日访客数](https://badge.jekit.cn/flat/tuv?url=https://jekit.cn/stats/)
-![当前页面今日访客数](https://badge.jekit.cn/flat/tpuv?url=https://jekit.cn/stats/)
-![站点今日 TTFB P75](https://badge.jekit.cn/flat/ttfb?url=https://jekit.cn/stats/)
-![站点今日 PLT P75](https://badge.jekit.cn/flat/plt?url=https://jekit.cn/stats/)
+![站点总访问量](https://badge.jekit.cn/flat/pv?url=https://jekit.cn/docs/more/badge/)
+![当前页面总访问量](https://badge.jekit.cn/flat/ppv?url=https://jekit.cn/docs/more/badge/)
+![站点总访客数](https://badge.jekit.cn/flat/uv?url=https://jekit.cn/docs/more/badge/)
+![当前页面总访客数](https://badge.jekit.cn/flat/puv?url=https://jekit.cn/docs/more/badge/)
+![站点今日访问量](https://badge.jekit.cn/flat/tpv?url=https://jekit.cn/docs/more/badge/)
+![当前页面今日访问量](https://badge.jekit.cn/flat/tppv?url=https://jekit.cn/docs/more/badge/)
+![站点今日访客数](https://badge.jekit.cn/flat/tuv?url=https://jekit.cn/docs/more/badge/)
+![当前页面今日访客数](https://badge.jekit.cn/flat/tpuv?url=https://jekit.cn/docs/more/badge/)
+![站点今日 TTFB P75](https://badge.jekit.cn/flat/ttfb?url=https://jekit.cn/docs/more/badge/)
+![站点今日 PLT P75](https://badge.jekit.cn/flat/plt?url=https://jekit.cn/docs/more/badge/)
 
 ## 如何使用？
 
@@ -26,23 +26,23 @@ Badge 地址由样式、指标和需要查询的网站 URL 组成：
 https://badge.jekit.cn/样式/指标?url=网站或页面地址
 ```
 
-例如，查看 `https://jekit.cn/stats/` 所属站点的总访问量：
+例如，查看 `https://jekit.cn` 所属站点的总访问量：
 
 ```text
-https://badge.jekit.cn/flat/pv?url=https://jekit.cn/stats/
+https://badge.jekit.cn/flat/pv?url=https://jekit.cn
 ```
 
 在 Markdown 中直接作为图片使用：
 
 ```text
-![Jekit 站点访问量](https://badge.jekit.cn/flat/pv?url=https://jekit.cn/stats/)
+![Jekit 站点访问量](https://badge.jekit.cn/flat/pv?url=https://jekit.cn)
 ```
 
 在 HTML 中使用：
 
 ```html
 <img
-    src="https://badge.jekit.cn/flat/pv?url=https://jekit.cn/stats/"
+    src="https://badge.jekit.cn/flat/pv?url=https://jekit.cn"
     alt="Jekit 站点访问量"
 >
 ```
@@ -67,7 +67,7 @@ https://badge.jekit.cn/flat/pv?url=https://jekit.cn/stats/
 查询页面指标时，请在 `url` 中提供完整的页面地址：
 
 ```text
-https://badge.jekit.cn/flat/ppv?url=https://jekit.cn/stats/
+https://badge.jekit.cn/flat/ppv?url=https://jekit.cn
 ```
 
 ## 选择一个样式
@@ -78,25 +78,25 @@ Badge 提供四种与主流徽章一致的样式：
 
 默认样式，带有圆角和轻微渐变。
 
-![flat](https://badge.jekit.cn/flat/pv?url=https://jekit.cn/stats/)
+![flat](https://badge.jekit.cn/flat/pv?url=https://jekit.cn/docs/more/badge/)
 
 ### - flat-square
 
 与 flat 接近，但是使用直角边缘。
 
-![flat-square](https://badge.jekit.cn/flat-square/pv?url=https://jekit.cn/stats/)
+![flat-square](https://badge.jekit.cn/flat-square/pv?url=https://jekit.cn/docs/more/badge/)
 
 ### - plastic
 
 带有更明显的高光和立体效果。
 
-![plastic](https://badge.jekit.cn/plastic/pv?url=https://jekit.cn/stats/)
+![plastic](https://badge.jekit.cn/plastic/pv?url=https://jekit.cn/docs/more/badge/)
 
 ### - for-the-badge
 
 尺寸更大，文字使用粗体并增加间距。
 
-![for-the-badge](https://badge.jekit.cn/for-the-badge/pv?url=https://jekit.cn/stats/)
+![for-the-badge](https://badge.jekit.cn/for-the-badge/pv?url=https://jekit.cn/docs/more/badge/)
 
 ## 性能指标是什么？
 
@@ -108,8 +108,8 @@ Badge 提供四种与主流徽章一致的样式：
 - SPA 虚拟路由和采集失败的数据会自动排除；当天没有有效数据时显示“无数据”。
 
 ```text
-https://badge.jekit.cn/flat/ttfb?url=https://jekit.cn/stats/
-https://badge.jekit.cn/flat/plt?url=https://jekit.cn/stats/
+https://badge.jekit.cn/flat/ttfb?url=https://jekit.cn
+https://badge.jekit.cn/flat/plt?url=https://jekit.cn
 ```
 
 ## URL 应该怎么填写？
@@ -123,8 +123,8 @@ https://badge.jekit.cn/flat/plt?url=https://jekit.cn/stats/
 例如，下面两个地址查询的是同一个页面：
 
 ```text
-https://badge.jekit.cn/flat/ppv?url=https://jekit.cn/stats/
-https://badge.jekit.cn/flat/ppv?url=jekit.cn/stats/
+https://badge.jekit.cn/flat/ppv?url=https://jekit.cn
+https://badge.jekit.cn/flat/ppv?url=jekit.cn
 ```
 
 ## 为什么 Badge 显示无数据？
