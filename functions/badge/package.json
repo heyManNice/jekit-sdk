@@ -1,0 +1,9 @@
+{
+    "type": "module",
+    "scripts": {
+        "dev": "bun run dev.ts",
+        "build": "vite build",
+        "typecheck": "tsc --project tsconfig.json",
+        "test": "npm run typecheck && npm run build && node --experimental-strip-types --test tests/badge.test.mjs"
+    }
+}
