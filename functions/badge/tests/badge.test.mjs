@@ -119,15 +119,32 @@ test('性能时间桶包含 0 和 253，无有效样本时显示无数据', asyn
 test('无效路由和参数不会访问上游', async () => {
     const count = calls.length;
     for (const [path, status] of [
-        ['/', 400], ['/?query=https://jekit.cn/stats/', 400],
+        ['/?query=https://jekit.cn/stats/', 400],
         ['/flat', 404], ['/flat/totalRequestForSite/extra' + query, 404],
         ['/unknown/totalRequestForSite' + query, 400], ['/flat/unknown' + query, 400],
         ['/toString/totalRequestForSite' + query, 400], ['/flat/__proto__' + query, 400],
         ['/flat/subPageCount' + query, 400], ['/favicon.ico', 404],
-    ]) assert.equal((await request(path)).status, status, path);
+    ]) {
+        const response = await request(path);
+        assert.equal(response.status, status, path);
+        assert.equal(response.headers.get('Content-Type'), 'image/svg+xml;charset=utf-8');
+        assert.equal(response.headers.get('Cache-Control'), 'no-store');
+        assert.match(await response.text(), /^<\?xml[\s\S]*<svg/);
+    }
     const post = await request('/' + query, 'POST');
     assert.equal(post.status, 405);
     assert.equal(post.headers.get('Allow'), 'GET, HEAD');
+    assert.equal(post.headers.get('Content-Type'), 'image/svg+xml;charset=utf-8');
+    assert.ok((await post.text()).includes('仅支持 GET 或 HEAD'));
+    assert.equal(calls.length, count);
+});
+
+test('不带参数访问根路径时永久重定向到 Badge 文档', async () => {
+    const count = calls.length;
+    const response = await request('/');
+    assert.equal(response.status, 301);
+    assert.equal(response.headers.get('Location'), 'https://jekit.cn/docs/more/badge/');
+    assert.equal(await response.text(), '');
     assert.equal(calls.length, count);
 });
 
@@ -170,19 +187,30 @@ test('根路径默认值、末尾斜杠和 HEAD', async () => {
     assert.equal(response.headers.get('Content-Type'), 'image/svg+xml;charset=utf-8');
 });
 
-test('上游错误返回不缓存的 502', async () => {
+test('上游错误返回不缓存的 SVG 502', async () => {
     upstreamStatus = 503;
     const originalConsoleError = console.error;
     console.error = () => {};
     try {
         const response = await request('/' + query);
         assert.equal(response.status, 502);
+        assert.equal(response.headers.get('Content-Type'), 'image/svg+xml;charset=utf-8');
         assert.equal(response.headers.get('Cache-Control'), 'no-store');
-        assert.equal(await response.text(), '统计服务暂时不可用');
+        const svg = await response.text();
+        assert.ok(svg.includes('aria-label="Jekit: 统计服务暂时不可用"'));
+        assert.ok(svg.includes('fill="#e05d44"'));
     } finally {
         upstreamStatus = 200;
         console.error = originalConsoleError;
     }
+});
+
+test('HEAD 错误响应保留 SVG 响应头且不返回正文', async () => {
+    const response = await request('/flat/pv', 'HEAD');
+    assert.equal(response.status, 400);
+    assert.equal(response.headers.get('Content-Type'), 'image/svg+xml;charset=utf-8');
+    assert.equal(response.headers.get('Cache-Control'), 'no-store');
+    assert.equal(await response.text(), '');
 });
 
 test('SVG 转义与样式特征', () => {

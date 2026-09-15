@@ -91,16 +91,16 @@ function parsePath(pathname: string): PathParseResult {
         return {
             ok: false,
             status: 404,
-            message: '路径格式：/样式/指标?url=网址，例如 /flat/pv?url=https://jekit.cn/stats/',
+            message: '路径格式无效',
         };
     }
 
     const [style, metric] = parts;
     if (!isBadgeStyle(style)) {
-        return invalidRequest(`不支持的样式：请选择 ${BADGE_STYLE_NAMES.join('、')}`);
+        return invalidRequest(`样式无效：${BADGE_STYLE_NAMES.join('、')}`);
     }
     if (!isBadgeMetric(metric)) {
-        return invalidRequest(`不支持的指标：请选择 ${BADGE_METRIC_NAMES.join('、')}`);
+        return invalidRequest(`指标无效：${BADGE_METRIC_NAMES.join('、')}`);
     }
 
     return {

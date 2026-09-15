@@ -3,6 +3,7 @@ import { renderBadgeSvg } from './badge/render-svg.ts';
 import { BADGE_DEFAULTS, BADGE_METRICS } from './config/options.ts';
 import { parseBadgeRequest } from './http/parse-request.ts';
 import {
+    docsRedirectResponse,
     errorResponse,
     methodNotAllowedResponse,
     svgResponse,
@@ -21,16 +22,19 @@ export default {
     ): Promise<Response> {
         const url = new URL(request.url);
 
-        if (url.pathname === '/favicon.ico') {
-            return new Response(null, { status: 404 });
-        }
         if (request.method !== 'GET' && request.method !== 'HEAD') {
             return methodNotAllowedResponse();
+        }
+        if (url.pathname === '/' && url.search === '') {
+            return docsRedirectResponse();
+        }
+        if (url.pathname === '/favicon.ico') {
+            return errorResponse('资源不存在', 404, request.method !== 'HEAD');
         }
 
         const parsed = parseBadgeRequest(request);
         if (!parsed.ok) {
-            return errorResponse(parsed.message, parsed.status);
+            return errorResponse(parsed.message, parsed.status, request.method !== 'HEAD');
         }
 
         const { style, metric, target } = parsed.value;
@@ -69,7 +73,7 @@ export default {
             return svgResponse(svg, request.method !== 'HEAD');
         } catch (error) {
             console.error('Badge 数据查询失败', error);
-            return errorResponse('统计服务暂时不可用', 502);
+            return errorResponse('统计服务暂时不可用', 502, request.method !== 'HEAD');
         }
     },
 };

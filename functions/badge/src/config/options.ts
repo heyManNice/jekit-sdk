@@ -96,6 +96,8 @@ export const BADGE_DEFAULTS = {
     labelColor: '#555',
     emptyValue: '无数据',
     emptyColor: '#9f9f9f',
+    errorLabel: 'Jekit',
+    errorColor: '#e05d44',
 } as const satisfies {
     style: BadgeStyle;
     metric: BadgeMetric;
@@ -103,6 +105,8 @@ export const BADGE_DEFAULTS = {
     labelColor: string;
     emptyValue: string;
     emptyColor: string;
+    errorLabel: string;
+    errorColor: string;
 };
 
 export const BADGE_STYLE_NAMES = Object.keys(BADGE_STYLES) as BadgeStyle[];
