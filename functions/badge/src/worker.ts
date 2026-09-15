@@ -1,6 +1,6 @@
-import { stats } from 'jekit-core';
+import { performance as getPerformance, stats } from 'jekit-core';
 import { renderBadgeSvg } from './badge/render-svg.ts';
-import { BADGE_METRICS } from './config/options.ts';
+import { BADGE_DEFAULTS, BADGE_METRICS } from './config/options.ts';
 import { parseBadgeRequest } from './http/parse-request.ts';
 import {
     errorResponse,
@@ -8,6 +8,10 @@ import {
     svgResponse,
 } from './http/responses.ts';
 import type { WorkerEnv, WorkerExecutionContext } from './runtime/worker-types.ts';
+import {
+    formatPerformanceBucket,
+    getPerformancePercentile,
+} from './performance/percentile.ts';
 
 export default {
     async fetch(
@@ -33,21 +37,38 @@ export default {
         const metricOption = BADGE_METRICS[metric];
 
         try {
-            const result = await stats({
-                domain: target.domain,
-                path: target.path,
-            });
+            let value: string;
+            let valueColor: string | undefined;
+
+            if (metricOption.source === 'stats') {
+                const result = await stats({
+                    domain: target.domain,
+                    path: target.path,
+                });
+                value = result[metricOption.statsKey].toString();
+            } else {
+                const result = await getPerformance({ domain: target.domain });
+                const bucket = getPerformancePercentile(
+                    result[metricOption.histogramKey],
+                    metricOption.percentile,
+                );
+                value = bucket === null
+                    ? BADGE_DEFAULTS.emptyValue
+                    : formatPerformanceBucket(bucket);
+                valueColor = bucket === null ? BADGE_DEFAULTS.emptyColor : undefined;
+            }
+
             const svg = renderBadgeSvg(
                 {
                     label: metricOption.label,
-                    value: result[metricOption.statsKey].toString(),
+                    value,
                 },
-                { style },
+                { style, valueColor },
             );
 
             return svgResponse(svg, request.method !== 'HEAD');
         } catch (error) {
-            console.error('Badge 统计查询失败', error);
+            console.error('Badge 数据查询失败', error);
             return errorResponse('统计服务暂时不可用', 502);
         }
     },

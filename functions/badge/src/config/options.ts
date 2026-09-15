@@ -1,6 +1,8 @@
-import type { stats } from 'jekit-core';
+import type { performance as getPerformance, stats } from 'jekit-core';
 
 type StatsResult = Awaited<ReturnType<typeof stats>>;
+type PerformanceResult = Awaited<ReturnType<typeof getPerformance>>;
+export const PERFORMANCE_PERCENTILE = 75 as const;
 
 export const BADGE_STYLES = {
     flat: {
@@ -47,20 +49,42 @@ export const BADGE_STYLES = {
 
 export type BadgeStyle = keyof typeof BADGE_STYLES;
 
-type MetricOption = {
+type StatsMetricOption = {
+    source: 'stats';
     statsKey: keyof StatsResult;
     label: string;
 };
 
+type PerformanceMetricOption = {
+    source: 'performance';
+    histogramKey: keyof PerformanceResult;
+    percentile: typeof PERFORMANCE_PERCENTILE;
+    label: string;
+};
+
+type MetricOption = StatsMetricOption | PerformanceMetricOption;
+
 export const BADGE_METRICS = {
-    pv: { statsKey: 'totalRequestForSite', label: '站点PV' },
-    ppv: { statsKey: 'totalRequestForPage', label: '页面PV' },
-    uv: { statsKey: 'totalVisitorForSite', label: '站点UV' },
-    puv: { statsKey: 'totalVisitorForPage', label: '页面UV' },
-    tpv: { statsKey: 'todayRequestForSite', label: '今日站点PV' },
-    tppv: { statsKey: 'todayRequestForPage', label: '今日页面PV' },
-    tuv: { statsKey: 'todayVisitorForSite', label: '今日站点UV' },
-    tpuv: { statsKey: 'todayVisitorForPage', label: '今日页面UV' },
+    pv: { source: 'stats', statsKey: 'totalRequestForSite', label: '站点PV' },
+    ppv: { source: 'stats', statsKey: 'totalRequestForPage', label: '页面PV' },
+    uv: { source: 'stats', statsKey: 'totalVisitorForSite', label: '站点UV' },
+    puv: { source: 'stats', statsKey: 'totalVisitorForPage', label: '页面UV' },
+    tpv: { source: 'stats', statsKey: 'todayRequestForSite', label: '今日站点PV' },
+    tppv: { source: 'stats', statsKey: 'todayRequestForPage', label: '今日页面PV' },
+    tuv: { source: 'stats', statsKey: 'todayVisitorForSite', label: '今日站点UV' },
+    tpuv: { source: 'stats', statsKey: 'todayVisitorForPage', label: '今日页面UV' },
+    ttfb: {
+        source: 'performance',
+        histogramKey: 'ttfbHist',
+        percentile: PERFORMANCE_PERCENTILE,
+        label: `TTFB P${PERFORMANCE_PERCENTILE}`,
+    },
+    plt: {
+        source: 'performance',
+        histogramKey: 'pltHist',
+        percentile: PERFORMANCE_PERCENTILE,
+        label: `PLT P${PERFORMANCE_PERCENTILE}`,
+    },
 } as const satisfies Record<string, MetricOption>;
 
 export type BadgeMetric = keyof typeof BADGE_METRICS;
@@ -70,11 +94,15 @@ export const BADGE_DEFAULTS = {
     metric: 'pv',
     valueColor: '#4c1',
     labelColor: '#555',
+    emptyValue: '无数据',
+    emptyColor: '#9f9f9f',
 } as const satisfies {
     style: BadgeStyle;
     metric: BadgeMetric;
     valueColor: string;
     labelColor: string;
+    emptyValue: string;
+    emptyColor: string;
 };
 
 export const BADGE_STYLE_NAMES = Object.keys(BADGE_STYLES) as BadgeStyle[];

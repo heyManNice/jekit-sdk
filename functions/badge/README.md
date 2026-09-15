@@ -34,7 +34,7 @@ URL 的输入规则与统计面板一致：可以省略协议，省略时按 `ht
 
 ## 指标
 
-`pv` 表示访问量，`uv` 表示访客数；默认查询站点累计值，`p` 前缀表示页面，`t` 前缀表示今日。
+`pv` 表示访问量，`uv` 表示访客数；默认查询站点累计值，`p` 前缀表示页面，`t` 前缀表示今日。性能指标使用当天的站点数据。
 
 | 指标 | 标签 |
 | --- | --- |
@@ -46,6 +46,17 @@ URL 的输入规则与统计面板一致：可以省略协议，省略时按 `ht
 | `tppv` | 今日页面PV |
 | `tuv` | 今日站点UV |
 | `tpuv` | 今日页面UV |
+| `ttfb` | TTFB P75 |
+| `plt` | PLT P75 |
+
+性能指标示例：
+
+```text
+/flat/ttfb?url=https://jekit.cn/stats/
+/flat/plt?url=https://jekit.cn/stats/
+```
+
+P75 表示 75% 的有效采集耗时不超过徽章显示的值。性能直方图的 `0–252` 是 10ms 时间桶，`253` 表示 `≥2.53s`；`254` 表示 SPA 虚拟路由无需采集，`255` 表示采集失败。计算 P75 时只使用 `0–253`，没有有效样本时显示“无数据”。
 
 `/?url=...` 默认使用 `flat/pv`。完整路径允许一个末尾斜杠。
 
@@ -69,6 +80,8 @@ src/
 │  ├─ parse-request.ts         URL 路径和参数解析
 │  ├─ parse-target-url.ts      统计目标 URL 解析
 │  └─ responses.ts             HTTP 响应构造
+├─ performance/
+│  └─ percentile.ts            性能分位数计算与时间格式化
 ├─ runtime/
 │  ├─ configure-fetch.ts       上游请求运行时配置
 │  └─ worker-types.ts          Worker 运行时类型
@@ -85,5 +98,7 @@ npm run typecheck
 npm run build
 npm test
 ```
+
+`npm run dev` 使用 Bun watch 模式；导入的源码发生变化时会自动重启本地服务。
 
 测试命令自动构建，然后使用模拟统计接口验证构建产物，不请求线上服务。测试需要支持 TypeScript 类型擦除的 Node.js（22.6+）。
