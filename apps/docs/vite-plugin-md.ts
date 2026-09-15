@@ -37,7 +37,7 @@ function shikiCodeRenderer(
         theme: "github-dark-default"
     });
     // 套上 .code-block 容器以兼容 md.css 中的语言标签（::after）样式
-    return `<div class="code-block" data-lang="${lang}">${html}</div>`;
+    return `<div class="code-block" data-lang="${lang}"><button type="button" class="code-copy" aria-label="复制代码" aria-live="polite">复制</button>${html}</div>`;
 }
 
 // Vite 插件

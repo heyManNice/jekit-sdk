@@ -101,6 +101,51 @@
     color: var(--color-text-muted);
     pointer-events: none;
     letter-spacing: 0.05em;
+    transition: opacity 0.15s;
+}
+
+.md .code-copy {
+    position: absolute;
+    z-index: 1;
+    top: 0.375rem;
+    right: 0.5rem;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    color: var(--color-text-muted);
+    background: #0a1628;
+    font-size: 0.8rem;
+    line-height: 1.25rem;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: color 0.15s, opacity 0.15s;
+}
+
+.md .code-block:hover::after,
+.md .code-block:focus-within::after {
+    opacity: 0;
+}
+
+.md .code-block:hover .code-copy,
+.md .code-block:focus-within .code-copy {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.md .code-copy:hover,
+.md .code-copy:focus-visible {
+    color: var(--color-primary);
+}
+
+@media (hover: none) {
+    .md .code-block[data-lang]::after {
+        opacity: 0;
+    }
+
+    .md .code-copy {
+        opacity: 1;
+        pointer-events: auto;
+    }
 }
 
 /* shiki 高亮输出 */

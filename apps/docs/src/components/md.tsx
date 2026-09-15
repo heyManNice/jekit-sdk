@@ -14,6 +14,29 @@ interface MdProps {
     className?: string;
 }
 
+const copyResetTimers = new WeakMap<HTMLButtonElement, number>();
+
+async function copyCode(button: HTMLButtonElement): Promise<void> {
+    const code = button.closest(".code-block")?.querySelector("code")?.textContent;
+    if (!code) return;
+
+    try {
+        await navigator.clipboard.writeText(code);
+        button.textContent = "已复制";
+    } catch {
+        button.textContent = "复制失败";
+    }
+
+    const activeTimer = copyResetTimers.get(button);
+    if (activeTimer !== undefined) window.clearTimeout(activeTimer);
+
+    const timer = window.setTimeout(() => {
+        button.textContent = "复制";
+        copyResetTimers.delete(button);
+    }, 1500);
+    copyResetTimers.set(button, timer);
+}
+
 // 判断是否为站内路由链接（排除锚点、协议链接、协议相对链接）
 function isInternalHref(href: string): boolean {
     if (!href || href.startsWith("#")) return false;
@@ -47,6 +70,15 @@ export function Md({ children, className }: MdProps) {
     const handleClick = (e: MouseEvent<HTMLDivElement>) => {
         if (e.defaultPrevented) return;
         if (e.button !== 0) return;
+
+        const target = e.target as HTMLElement;
+        const copyButton = target.closest<HTMLButtonElement>(".code-copy");
+        if (copyButton) {
+            e.preventDefault();
+            void copyCode(copyButton);
+            return;
+        }
+
         // 修饰键（新标签/新窗口/下载等）保持浏览器默认行为
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
