@@ -2,12 +2,25 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { renderBadgeSvg } from '../src/badge/render-svg.ts';
 import { BADGE_METRICS, BADGE_STYLES } from '../src/config/options.ts';
+import { formatRegistrationAge, sumDailyValues } from '../src/stats/format.ts';
 
 const calls = [];
 const rawCalls = [];
 let upstreamStatus = 200;
+const dayInMs = 24 * 60 * 60 * 1000;
 // stats 二进制响应：两个 u64，六个 u32，之后为其余字段。
 const values = [9007199254740993n, 27n, 303, 404, 505, 606, 707, 808];
+const statsMetadata = {
+    subPageCount: 12,
+    pageLimitForSite: 100,
+    registeredAt: BigInt(Date.now() - Math.floor(9.5 * dayInMs)),
+};
+const dailyValues = {
+    dailyRequestForSite: [1, 2, 3, 4, 5, 6, 7],
+    dailyRequestForPage: [2, 3, 4, 5, 6, 7, 8],
+    dailyVisitorForSite: [1, 1, 1, 1, 1, 1, 1],
+    dailyVisitorForPage: [0, 1, 0, 1, 0, 1, 0],
+};
 const performanceHistograms = {
     ttfb: Array(256).fill(0),
     plt: Array(256).fill(0),
@@ -37,6 +50,14 @@ globalThis.fetch = async (input, init) => {
     view.setBigUint64(0, values[0], true);
     view.setBigUint64(8, values[1], true);
     values.slice(2).forEach((value, i) => view.setUint32(16 + i * 4, value, true));
+    view.setUint16(40, statsMetadata.subPageCount, true);
+    view.setUint16(42, statsMetadata.pageLimitForSite, true);
+    view.setBigUint64(44, statsMetadata.registeredAt, true);
+    Object.values(dailyValues).forEach((daily, arrayIndex) => {
+        daily.forEach((value, valueIndex) => {
+            view.setUint32(52 + arrayIndex * 28 + valueIndex * 4, value, true);
+        });
+    });
     return new Response(buffer);
 };
 const { default: worker } = await import('../dist/index.js');
@@ -47,21 +68,69 @@ const request = (path, method = 'GET') => worker.fetch(new Request('https://badg
 const metrics = Object.entries(BADGE_METRICS);
 const statsMetrics = metrics.filter(([, metric]) => metric.source === 'stats');
 const styles = Object.entries(BADGE_STYLES);
+const scalarStatsValues = {
+    pv: values[0],
+    ppv: values[1],
+    uv: values[2],
+    puv: values[3],
+    tpv: values[4],
+    tppv: values[5],
+    tuv: values[6],
+    tpuv: values[7],
+    pg: statsMetadata.subPageCount,
+};
 
-test('四种样式 × 八个指标均返回对应统计值，并保留大整数精度', async () => {
+test('四种样式 × 直出统计指标均返回对应值，并保留大整数精度', async () => {
     for (const [styleName, style] of styles) {
-        for (const [i, [metricName, metric]] of statsMetrics.entries()) {
+        for (const [metricName, metric] of statsMetrics) {
             const response = await request('/' + styleName + '/' + metricName + query);
             assert.equal(response.status, 200);
             assert.equal(response.headers.get('Content-Type'), 'image/svg+xml;charset=utf-8');
             assert.equal(response.headers.get('Cache-Control'), 'public, max-age=3600');
             const svg = await response.text();
-            assert.ok(svg.includes('aria-label="' + metric.label + ': ' + values[i] + '"'));
+            assert.ok(svg.includes('aria-label="' + metric.label + ': ' + scalarStatsValues[metricName] + '"'));
             assert.ok(svg.includes('height="' + style.height + '"'));
         }
     }
     assert.equal(calls.at(-1).headers.get('x-query-domain'), 'https://jekit.cn');
     assert.equal(calls.at(-1).headers.get('Origin'), 'https://badge.jekit.cn');
+});
+
+test('近 7 日、页面数和接入天数指标使用 stats 返回值', async () => {
+    const expected = {
+        pv7: '近7日PV: 28',
+        ppv7: '近7日页面PV: 35',
+        uv7: '近7日UV: 7',
+        puv7: '近7日页面UV: 3',
+        pg: '页面数: 12',
+        age: '接入天数: 10',
+    };
+
+    for (const [styleName] of styles) {
+        for (const [metric, text] of Object.entries(expected)) {
+            const response = await request('/' + styleName + '/' + metric + query);
+            assert.equal(response.status, 200);
+            assert.ok((await response.text()).includes('aria-label="' + text + '"'));
+        }
+    }
+});
+
+test('统计派生值处理空接入时间和日期边界', async () => {
+    assert.equal(sumDailyValues([1, 2, 3]), '6');
+    assert.equal(formatRegistrationAge(1_000n, 1_000), '1');
+    assert.equal(formatRegistrationAge(1_000n, 1_000 + dayInMs), '2');
+    assert.equal(formatRegistrationAge(0n, 1_000), null);
+
+    const registeredAt = statsMetadata.registeredAt;
+    statsMetadata.registeredAt = 0n;
+    try {
+        const response = await request('/flat/age' + query);
+        const svg = await response.text();
+        assert.ok(svg.includes('aria-label="接入天数: 无数据"'));
+        assert.ok(svg.includes('fill="#9f9f9f"'));
+    } finally {
+        statsMetadata.registeredAt = registeredAt;
+    }
 });
 
 test('TTFB 和 PLT 分别计算 P75，并忽略 254、255', async () => {

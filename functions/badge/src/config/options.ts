@@ -4,6 +4,14 @@ type StatsResult = Awaited<ReturnType<typeof stats>>;
 type PerformanceResult = Awaited<ReturnType<typeof getPerformance>>;
 export const PERFORMANCE_PERCENTILE = 75 as const;
 
+type StatsScalarKey = {
+    [Key in keyof StatsResult]: StatsResult[Key] extends number | bigint ? Key : never;
+}[keyof StatsResult];
+
+type StatsArrayKey = {
+    [Key in keyof StatsResult]: StatsResult[Key] extends readonly number[] ? Key : never;
+}[keyof StatsResult];
+
 export const BADGE_STYLES = {
     flat: {
         height: 20,
@@ -51,7 +59,19 @@ export type BadgeStyle = keyof typeof BADGE_STYLES;
 
 type StatsMetricOption = {
     source: 'stats';
-    statsKey: keyof StatsResult;
+    statsKey: StatsScalarKey;
+    label: string;
+};
+
+type StatsSumMetricOption = {
+    source: 'stats-sum';
+    statsKey: StatsArrayKey;
+    label: string;
+};
+
+type StatsAgeMetricOption = {
+    source: 'stats-age';
+    statsKey: 'registeredAt';
     label: string;
 };
 
@@ -62,7 +82,11 @@ type PerformanceMetricOption = {
     label: string;
 };
 
-type MetricOption = StatsMetricOption | PerformanceMetricOption;
+type MetricOption =
+    | StatsMetricOption
+    | StatsSumMetricOption
+    | StatsAgeMetricOption
+    | PerformanceMetricOption;
 
 export const BADGE_METRICS = {
     pv: { source: 'stats', statsKey: 'totalRequestForSite', label: '站点PV' },
@@ -73,6 +97,12 @@ export const BADGE_METRICS = {
     tppv: { source: 'stats', statsKey: 'todayRequestForPage', label: '今日页面PV' },
     tuv: { source: 'stats', statsKey: 'todayVisitorForSite', label: '今日站点UV' },
     tpuv: { source: 'stats', statsKey: 'todayVisitorForPage', label: '今日页面UV' },
+    pv7: { source: 'stats-sum', statsKey: 'dailyRequestForSite', label: '近7日PV' },
+    ppv7: { source: 'stats-sum', statsKey: 'dailyRequestForPage', label: '近7日页面PV' },
+    uv7: { source: 'stats-sum', statsKey: 'dailyVisitorForSite', label: '近7日UV' },
+    puv7: { source: 'stats-sum', statsKey: 'dailyVisitorForPage', label: '近7日页面UV' },
+    pg: { source: 'stats', statsKey: 'subPageCount', label: '页面数' },
+    age: { source: 'stats-age', statsKey: 'registeredAt', label: '接入天数' },
     ttfb: {
         source: 'performance',
         histogramKey: 'ttfbHist',

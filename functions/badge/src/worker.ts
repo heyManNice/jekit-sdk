@@ -13,6 +13,7 @@ import {
     formatPerformanceBucket,
     getPerformancePercentile,
 } from './performance/percentile.ts';
+import { formatRegistrationAge, sumDailyValues } from './stats/format.ts';
 
 export default {
     async fetch(
@@ -44,12 +45,21 @@ export default {
             let value: string;
             let valueColor: string | undefined;
 
-            if (metricOption.source === 'stats') {
+            if (metricOption.source !== 'performance') {
                 const result = await stats({
                     domain: target.domain,
                     path: target.path,
                 });
-                value = result[metricOption.statsKey].toString();
+
+                if (metricOption.source === 'stats') {
+                    value = result[metricOption.statsKey].toString();
+                } else if (metricOption.source === 'stats-sum') {
+                    value = sumDailyValues(result[metricOption.statsKey]);
+                } else {
+                    const age = formatRegistrationAge(result[metricOption.statsKey]);
+                    value = age ?? BADGE_DEFAULTS.emptyValue;
+                    valueColor = age === null ? BADGE_DEFAULTS.emptyColor : undefined;
+                }
             } else {
                 const result = await getPerformance({ domain: target.domain });
                 const bucket = getPerformancePercentile(

@@ -13,6 +13,12 @@ Jekit Badge 可以把公开的统计数据生成为 SVG 徽章，适合放在网
 ![当前页面今日访问量](https://badge.jekit.cn/flat/tppv?url=https://jekit.cn/docs/more/badge/)
 ![站点今日访客数](https://badge.jekit.cn/flat/tuv?url=https://jekit.cn/docs/more/badge/)
 ![当前页面今日访客数](https://badge.jekit.cn/flat/tpuv?url=https://jekit.cn/docs/more/badge/)
+![站点近 7 日访问量](https://badge.jekit.cn/flat/pv7?url=https://jekit.cn/docs/more/badge/)
+![当前页面近 7 日访问量](https://badge.jekit.cn/flat/ppv7?url=https://jekit.cn/docs/more/badge/)
+![站点近 7 日访客数](https://badge.jekit.cn/flat/uv7?url=https://jekit.cn/docs/more/badge/)
+![当前页面近 7 日访客数](https://badge.jekit.cn/flat/puv7?url=https://jekit.cn/docs/more/badge/)
+![页面数](https://badge.jekit.cn/flat/pg?url=https://jekit.cn/docs/more/badge/)
+![接入天数](https://badge.jekit.cn/flat/age?url=https://jekit.cn/docs/more/badge/)
 ![站点今日 TTFB P75](https://badge.jekit.cn/flat/ttfb?url=https://jekit.cn/docs/more/badge/)
 ![站点今日 PLT P75](https://badge.jekit.cn/flat/plt?url=https://jekit.cn/docs/more/badge/)
 
@@ -47,7 +53,7 @@ https://badge.jekit.cn/flat/pv?url=https://jekit.cn
 
 ## 选择一个指标
 
-`PV` 表示访问量，`UV` 表示访客数。`p` 前缀表示当前页面，`t` 前缀表示今日。
+`PV` 表示访问量，`UV` 表示访客数。`p` 前缀表示当前页面，`t` 前缀表示今日，`7` 后缀表示近 7 日累计。
 
 | 指标 | 显示内容 |
 | --- | --- |
@@ -59,6 +65,12 @@ https://badge.jekit.cn/flat/pv?url=https://jekit.cn
 | `tppv` | 当前页面今日访问量 |
 | `tuv` | 站点今日访客数 |
 | `tpuv` | 当前页面今日访客数 |
+| `pv7` | 站点近 7 日访问量 |
+| `ppv7` | 当前页面近 7 日访问量 |
+| `uv7` | 站点近 7 日访客数 |
+| `puv7` | 当前页面近 7 日访客数 |
+| `pg` | 页面数 |
+| `age` | 接入天数 |
 | `ttfb` | 站点今日 TTFB P75 |
 | `plt` | 站点今日 PLT P75 |
 
