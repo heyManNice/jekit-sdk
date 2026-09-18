@@ -7,6 +7,8 @@ export interface BlogEntry {
     type: string;
     filename: string;
     date: string;
+    publishedDate: string;
+    modifiedDate: string;
     cover: string | null;
 }
 

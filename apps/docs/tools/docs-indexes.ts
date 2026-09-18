@@ -1,64 +1,20 @@
 import fg from "fast-glob";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { statSync } from "node:fs";
-import { execSync } from "node:child_process";
+import {
+    formatDisplayDate,
+    getGitLastModified,
+    parseFrontmatter,
+} from "./content-meta";
 
 const contentDir = path.resolve("src/pages/docs/content");
 const outputFile = path.resolve("src/pages/docs/index.json");
 
 interface DocsEntry {
     title: string;
+    description: string;
     subPath: string;
     date: string;
-}
-
-// 解析 YAML frontmatter，提取 title
-function parseFrontmatter(
-    content: string,
-): { title?: string } {
-    const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-    if (!match) return {};
-
-    const frontmatter: Record<string, string> = {};
-    const lines = match[1].split("\n");
-    for (const line of lines) {
-        const sepIndex = line.indexOf(":");
-        if (sepIndex === -1) continue;
-        const key = line.slice(0, sepIndex).trim();
-        const value = line.slice(sepIndex + 1).trim();
-        frontmatter[key] = value;
-    }
-    return frontmatter;
-}
-
-// 通过 git log 获取文件日期，失败时回退到文件 mtime
-function getGitDate(filePath: string): string {
-    try {
-        const relativePath = path.relative(process.cwd(), filePath);
-        const output = execSync(
-            `git log -1 --format="%ci" -- "${relativePath}"`,
-            { encoding: "utf-8", cwd: process.cwd() },
-        ).trim();
-
-        if (output) {
-            // "%ci" 格式: "2026-07-04 18:26:47 +0800" → "2026-07-04 18:26"
-            const parts = output.split(" ");
-            const dateTime = parts.slice(0, 2).join(" ");
-            // 去掉秒数 "18:26:47" → "18:26"
-            return dateTime.replace(/(\d{2}:\d{2}):\d{2}$/, "$1");
-        }
-    } catch {
-        // git 命令失败，回退到文件修改时间
-    }
-
-    // 回退方案：使用文件的修改时间
-    const stats = statSync(filePath);
-    const d = new Date(stats.mtime);
-    return (
-        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")} ` +
-        `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`
-    );
 }
 
 // 侧边栏与内容目录必须一一对应：漏了一边就会出现
@@ -112,10 +68,11 @@ async function main() {
         const subPath = file.replace(/\.md$/, "");
 
         // date = git log 时间
-        const date = getGitDate(fullPath);
+        const date = formatDisplayDate(getGitLastModified(fullPath));
 
         entries.push({
             title: frontmatter.title || path.basename(file, ".md"),
+            description: frontmatter.description || "",
             subPath,
             date,
         });

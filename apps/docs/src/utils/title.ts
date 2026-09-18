@@ -7,5 +7,5 @@ import {
 // 设置标题与页面元信息（description / OG），并把当前页面播报给读屏
 export function setTitle(meta: PageMeta) {
     setPageMeta(meta);
-    speak("您现在处于" + meta.title);
+    speak("您现在处于" + (meta.announcement ?? meta.title));
 }

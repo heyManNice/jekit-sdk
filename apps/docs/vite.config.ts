@@ -35,9 +35,23 @@ export default defineConfig(async () => ({
                 chunkFileNames: '_/[hash].js',
                 assetFileNames: '_/[hash][extname]',
                 manualChunks: (id: string) => {
-                    if (id.includes('node_modules')) {
-                        return 'vendor';
+                    const moduleId = id.replaceAll('\\', '/');
+                    if (!moduleId.includes('/node_modules/')) return;
+
+                    // 图表只用于统计页，避免文档和博客加载整套 Chart.js。
+                    if (/\/node_modules\/(chart\.js|react-chartjs-2)\//.test(moduleId)) {
+                        return 'charts';
                     }
+                    if (moduleId.includes('/node_modules/framer-motion/')) {
+                        return 'motion';
+                    }
+                    if (moduleId.includes('/node_modules/lucide-react/')) {
+                        return 'icons';
+                    }
+                    if (/\/node_modules\/(react|react-dom|react-router|scheduler)\//.test(moduleId)) {
+                        return 'react';
+                    }
+                    return 'vendor';
                 },
             }
         },

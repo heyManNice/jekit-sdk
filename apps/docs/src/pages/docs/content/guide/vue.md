@@ -1,5 +1,6 @@
 ---
 title: Vue 引入
+description: 在 Vue 3 项目中接入 Jekit，通过组合式 API 获取网站和页面的访问量、访客数及当日统计数据。
 ---
 
 Jekit Vue 为 Vue 3 提供组合式 API，可以在组件中直接获取网站和页面的访问量、访客数等统计数据。

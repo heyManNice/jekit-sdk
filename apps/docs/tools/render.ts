@@ -1,4 +1,3 @@
-import fg from "fast-glob";
 import fs from "node:fs/promises";
 import path from "node:path";
 import {
@@ -8,41 +7,11 @@ import {
 } from "playwright";
 import { minify } from "html-minifier-terser";
 import { preview } from "vite";
+import { scanSiteRoutes } from "./site-routes";
 
 const port = 5178;
 const tempDir = path.join("node_modules/.render");
 const distDir = path.join("dist");
-
-async function scanPages(): Promise<string[]> {
-    const files = await fg("src/pages/**/page.tsx");
-    const routes = files.map((file) => {
-        const route =
-            file.replace("src/pages", "")
-                .replace("/page.tsx", "") + "/";
-
-        return route;
-    });
-
-    // 扫描文档 markdown 内容页
-    const mdFiles = await fg("src/pages/docs/content/*/*.md", {
-        ignore: ["**/sidebar.md"]
-    });
-    for (const file of mdFiles) {
-        const route = "/docs/" + file
-            .replace("src/pages/docs/content/", "")
-            .replace(/\.md$/, "") + "/";
-        routes.push(route);
-    }
-
-    // 扫描博客 markdown 内容页
-    const blogFiles = await fg("src/pages/blogs/content/**/*.md");
-    for (const file of blogFiles) {
-        const filename = file.split("/").pop()?.replace(/\.md$/, "") ?? "";
-        routes.push(`/blogs/${filename}`);
-    }
-
-    return routes;
-}
 
 // 将预览服务器产生的绝对 URL 归一化为根相对路径，
 // 消除运行时动态 modulepreload 注入的 http://localhost:5178/... 链接
@@ -80,7 +49,7 @@ async function renderAll(): Promise<void> {
             }
         });
 
-        const routes = await scanPages();
+        const routes = (await scanSiteRoutes()).map((route) => route.path);
         const failed: string[] = [];
 
         for (const route of routes) {

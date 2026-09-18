@@ -7,11 +7,14 @@ import BlogSearch from "./views/BlogSearch";
 import BlogCategories from "./views/BlogCategories";
 import BlogList from "./views/BlogList";
 import BlogSidebar from "./views/BlogSidebar";
+import { blogStructuredData } from "@/utils/structured-data";
 
 export default function Blogs() {
     usePageMeta({
-        title: "博客 - 查看 Jekit 的相关文章",
-        description: "Jekit 的技术笔记与随笔合集：开源统计服务的实现思路、隐私设计与日常记录。",
+        title: "网站统计与隐私技术博客 | Jekit",
+        announcement: "Jekit 博客",
+        description: "Jekit 关于网站统计、无 Cookie 分析、隐私设计和前端开发的技术文章与使用指南。",
+        structuredData: blogStructuredData(allEntries),
     });
 
     const [activeCategory, setActiveCategory] = useState("全部");

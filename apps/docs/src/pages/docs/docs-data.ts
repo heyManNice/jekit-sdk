@@ -2,6 +2,7 @@
 
 export interface DocsEntry {
     title: string;
+    description: string;
     subPath: string;
     date: string;
 }

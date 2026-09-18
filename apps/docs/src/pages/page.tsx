@@ -8,6 +8,7 @@ import { useDevicePolling, useMetricsUI } from "@/stores/server-status";
 
 import bgEarth from "@/images/bg-earth.webp";
 import jekit from "@/images/jekit.webp";
+import { homeStructuredData } from "@/utils/structured-data";
 
 // 强调文本
 function H(props: {
@@ -24,11 +25,11 @@ function Hero() {
         <section className="relative px-3 max-sm:px-5">
             <div className="pt-10 pb-6 flex-1 max-w-md relative z-10 max-sm:mx-auto max-sm:text-center">
                 {/* 标题 */}
-                <GlowCard className="inline-block px-3 py-2 rounded text-xs bg-linear-to-r from-[#14D6E9]/20 to-[#00F8DB]/20" tabIndex={-1} aria-label="Jekit是免费的公共统计基础工具">
+                <GlowCard className="inline-block px-3 py-2 rounded text-xs bg-linear-to-r from-[#14D6E9]/20 to-[#00F8DB]/20" tabIndex={-1} aria-label="Jekit 是免费、开源、隐私友好的网站统计工具">
                     <span className="text-primary">
                         Jekit&nbsp;
                     </span>
-                    /&nbsp;免费的公共统计基础工具
+                    /&nbsp;免费的网站访问统计工具
                 </GlowCard>
 
                 {/* 主要标题 */}
@@ -43,8 +44,8 @@ function Hero() {
                 </h1>
 
                 {/* 详细信息 */}
-                <p className="text-[#A7AFBB] mt-3 leading-loose" tabIndex={-1} aria-label="Jekit 是一个免费的公共统计基础工具，支持 CDN 引入、NPM 引入，支持 Vue 、React。支持公开查看基础计数、历史趋势、来源渠道（搜索引擎和 AI ）、操作系统类别、浏览器类别和网站性能指标（ TTFB 和 PLT ）。">
-                    <img src={jekit} className="inline" alt="jekit" style={{ height: '20px' }} /> 是一个免费的公共统计基础工具，支持 <H>CDN</H> 引入、<H>NPM</H> 引入，支持 <H>Vue</H> 、<H>React</H>。支持公开查看基础计数、历史趋势、来源渠道（<H>搜索引擎</H>、<H>AI</H> ）、操作系统类别、浏览器类别和网站性能指标（ <H>TTFB</H>、<H>PLT</H> ）。
+                <p className="text-[#A7AFBB] mt-3 leading-loose" tabIndex={-1} aria-label="Jekit 是免费、开源、无 Cookie 的网站访问统计工具，可以通过 CDN、NPM、Vue 或 React 快速接入，查看访问量、访客数、来源渠道和网站性能指标。">
+                    <img src={jekit} className="inline" alt="Jekit" style={{ height: '20px' }} /> 是免费、开源、无 Cookie 的网站访问统计工具，可以通过 <H>CDN</H>、<H>NPM</H>、<H>Vue</H> 或 <H>React</H> 快速接入，查看访问量、访客数、来源渠道（<H>搜索引擎</H>、<H>AI</H>）和网站性能指标（<H>TTFB</H>、<H>PLT</H>）。
                 </p>
 
                 {/* 两个按钮 */}
@@ -110,7 +111,11 @@ function ServerStatus() {
 import { usePageMeta } from "@/hooks/use-page-meta";
 export default function Index() {
     // 首页沿用 utils/meta.ts 里的默认描述
-    usePageMeta({ title: "首页 - 查看 Jekit 的功能特性和服务器状态" });
+    usePageMeta({
+        title: "免费、开源、隐私友好的网站统计工具 | Jekit",
+        announcement: "Jekit 首页",
+        structuredData: homeStructuredData(),
+    });
     return (
         <div className="bg-no-repeat bg-position-[right_0px_top_-72px] bg-size-[950px]" style={{
             backgroundImage: `url(${bgEarth})`,

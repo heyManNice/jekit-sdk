@@ -13,6 +13,7 @@ import { allEntries, typeMeta } from "../blog-data";
 import { ContentSkeleton } from "@/components/content-skeleton";
 import { TypeBadge } from "@/components/type-badge";
 import { GITHUB_REPO, GITHUB_BRANCH, BLOG_CONTENT_REPO_PATH } from "@/utils/github";
+import { blogPostStructuredData } from "@/utils/structured-data";
 
 // Markdown 内容加载器
 
@@ -90,9 +91,17 @@ export default function BlogDetail() {
         }
 
         setTitle({
-            title: `博客 - ${entry.title}`,
+            title: `${entry.title} | Jekit 博客`,
+            announcement: entry.title,
             description: entry.description,
+            image: entry.cover ?? undefined,
             type: "article",
+            publishedTime: entry.publishedDate,
+            modifiedTime: entry.modifiedDate,
+            structuredData: blogPostStructuredData({
+                ...entry,
+                image: entry.cover,
+            }),
         });
 
         // 构造 glob key：../content/{type}/{filename}
