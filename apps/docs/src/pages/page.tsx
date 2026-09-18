@@ -54,7 +54,7 @@ function Hero() {
                         <span>快速开始</span>
                         <ArrowRight size={18} />
                     </Link>
-                    <Link to="/stats/" aria-label="查看文档" className="flex  hover:scale-110 hover:bg-[#00F8DB] hover:text-black transition-all cursor-pointer items-center gap-2 border border-[#00F8DB]/20 px-4 py-2 rounded-md">
+                    <Link to="/stats/" aria-label="统计面板" className="flex  hover:scale-110 hover:bg-[#00F8DB] hover:text-black transition-all cursor-pointer items-center gap-2 border border-[#00F8DB]/20 px-4 py-2 rounded-md">
                         <span>统计面板</span>
                         <ChartSpline size={18} />
                     </Link>

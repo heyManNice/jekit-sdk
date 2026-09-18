@@ -1,9 +1,9 @@
 import {
-    BookOpenText,
+    BanknoteX,
+    CodeXml,
     Globe,
-    ShieldCheck,
-    Timer,
-    Users,
+    MegaphoneOff,
+    UserRoundX,
 } from "lucide-react";
 
 
@@ -11,19 +11,19 @@ export function Features() {
     const items = [
         {
             label: "完全免费",
-            icon: ShieldCheck
+            icon: BanknoteX
         },
         {
             label: "无需注册",
-            icon: Users
+            icon: UserRoundX
         },
         {
             label: "无广告",
-            icon: Timer
+            icon: MegaphoneOff
         },
         {
             label: "SDK 开源",
-            icon: BookOpenText
+            icon: CodeXml
         },
         {
             label: "全球可用",
