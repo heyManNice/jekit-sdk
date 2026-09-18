@@ -16,14 +16,14 @@ export default function OverviewCards({ resource }: { resource: StatsResource })
     const d = resource.data;
 
     const cards = [
-        { label: "今日站点访客量", value: d?.todayVisitorForSite, daily: d?.dailyVisitorForSite, icon: Users },
-        { label: "今日站点浏览量", value: d?.todayRequestForSite, daily: d?.dailyRequestForSite, icon: Eye },
-        { label: "今日页面访客量", value: d?.todayVisitorForPage, daily: d?.dailyVisitorForPage, icon: User },
-        { label: "今日页面浏览量", value: d?.todayRequestForPage, daily: d?.dailyRequestForPage, icon: MousePointerClick },
-        { label: "总站点访客量", value: d?.totalVisitorForSite, daily: cumulativeSparkline(d?.totalVisitorForSite, d?.dailyVisitorForSite), icon: Users },
-        { label: "总站点浏览量", value: d?.totalRequestForSite, daily: cumulativeSparkline(d?.totalRequestForSite, d?.dailyRequestForSite), icon: Eye },
-        { label: "总页面访客量", value: d?.totalVisitorForPage, daily: cumulativeSparkline(d?.totalVisitorForPage, d?.dailyVisitorForPage), icon: User },
-        { label: "总页面浏览量", value: d?.totalRequestForPage, daily: cumulativeSparkline(d?.totalRequestForPage, d?.dailyRequestForPage), icon: MousePointerClick },
+        { label: "今日站点 UV", value: d?.todayVisitorForSite, daily: d?.dailyVisitorForSite, icon: Users },
+        { label: "今日站点 PV", value: d?.todayRequestForSite, daily: d?.dailyRequestForSite, icon: Eye },
+        { label: "今日页面 UV", value: d?.todayVisitorForPage, daily: d?.dailyVisitorForPage, icon: User },
+        { label: "今日页面 PV", value: d?.todayRequestForPage, daily: d?.dailyRequestForPage, icon: MousePointerClick },
+        { label: "累计站点 UV", value: d?.totalVisitorForSite, daily: cumulativeSparkline(d?.totalVisitorForSite, d?.dailyVisitorForSite), icon: Users },
+        { label: "累计站点 PV", value: d?.totalRequestForSite, daily: cumulativeSparkline(d?.totalRequestForSite, d?.dailyRequestForSite), icon: Eye },
+        { label: "累计页面 UV", value: d?.totalVisitorForPage, daily: cumulativeSparkline(d?.totalVisitorForPage, d?.dailyVisitorForPage), icon: User },
+        { label: "累计页面 PV", value: d?.totalRequestForPage, daily: cumulativeSparkline(d?.totalRequestForPage, d?.dailyRequestForPage), icon: MousePointerClick },
     ] as const;
 
     return (
