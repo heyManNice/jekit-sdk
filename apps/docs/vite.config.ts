@@ -34,24 +34,39 @@ export default defineConfig(async () => ({
                 entryFileNames: '_/[hash].js',
                 chunkFileNames: '_/[hash].js',
                 assetFileNames: '_/[hash][extname]',
-                manualChunks: (id: string) => {
-                    const moduleId = id.replaceAll('\\', '/');
-                    if (!moduleId.includes('/node_modules/')) return;
-
-                    // 图表只用于统计页，避免文档和博客加载整套 Chart.js。
-                    if (/\/node_modules\/(chart\.js|react-chartjs-2)\//.test(moduleId)) {
-                        return 'charts';
-                    }
-                    if (moduleId.includes('/node_modules/framer-motion/')) {
-                        return 'motion';
-                    }
-                    if (moduleId.includes('/node_modules/lucide-react/')) {
-                        return 'icons';
-                    }
-                    if (/\/node_modules\/(react|react-dom|react-router|scheduler)\//.test(moduleId)) {
-                        return 'react';
-                    }
-                    return 'vendor';
+                codeSplitting: {
+                    groups: [
+                        // 高优先级先固定 React 基础设施，防止它被图表组递归吸收。
+                        {
+                            name: 'react',
+                            test: /node_modules[\\/](react|react-dom|react-router|scheduler)[\\/]/,
+                            priority: 100,
+                        },
+                        {
+                            name: 'charts',
+                            test: /node_modules[\\/](chart\.js|react-chartjs-2)[\\/]/,
+                            priority: 90,
+                            entriesAware: true,
+                        },
+                        {
+                            name: 'motion',
+                            test: /node_modules[\\/]framer-motion[\\/]/,
+                            priority: 80,
+                            entriesAware: true,
+                        },
+                        {
+                            name: 'icons',
+                            test: /node_modules[\\/]lucide-react[\\/]/,
+                            priority: 70,
+                            entriesAware: true,
+                        },
+                        {
+                            name: 'vendor',
+                            test: /node_modules[\\/]/,
+                            priority: 1,
+                            entriesAware: true,
+                        },
+                    ],
                 },
             }
         },

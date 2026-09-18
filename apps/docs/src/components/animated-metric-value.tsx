@@ -1,5 +1,3 @@
-import { animate } from "framer-motion";
-
 import {
     Fragment,
     useEffect,
@@ -58,6 +56,11 @@ function formatNum(value: number, decimals: number): string {
     return decimals > 0 ? value.toFixed(decimals) : String(Math.round(value));
 }
 
+// 三次缓出：与原来的 easeOut 数字增长观感接近，不再为这一处动画加载动画库。
+function easeOutCubic(progress: number): number {
+    return 1 - (1 - progress) ** 3;
+}
+
 // 文本段里的换行符渲染成 <br/>（多行指标在内部用 \n 连接成一段）
 function renderText(text: string, keyPrefix: string) {
     return text.split("\n").map((part, index) => (
@@ -104,18 +107,25 @@ export function AnimatedMetricValue({
 
         const startValues = [...animRef.current];
 
-        const controls = targets.map((target, index) =>
-            animate(startValues[index] ?? 0, target, {
-                duration: 3,
-                ease: "easeOut",
-                onUpdate: (latest) => {
-                    animRef.current[index] = latest;
-                    setTick((t) => t + 1);
-                },
-            }),
-        );
+        const duration = 3000;
+        const startedAt = performance.now();
+        let frame = 0;
 
-        return () => controls.forEach((c) => c.stop());
+        const update = (now: number) => {
+            const progress = Math.min(1, (now - startedAt) / duration);
+            const eased = easeOutCubic(progress);
+
+            animRef.current = targets.map((target, index) => {
+                const start = startValues[index] ?? 0;
+                return start + (target - start) * eased;
+            });
+            setTick((tick) => tick + 1);
+
+            if (progress < 1) frame = requestAnimationFrame(update);
+        };
+
+        frame = requestAnimationFrame(update);
+        return () => cancelAnimationFrame(frame);
     }, [shouldAnimate, targets]);
 
     // 4. 无动画模式 —— 逐行渲染，行间插入 <br/>

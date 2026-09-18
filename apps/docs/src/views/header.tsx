@@ -2,7 +2,6 @@ import {
     Link,
     useLocation
 } from "react-router";
-import { motion as m } from "framer-motion";
 import { GlowCard } from "@/components/glow-card";
 import { preload } from "@/routes/router";
 import jekit from "@/images/jekit.webp";
@@ -82,8 +81,7 @@ function NavLink(props: {
         >
             {props.label}
             {isActive && (
-                <m.div
-                    layoutId="nav-indicator"
+                <div
                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 />
             )}
