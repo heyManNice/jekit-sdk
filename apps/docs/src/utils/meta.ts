@@ -4,24 +4,14 @@
 // page.content() 落盘，所以运行时写入的标签会原样进入预渲染 HTML，
 // 不需要在 head 里做静态注入。
 
-export {
-    DEFAULT_OG_IMAGE,
-    DEFAULT_OG_IMAGE_HEIGHT,
-    DEFAULT_OG_IMAGE_WIDTH,
-    SITE_NAME,
-    SITE_ORIGIN,
-} from "@/config/site";
 import {
+    DEFAULT_DESCRIPTION,
     DEFAULT_OG_IMAGE,
     DEFAULT_OG_IMAGE_HEIGHT,
     DEFAULT_OG_IMAGE_WIDTH,
     SITE_NAME,
     SITE_ORIGIN,
 } from "@/config/site";
-
-// 首页与没有单独描述的页面共用
-export const DEFAULT_DESCRIPTION =
-    "Jekit（见客统计）是一个免费、开源、无 Cookie 的网站访问统计工具，可通过 React、Vue 或 CDN 快速接入，查看访问量、访客数、来源渠道和网站性能指标。";
 
 export type StructuredData = Record<string, unknown> | Record<string, unknown>[];
 

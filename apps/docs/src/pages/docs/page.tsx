@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight, SquarePen } from "lucide-react";
 import { useJekit } from "jekit-react";
 import { allDocs } from "./docs-data";
 import { ContentSkeleton } from "@/components/content-skeleton";
-import { GITHUB_REPO, GITHUB_BRANCH, DOCS_CONTENT_PATH } from "@/utils/github";
+import { DOCS_CONTENT_PATH, GITHUB_BRANCH, GITHUB_REPO } from "@/config/site";
 import { docStructuredData } from "@/utils/structured-data";
 
 

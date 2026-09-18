@@ -11,7 +11,7 @@ import { useJekit } from "jekit-react";
 import { setTitle } from "@/utils/title";
 import { allEntries, typeMeta } from "../blog-data";
 import { ContentSkeleton } from "@/components/content-skeleton";
-import { GITHUB_REPO, GITHUB_BRANCH, BLOG_CONTENT_REPO_PATH } from "@/utils/github";
+import { BLOG_CONTENT_REPO_PATH, GITHUB_BRANCH, GITHUB_REPO } from "@/config/site";
 import { blogPostStructuredData } from "@/utils/structured-data";
 
 // Markdown 内容加载器

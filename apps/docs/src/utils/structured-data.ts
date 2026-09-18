@@ -1,4 +1,5 @@
-import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_ORIGIN, type StructuredData } from "./meta";
+import { DEFAULT_OG_IMAGE, GITHUB_REPO, SITE_NAME, SITE_ORIGIN } from "@/config/site";
+import type { StructuredData } from "./meta";
 
 const organizationId = `${SITE_ORIGIN}/#organization`;
 const siteLogo = `${SITE_ORIGIN}/favicon.ico`;
@@ -23,7 +24,7 @@ export function homeStructuredData(): StructuredData {
                 name: SITE_NAME,
                 url: SITE_ORIGIN,
                 logo: siteLogo,
-                sameAs: ["https://github.com/heyManNice/jekit-sdk"],
+                sameAs: [GITHUB_REPO],
             },
             {
                 "@type": "WebSite",
