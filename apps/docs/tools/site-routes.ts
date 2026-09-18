@@ -2,6 +2,11 @@ import fg from "fast-glob";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { getGitLastModified, isDraft, parseFrontmatter } from "./content-meta";
+import {
+    blogFilenameToRoute,
+    docFileToRoute,
+    pageFileToRoute,
+} from "../src/content/routes";
 
 export interface SiteRoute {
     path: string;
@@ -15,7 +20,7 @@ export async function scanSiteRoutes(): Promise<SiteRoute[]> {
 
     const pageFiles = await fg("src/pages/**/page.tsx");
     for (const file of pageFiles) {
-        const routePath = file.replace("src/pages", "").replace("/page.tsx", "") + "/";
+        const routePath = pageFileToRoute(file);
         routes.set(routePath, {
             path: routePath,
             type: "static",
@@ -27,9 +32,7 @@ export async function scanSiteRoutes(): Promise<SiteRoute[]> {
         ignore: ["**/sidebar.md"],
     });
     for (const file of docFiles) {
-        const routePath = "/docs/" + file
-            .replace("src/pages/docs/content/", "")
-            .replace(/\.md$/, "") + "/";
+        const routePath = docFileToRoute(file);
         routes.set(routePath, {
             path: routePath,
             type: "doc",
@@ -44,7 +47,7 @@ export async function scanSiteRoutes(): Promise<SiteRoute[]> {
         if (isDraft(parseFrontmatter(content))) continue;
 
         const filename = path.basename(file, ".md");
-        const routePath = `/blogs/${filename}`;
+        const routePath = blogFilenameToRoute(filename);
         routes.set(routePath, {
             path: routePath,
             type: "blog",

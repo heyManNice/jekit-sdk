@@ -20,19 +20,6 @@ const modules = import.meta.glob('./content/*/*.md', { import: 'default' });
 // 低于这个长度的段落多半只是半句话，不足以当摘要
 const MIN_SUMMARY_LENGTH = 12;
 
-const SEO_TITLES: Record<string, string> = {
-    "intro/what-this-is": "Jekit 是什么？免费、隐私友好的网站统计工具",
-    "guide/ai": "通过 AI 助手接入网站访问统计 | Jekit",
-    "guide/cdn": "CDN 网站访问统计接入教程 | Jekit",
-    "guide/react": "React 网站访问统计接入教程 | Jekit",
-    "guide/vue": "Vue 3 网站访问统计接入教程 | Jekit",
-    "more/badge": "网站访问量 Badge 徽章使用教程 | Jekit",
-    "more/api": "网站统计 API 文档 | Jekit",
-    "faq/setup": "Jekit 网站统计安装问题与排查",
-    "faq/use": "Jekit 网站统计使用问题与解答",
-    "faq/impl": "Jekit 网站统计实现原理与隐私设计",
-};
-
 function summarizeContent(html: string, limit = 120): string {
     const doc = new DOMParser().parseFromString(
         // <br> 会消失得无影无踪，先换成空格，避免两句话被粘在一起
@@ -167,8 +154,10 @@ export default function DocsContent() {
 
         const key = `./content/${subPath}.md`;
         const loader = modules[key] as (() => Promise<string>) | undefined;
+        let cancelled = false;
         if (loader) {
             loader().then((c) => {
+                if (cancelled) return;
                 setContent(c);
                 // 从文档索引中查找标题（与博客一致）
                 const found = allDocs.find((e) => e.subPath === subPath);
@@ -178,7 +167,7 @@ export default function DocsContent() {
                 const description = found?.description || describeDoc(c, found?.title);
                 setTitle({
                     title: found
-                        ? SEO_TITLES[found.subPath] ?? `${found.title} | Jekit 网站统计文档`
+                        ? found.seoTitle || `${found.title} | Jekit 网站统计文档`
                         : "Jekit 网站统计接入文档",
                     announcement: found ? `${found.title}文档` : "Jekit 文档",
                     description,
@@ -187,11 +176,18 @@ export default function DocsContent() {
                         : undefined,
                 });
                 setIsLoading(false);
+            }).catch(() => {
+                if (cancelled) return;
+                setContent("文档加载失败，请稍后重试。");
+                setIsLoading(false);
             });
         } else {
             setContent("未找到对应的文档内容，请检查链接是否正确。");
             setIsLoading(false);
         }
+        return () => {
+            cancelled = true;
+        };
     }, [location.pathname, sections, subPath]);
 
     if (isLoading) {

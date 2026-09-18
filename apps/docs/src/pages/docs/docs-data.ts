@@ -1,14 +1,8 @@
-// 文档索引数据
+import { parseDocsEntries, type DocsEntry } from "@/content/model";
 
-export interface DocsEntry {
-    title: string;
-    description: string;
-    subPath: string;
-    date: string;
-    modifiedDate: string;
-}
+export type { DocsEntry } from "@/content/model";
 
 // 由 build 时生成，此处直接 import JSON
 import docsIndexes from "./index.json";
 
-export const allDocs = docsIndexes as unknown as DocsEntry[];
+export const allDocs: DocsEntry[] = parseDocsEntries(docsIndexes);

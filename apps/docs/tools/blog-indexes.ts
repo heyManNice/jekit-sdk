@@ -8,21 +8,14 @@ import {
     isDraft,
     parseFrontmatter,
 } from "./content-meta";
+import {
+    BLOG_TYPE_META,
+    isBlogType,
+    type BlogEntry,
+} from "../src/content/model";
 
 const contentDir = path.resolve("src/pages/blogs/content");
 const outputFile = path.resolve("src/pages/blogs/index.json");
-
-interface BlogEntry {
-    title: string;
-    description: string;
-    keywords: string;
-    type: string;
-    filename: string;
-    date: string;
-    publishedDate: string;
-    modifiedDate: string;
-    cover: string | null;
-}
 
 // 提取 Markdown 正文中第一张图片的地址
 function extractFirstImage(content: string): string | null {
@@ -47,6 +40,9 @@ async function main() {
 
         // type = content 目录下的第一层文件夹名（post / show / tech …）
         const type = file.split("/")[0];
+        if (!isBlogType(type)) {
+            throw new Error(`未知博客目录 ${type}，允许值：${Object.keys(BLOG_TYPE_META).join("、")}`);
+        }
 
         // filename = 仅文件名
         const filename = path.basename(file);

@@ -1,5 +1,6 @@
 ---
 title: 安装问题
+seoTitle: Jekit 网站统计安装问题与排查
 description: 排查 Jekit 接入后显示 Err、新页面没有统计数据和页面数量限制等常见安装问题。
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: Vue 引入
+seoTitle: Vue 3 网站访问统计接入教程 | Jekit
 description: 在 Vue 3 项目中接入 Jekit，通过组合式 API 获取网站和页面的访问量、访客数及当日统计数据。
 ---
 

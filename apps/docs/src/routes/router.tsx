@@ -1,6 +1,7 @@
 import { type RouteObject, createBrowserRouter } from "react-router";
 import { AppLayout } from "@/layouts/app-layout";
 import { DocsLayout } from "@/layouts/docs-layout";
+import { pageFileToRoute } from "@/content/routes";
 
 // 页面和对应的loader映射
 const routeModules: Record<string, () => Promise<{ default: React.ComponentType }>> = {};
@@ -39,7 +40,7 @@ export async function createAppRouter() {
     );
 
     for (const [moduleKey, loader] of Object.entries(modules)) {
-        const routePath = moduleKey.replace("/src/pages", "").replace("/page.tsx", "") + "/";
+        const routePath = pageFileToRoute(moduleKey);
 
         routeModules[routePath] = loader;
 

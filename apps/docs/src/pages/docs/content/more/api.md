@@ -1,5 +1,6 @@
 ---
 title: API 开放平台
+seoTitle: 网站统计 API 文档 | Jekit
 description: 使用 Jekit Core 的数据上报、统计查询和来源分析接口，开发自定义的网站访问统计功能。
 ---
 

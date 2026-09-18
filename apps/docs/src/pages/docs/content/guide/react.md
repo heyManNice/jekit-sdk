@@ -1,5 +1,6 @@
 ---
 title: React 引入
+seoTitle: React 网站访问统计接入教程 | Jekit
 description: 在 React 18 及更高版本中接入 Jekit，通过 Hook 获取网站和页面的访问量、访客数及当日统计数据。
 ---
 

@@ -6,17 +6,10 @@ import {
     getGitLastModified,
     parseFrontmatter,
 } from "./content-meta";
+import type { DocsEntry } from "../src/content/model";
 
 const contentDir = path.resolve("src/pages/docs/content");
 const outputFile = path.resolve("src/pages/docs/index.json");
-
-interface DocsEntry {
-    title: string;
-    description: string;
-    subPath: string;
-    date: string;
-    modifiedDate: string;
-}
 
 // 侧边栏与内容目录必须一一对应：漏了一边就会出现
 // 「侧边栏点进去是空白页」或「文档写好了但列表里找不到」，两者都算构建失败。
@@ -74,6 +67,7 @@ async function main() {
 
         entries.push({
             title: frontmatter.title || path.basename(file, ".md"),
+            seoTitle: frontmatter.seoTitle || "",
             description: frontmatter.description || "",
             subPath,
             date,

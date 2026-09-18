@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite --port 5177 --host",
-        "build": "npm run blog:indexes && npm run docs:indexes && vite build && npm run render && npm run sitemap && npm run seo:check",
+        "build": "npm run test && npm run blog:indexes && npm run docs:indexes && vite build && npm run render && npm run sitemap && npm run seo:check",
         "preview": "serve dist -p 5177 -n",
         "render": "tsx tools/render.ts",
         "sitemap": "tsx tools/sitemap.ts",
@@ -13,6 +13,7 @@
         "blog:indexes": "tsx tools/blog-indexes.ts",
         "docs:indexes": "tsx tools/docs-indexes.ts",
         "typecheck": "tsc -p tsconfig.typecheck.json",
+        "test": "tsx --test tools/refactor.test.ts",
         "start": "npm run build && npm run preview"
     },
     "devDependencies": {

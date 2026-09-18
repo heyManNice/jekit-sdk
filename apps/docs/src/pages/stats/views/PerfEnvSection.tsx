@@ -8,71 +8,24 @@ import { getBrandIconSrc } from "./brand-icons";
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { useApi } from "@/utils/api";
 import {
-    performance,
-    source,
-    scopeOption,
-    dimensionOption,
     whichBrowserOption,
     whichOsOption,
 } from "jekit-core";
 import { AsyncBoundary } from "@/components/async-boundary";
-import { useQueryStore } from "@/stores/query";
-import { useRefetchOnChange } from "@/hooks/use-refetch-on-change";
 import { gradientFill } from "@/utils/chart";
+import type {
+    PerformanceResource,
+    SourceResource,
+} from "../model/types";
+import {
+    buildDimensionRows,
+    buildPerformancePoints,
+    type DimensionRow,
+    type PerformancePoint,
+} from "../model/presenters";
 
 // 维度枚举 → 显示名称映射（与 getBrandIconSrc key 一致）
-
-interface SourceRow {
-    name: string;
-    totalVisits: string;
-    todayVisits: string;
-    ratio: string;
-}
-
-// 从 source API 响应构建 SourceTable 行数据（缺失的维度显示为 0，按总访问量降序）
-function buildRows(
-    data: readonly {
-        dimensionIndex: number;
-        totalRequest: bigint;
-        todayRequest: number;
-    }[] | null,
-    enumObj: Record<string, string | number>,
-    nameFix: Record<string, string> = {},
-): SourceRow[] {
-    if (!data) return [];
-    const dataMap = new Map(data.map((d) => [d.dimensionIndex, d]));
-    const grandTotal = data.reduce((s, d) => s + Number(d.totalRequest), 0);
-
-    return (
-        Object.values(enumObj)
-            .filter((v): v is number => typeof v === "number")
-            .map((index) => {
-                const entry = dataMap.get(index);
-                const total = entry ? Number(entry.totalRequest) : 0;
-                const today = entry ? entry.todayRequest : 0;
-                const rawName = enumObj[index] as string;
-                return {
-                    name: nameFix[rawName] ?? rawName,
-                    totalVisits: total.toLocaleString(),
-                    todayVisits: today.toLocaleString(),
-                    ratio:
-                        grandTotal > 0
-                            ? ((total / grandTotal) * 100).toFixed(1) + "%"
-                            : "0%",
-                    sortKey: total,
-                };
-            })
-            .sort((a, b) => {
-                // Other 始终在底部
-                if (a.name === "Other") return 1;
-                if (b.name === "Other") return -1;
-                return b.sortKey - a.sortKey;
-            })
-            .map(({ sortKey: _, ...row }) => row)
-    );
-}
 
 // 图例小色块
 function ChartLegendDot({ className }: { className: string }) {
@@ -80,16 +33,8 @@ function ChartLegendDot({ className }: { className: string }) {
 }
 
 // 性能数据点（TTFB / PLT 占比 + 原始计数）
-interface PerfDataPoint {
-    label: string;
-    ttfb: number;
-    plt: number;
-    ttfbRaw: number;
-    pltRaw: number;
-}
-
 interface TrafficChartProps {
-    rawData: PerfDataPoint[];
+    rawData: PerformancePoint[];
     chartData: ChartData<"line">;
     chartOptions: ChartOptions<"line">;
 }
@@ -134,7 +79,7 @@ function TrafficChart({ rawData, chartData, chartOptions }: TrafficChartProps) {
 
 interface SourceTableProps {
     title: string;
-    api: { data: SourceRow[] | null; loading: boolean; error: Error | null };
+    api: { data: DimensionRow[] | null; loading: boolean; error: Error | null };
 }
 
 // 来源表格（浏览器 / 操作系统）
@@ -182,68 +127,33 @@ function SourceTable({ title, api }: SourceTableProps) {
 }
 
 // 性能与环境分析
-export default function PerfEnvSection() {
+interface PerfEnvSectionProps {
+    performanceResource: PerformanceResource;
+    browserResource: SourceResource;
+    osResource: SourceResource;
+}
 
-    const { domain, path, version } = useQueryStore();
-
-    // source API（浏览器 / 操作系统）
-    const browserApi = useApi(() =>
-        source({ domain, path, scope: scopeOption.Site, dimension: dimensionOption.Browser }),
-    );
-
-    const osApi = useApi(() =>
-        source({ domain, path, scope: scopeOption.Site, dimension: dimensionOption.OS }),
-    );
-
-    // 切换查询（version 变化）时重新请求
-    const api = useApi(() => performance({ domain }));
-    useRefetchOnChange(() => {
-        browserApi.update();
-        osApi.update();
-        api.update();
-    }, [version]);
+export default function PerfEnvSection({
+    performanceResource,
+    browserResource,
+    osResource,
+}: PerfEnvSectionProps) {
 
     const browserRows = useMemo(
-        () => (browserApi.data ? buildRows(browserApi.data, whichBrowserOption) : null),
-        [browserApi.data],
+        () => (browserResource.data ? buildDimensionRows(browserResource.data, whichBrowserOption) : null),
+        [browserResource.data],
     );
 
     const osRows = useMemo(
-        () => (osApi.data ? buildRows(osApi.data, whichOsOption, { iOS: "IOS", HarmonyOS: "HMOS" }) : null),
-        [osApi.data],
+        () => (osResource.data ? buildDimensionRows(osResource.data, whichOsOption, { iOS: "IOS", HarmonyOS: "HMOS" }) : null),
+        [osResource.data],
     );
 
     // 性能数据：去除两端的 0，只保留有数据的范围，并计算占比
-    const perfRawData: PerfDataPoint[] = useMemo(() => {
-        if (!api.data) return [];
-
-        const { ttfbHist, pltHist } = api.data;
-
-        // 自动去除两端的 0，只保留有数据的范围
-        let start = 0;
-        let end = ttfbHist.length - 2; // 254代表虚拟路由无性能采集，255代表采集失败
-        while (start < end && ttfbHist[start] === 0 && pltHist[start] === 0) start++;
-        while (end > start && ttfbHist[end - 1] === 0 && pltHist[end - 1] === 0) end--;
-
-        const sliceLen = end - start;
-        const sumTtfb = ttfbHist.slice(start, end).reduce((a, b) => a + b, 0);
-        const sumPlt = pltHist.slice(start, end).reduce((a, b) => a + b, 0);
-
-        return Array.from({ length: sliceLen }, (_, i) => {
-            const idx = start + i;
-            return {
-                label: (() => {
-                    if (idx < 100) return `${idx * 10}ms`;
-                    if (idx < 253) return `${idx / 100}s`;
-                    return "≥2.53s";
-                })(),
-                ttfb: Math.round((ttfbHist[idx] / sumTtfb) * 100),
-                plt: Math.round((pltHist[idx] / sumPlt) * 100),
-                ttfbRaw: ttfbHist[idx],
-                pltRaw: pltHist[idx],
-            };
-        });
-    }, [api.data]);
+    const perfRawData = useMemo(
+        () => buildPerformancePoints(performanceResource.data),
+        [performanceResource.data],
+    );
 
     const perfChartData: ChartData<"line"> = useMemo(
         () => ({
@@ -346,7 +256,7 @@ export default function PerfEnvSection() {
         <section className="px-3 pt-6 max-sm:px-5">
             <div className="grid grid-cols-1 gap-3 xl:grid-cols-[1.25fr_1fr_1fr]">
                 <GlowCard className="min-w-0 rounded border overflow-hidden border-[#081A2B] bg-[#03101C]/90 px-4 py-4 backdrop-blur-sm">
-                    <AsyncBoundary api={api} className="h-full">
+                    <AsyncBoundary api={performanceResource} className="h-full">
                         <TrafficChart
                             rawData={perfRawData}
                             chartData={perfChartData}
@@ -355,10 +265,10 @@ export default function PerfEnvSection() {
                     </AsyncBoundary>
                 </GlowCard>
                 <div className="min-w-0">
-                    <SourceTable title="浏览器来源" api={{ data: browserRows, loading: browserApi.loading, error: browserApi.error }} />
+                    <SourceTable title="浏览器来源" api={{ data: browserRows, loading: browserResource.loading, error: browserResource.error }} />
                 </div>
                 <div className="min-w-0">
-                    <SourceTable title="操作系统来源" api={{ data: osRows, loading: osApi.loading, error: osApi.error }} />
+                    <SourceTable title="操作系统来源" api={{ data: osRows, loading: osResource.loading, error: osResource.error }} />
                 </div>
             </div>
         </section>

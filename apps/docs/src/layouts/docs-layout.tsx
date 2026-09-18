@@ -10,7 +10,6 @@ import { Header } from "@/views/header";
 import { Footer } from "@/views/footer";
 import {
     useLayoutEffect,
-    useMemo,
     useState,
     useEffect,
     useRef
@@ -18,18 +17,9 @@ import {
 import sidebar from "@/pages/docs/content/sidebar.md?raw";
 import { usePageEnterAnimation } from "@/hooks/use-page-enter-animation";
 import { isFirstLoad } from "@/utils/first-load";
+import type { SidebarSection } from "@/content/model";
 
 // 侧边栏 Markdown 解析
-
-interface SidebarItem {
-    label: string;
-    href: string;
-}
-
-interface SidebarSection {
-    title: string;
-    items: SidebarItem[];
-}
 
 // 将 sidebar.md 原文解析为结构化数据
 function parseSidebarMarkdown(raw: string): SidebarSection[] {
@@ -64,6 +54,8 @@ function parseSidebarMarkdown(raw: string): SidebarSection[] {
 
     return sections;
 }
+
+const sidebarSections = parseSidebarMarkdown(sidebar);
 
 // 边栏条目渲染（供手机/桌面端复用）
 
@@ -106,9 +98,8 @@ function renderSidebarItems(
 
 // 边栏（桌面端）
 
-function DesktopSidebar() {
+function DesktopSidebar({ sections }: { sections: SidebarSection[] }) {
     const location = useLocation();
-    const sections = useMemo(() => parseSidebarMarkdown(sidebar), []);
     const navRef = useRef<HTMLElement>(null);
 
     useLayoutEffect(() => {
@@ -143,7 +134,7 @@ export function DocsLayout() {
     const navigation = useNavigation();
     const navigate = useNavigate();
     const isPageLoading = navigation.state === "loading";
-    const sections = useMemo(() => parseSidebarMarkdown(sidebar), []);
+    const sections = sidebarSections;
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const mainRef = useRef<HTMLElement>(null);
@@ -208,7 +199,7 @@ export function DocsLayout() {
                 </nav>
 
                 <div className="flex flex-row">
-                    <DesktopSidebar />
+                    <DesktopSidebar sections={sections} />
                     <div ref={contentRef} className="flex-1 px-4 lg:px-6 min-w-0">
                         <Outlet context={{ sections }} />
                     </div>

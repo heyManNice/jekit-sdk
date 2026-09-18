@@ -1,34 +1,21 @@
-// 博客索引数据
+import {
+    BLOG_TYPE_META,
+    parseBlogEntries,
+    type BlogEntry,
+} from "@/content/model";
 
-export interface BlogEntry {
-    title: string;
-    description: string;
-    keywords: string;
-    type: string;
-    filename: string;
-    date: string;
-    publishedDate: string;
-    modifiedDate: string;
-    cover: string | null;
-}
+export type { BlogEntry } from "@/content/model";
 
 // 由 build 时生成，此处直接 import JSON
 import blogIndexes from "./index.json";
 
-export const allEntries = blogIndexes as unknown as BlogEntry[];
+export const allEntries: BlogEntry[] = parseBlogEntries(blogIndexes);
 
 // 类型标签颜色映射
-export const typeMeta: Record<string, { label: string; color: string }> = {
-    post: { label: "产品动态", color: "#06D9D6" },
-    show: { label: "行业洞察", color: "#06D9D6" },
-    tech: { label: "技术文章", color: "#06D9D6" },
-};
+export const typeMeta = BLOG_TYPE_META;
 
 // 分类筛选
 export const categories = [
     "全部",
-    "产品动态",
-    "技术文章",
-    "使用指南",
-    "行业洞察",
+    ...new Set(Object.values(typeMeta).map((meta) => meta.label)),
 ];

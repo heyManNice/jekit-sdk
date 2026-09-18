@@ -1,5 +1,6 @@
 ---
 title: 使用问题
+seoTitle: Jekit 网站统计使用问题与解答
 description: 解答 Jekit 统计面板无记录、查询地址填写方式、统计限制和日常使用中的常见问题。
 ---
 

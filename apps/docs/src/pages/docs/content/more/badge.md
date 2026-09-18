@@ -1,5 +1,6 @@
 ---
 title: 你喜爱的 Badge
+seoTitle: 网站访问量 Badge 徽章使用教程 | Jekit
 description: 使用 Jekit Badge 将网站访问量、访客数和当日统计数据生成为 SVG 徽章，展示在网站或项目 README 中。
 ---
 

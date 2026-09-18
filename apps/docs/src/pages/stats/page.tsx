@@ -6,8 +6,11 @@ import PerfEnvSection from "./views/PerfEnvSection";
 import SourceAnalysis from "./views/SourceAnalysis";
 import TrendAnalysis from "./views/TrendAnalysis";
 import { statsStructuredData } from "@/utils/structured-data";
+import { useStatsDashboard } from "./model/use-stats-dashboard";
 
 export default function Stats() {
+    const dashboard = useStatsDashboard();
+
     usePageMeta({
         title: "网站访问统计查询 | Jekit",
         announcement: "网站统计查询",
@@ -16,11 +19,22 @@ export default function Stats() {
     });
     return (
         <>
-            <DashboardHeader />
-            <OverviewCards />
-            <PerfEnvSection />
-            <SourceAnalysis />
-            <TrendAnalysis />
+            <DashboardHeader
+                query={dashboard.query}
+                history={dashboard.history}
+                stats={dashboard.overview.data}
+                onSearch={dashboard.submitQuery}
+                onRemoveHistory={dashboard.removeHistory}
+                onClearHistory={dashboard.clearHistory}
+            />
+            <OverviewCards resource={dashboard.overview} />
+            <PerfEnvSection
+                performanceResource={dashboard.performance}
+                browserResource={dashboard.browserSource}
+                osResource={dashboard.osSource}
+            />
+            <SourceAnalysis resource={dashboard.searchSource} />
+            <TrendAnalysis query={dashboard.query} refreshToken={dashboard.refreshToken} />
         </>
     );
 }

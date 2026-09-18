@@ -1,5 +1,6 @@
 ---
 title: CDN 引入
+seoTitle: CDN 网站访问统计接入教程 | Jekit
 description: 无需构建工具，通过 CDN 脚本为原生网页接入 Jekit，并使用自动注入、事件监听或全局对象读取网站统计数据。
 ---
 

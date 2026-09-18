@@ -1,5 +1,6 @@
 ---
 title: 原理问题
+seoTitle: Jekit 网站统计实现原理与隐私设计
 description: 解答 Jekit 的异步加载、SPA 路由统计、页面识别、访客去重、数据来源和隐私保护等实现原理。
 ---
 

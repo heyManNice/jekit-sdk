@@ -5,57 +5,15 @@ import {
     Users,
 } from "lucide-react";
 
-import {
-    useEffect,
-} from "react";
 import { GlowCard } from "@/components/glow-card";
-import { useApi } from "@/utils/api";
-import { stats } from "jekit-core";
 import { AsyncBoundary } from "@/components/async-boundary";
 import { Sparkline } from "@/components/sparkline";
-import { useRefetchOnChange } from "@/hooks/use-refetch-on-change";
-import { useQueryStore } from "@/stores/query";
-
-// 将每日增量数据换算为累计趋势（从 total - 7 日总和 累进到 total）。
-// 从右往左累加后缀和，O(n)，避免原先 slice+reduce 的 O(n²)。
-function cumulativeSparkline(
-    total: number | bigint | undefined,
-    daily: readonly number[] | undefined,
-): number[] {
-    if (total == null || !daily) return [];
-    const t = Number(total);
-    const result = new Array(daily.length);
-    let suffix = 0;
-    for (let i = daily.length - 1; i >= 0; i--) {
-        result[i] = t - suffix;
-        suffix += daily[i];
-    }
-    return result;
-}
+import type { StatsResource } from "../model/types";
+import { cumulativeSparkline } from "../model/presenters";
 
 // 基本数值总览
-export default function OverviewCards() {
-
-    const { domain, path, version, setStatsInfo } = useQueryStore();
-
-    const api = useApi(() => stats({ domain, path }));
-
-    // 切换查询（version 变化）时重新请求
-    useRefetchOnChange(api.update, [version]);
-
-    // stats 请求成功后，将站点信息写入 store
-    useEffect(() => {
-        const row = api.data;
-        if (row && row.subPageCount != null && row.registeredAt != null) {
-            setStatsInfo(
-                Number(row.subPageCount),
-                row.registeredAt,
-                Number(row.pageLimitForSite),
-            );
-        }
-    }, [api.data, setStatsInfo]);
-
-    const d = api.data;
+export default function OverviewCards({ resource }: { resource: StatsResource }) {
+    const d = resource.data;
 
     const cards = [
         { label: "今日站点访客量", value: d?.todayVisitorForSite, daily: d?.dailyVisitorForSite, icon: Users },
@@ -79,7 +37,7 @@ export default function OverviewCards() {
                             key={card.label}
                             className="rounded border overflow-hidden border-[#081A2B] bg-[#03101C]/90 px-4 py-3 backdrop-blur-sm"
                         >
-                            <AsyncBoundary api={api}>
+                            <AsyncBoundary api={resource}>
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="min-w-0">
                                         <div className="flex items-center gap-2 text-[#64f6ef]">

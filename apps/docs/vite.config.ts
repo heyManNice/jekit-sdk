@@ -7,21 +7,27 @@ import babel from '@rolldown/plugin-babel'
 import { helloScreen } from '../hello-screen';
 
 // https://vite.dev/config/
-export default defineConfig(async () => ({
+export default defineConfig(async ({ mode }) => {
+    const analyze = process.env.ANALYZE === "true";
+    const analyzePlugin = analyze
+        ? (await import('rollup-plugin-visualizer')).visualizer({
+            open: true,
+            filename: 'report.html',
+            gzipSize: true,
+            brotliSize: true,
+        })
+        : null;
+
+    return ({
     plugins: [
-        codeInspectorPlugin({
+        mode === "development" && codeInspectorPlugin({
             bundler: 'vite',
         }),
         vitePluginMd(),
         react(),
         babel({ presets: [reactCompilerPreset()] }),
         tailwindcss(),
-        (await import('rollup-plugin-visualizer')).visualizer({
-            open: true,
-            filename: 'report.html',
-            gzipSize: true,
-            brotliSize: true,
-        }),
+        analyzePlugin,
         helloScreen('Docs')
     ],
     resolve: {
@@ -71,4 +77,5 @@ export default defineConfig(async () => ({
             }
         },
     }
-}))
+    });
+})

@@ -17,7 +17,7 @@ import { blogPostStructuredData } from "@/utils/structured-data";
 
 // Markdown 内容加载器
 
-const modules = import.meta.glob(
+const modules = import.meta.glob<string>(
     "../content/**/*.md",
     { import: "default" },
 );
@@ -115,16 +115,25 @@ export default function BlogDetail() {
 
         // 构造 glob key：../content/{type}/{filename}
         const key = `../content/${entry.type}/${entry.filename}`;
-        const loader = modules[key] as (() => Promise<unknown>) | undefined;
+        const loader = modules[key];
+        let cancelled = false;
         if (loader) {
             loader().then((c) => {
-                setContent(c as string);
+                if (cancelled) return;
+                setContent(c);
+                setIsLoading(false);
+            }).catch(() => {
+                if (cancelled) return;
+                setContent("文章加载失败，请稍后重试。");
                 setIsLoading(false);
             });
         } else {
             setContent("未找到对应的文章内容。");
             setIsLoading(false);
         }
+        return () => {
+            cancelled = true;
+        };
     }, [filename]);
 
     // 提取标题列表

@@ -1,8 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { scanSiteRoutes } from "./site-routes";
+import { SITE_ORIGIN } from "../src/config/site";
 
-const siteOrigin = "https://jekit.cn";
 const outputFile = path.resolve("dist/sitemap.xml");
 
 function escapeXml(value: string): string {
@@ -20,7 +20,7 @@ async function main() {
         const lastmod = route.lastmod
             ? `\n        <lastmod>${escapeXml(route.lastmod)}</lastmod>`
             : "";
-        return `    <url>\n        <loc>${escapeXml(siteOrigin + route.path)}</loc>${lastmod}\n    </url>`;
+        return `    <url>\n        <loc>${escapeXml(SITE_ORIGIN + route.path)}</loc>${lastmod}\n    </url>`;
     });
 
     const xml = [

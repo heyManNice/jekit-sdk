@@ -6,59 +6,40 @@ import {
 import { GlowCard } from "@/components/glow-card";
 import { HelpTooltip } from "@/components/help-tooltip";
 import { SearchHistoryInput } from "@/components/search-history-input";
-import { useQueryStore } from "@/stores/query";
 import { fmtDate } from "@/utils/format";
-import { formatStatsUrl, parseStatsUrl, readStatsQuery, buildStatsQueryUrl } from "@/utils/stats-url";
-import { Link, useLocation, useNavigate } from "react-router";
+import { formatStatsUrl } from "@/utils/stats-url";
+import { Link } from "react-router";
+import type { StatsData, StatsQuery } from "../model/types";
+
+interface DashboardHeaderProps {
+    query: StatsQuery;
+    history: readonly string[];
+    stats: StatsData | null;
+    onSearch: (value: string) => void;
+    onRemoveHistory: (url: string) => void;
+    onClearHistory: () => void;
+}
 
 // 仪表盘头部
-export default function DashboardHeader() {
-    const {
-        domain,
-        path,
-        search,
-        history,
-        removeHistory,
-        clearHistory,
-        subPageCount,
-        registeredAt,
-        pageLimitForSite,
-    } = useQueryStore();
-
-    const location = useLocation();
-    const navigate = useNavigate();
+export default function DashboardHeader({
+    query,
+    history,
+    stats,
+    onSearch,
+    onRemoveHistory,
+    onClearHistory,
+}: DashboardHeaderProps) {
+    const { domain, path } = query;
+    const subPageCount = stats ? Number(stats.subPageCount) : null;
+    const registeredAt = stats?.registeredAt ?? null;
+    const pageLimitForSite = stats ? Number(stats.pageLimitForSite) : null;
 
     // 搜索框内容，初始为上次查询的地址
     const [text, setText] = useState(formatStatsUrl(domain, path));
 
-    const handleSearch = (value: string) => {
-        const { domain: d, path: p } = parseStatsUrl(value);
-        const url = formatStatsUrl(d, p);
-        search(d, p);
-        // 回填归一化后的地址，保证输入框内容与实际查询的一致
-        setText(url);
-        // 同步到地址栏，方便直接分享链接，或刷新后停留在同一个查询
-        // 刻意用原始形态写入（不做编码），与读取端的整体切片保持一致
-        navigate(buildStatsQueryUrl(location.pathname, url), { replace: true });
-    };
-
-    // 支持通过 ?query=xxx 跳转过来直接查询，并保证地址栏始终带着当前查询
-    const urlQuery = readStatsQuery(location.search, location.hash);
     useEffect(() => {
-        // 地址栏没有 query 参数（例如从其它页面切回统计面板），补上当前查询
-        if (!urlQuery) {
-            const current = formatStatsUrl(domain, path);
-            navigate(buildStatsQueryUrl(location.pathname, current), { replace: true });
-            return;
-        }
-
-        const { domain: d, path: p } = parseStatsUrl(urlQuery);
-        // 当前查询已经是这个地址（首次加载时 store 已从地址栏初始化过），不必重复触发
-        if (d === domain && p === path) return;
-
-        search(d, p);
-        setText(formatStatsUrl(d, p));
-    }, [urlQuery, domain, path, search, navigate, location.pathname]);
+        setText(formatStatsUrl(domain, path));
+    }, [domain, path]);
 
     return (
         <section className="px-3 pt-6 max-sm:px-5">
@@ -90,10 +71,10 @@ export default function DashboardHeader() {
                     <SearchHistoryInput
                         value={text}
                         onChange={setText}
-                        onSubmit={handleSearch}
+                        onSubmit={onSearch}
                         history={history}
-                        onRemoveHistory={removeHistory}
-                        onClearHistory={clearHistory}
+                        onRemoveHistory={onRemoveHistory}
+                        onClearHistory={onClearHistory}
                         placeholder="输入 URL，如 http://localhost/stats/"
                         ariaLabel="输入域名或页面路径"
                     />

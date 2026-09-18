@@ -1,71 +1,79 @@
-import { memo } from "react";
-import { Line } from "react-chartjs-2";
-import type { ChartData, ChartOptions } from "chart.js";
-
-import { gradientFill } from "@/utils/chart";
+import { memo, useId, useMemo } from "react";
 
 interface SparklineProps {
-    // 趋势数据
     data: readonly number[];
-    // 线条颜色，默认青色
     color?: string;
-    // 容器尺寸类
     heightClass?: string;
-    // 曲线平滑度
-    tension?: number;
-    // 填充方式："gradient" 渐变 / 具体颜色字符串 / false 不填充
     fill?: "gradient" | string | false;
-    // y 轴最小值（不传则交给 chart.js 自动）
     yMin?: number;
 }
 
-// 微型趋势折线图（不含坐标轴 / 图例 / 提示框）
+interface Point {
+    x: number;
+    y: number;
+}
+
+function makePoints(data: readonly number[], yMin?: number): Point[] {
+    if (data.length === 0) return [];
+
+    const min = yMin ?? Math.min(...data);
+    const max = Math.max(...data, min);
+    const range = max - min;
+
+    return data.map((value, index) => ({
+        x: data.length === 1 ? 50 : (index / (data.length - 1)) * 100,
+        y: range === 0 ? 16 : 30 - ((value - min) / range) * 28,
+    }));
+}
+
+// 7 个点的迷你趋势图使用 SVG，避免为每一行创建完整 Chart.js 实例。
 export const Sparkline = memo(function Sparkline({
     data,
     color = "#11ebe9",
     heightClass = "h-4 w-16",
-    tension = 0.3,
     fill = "gradient",
     yMin,
 }: SparklineProps) {
-    const chartData: ChartData<"line"> = {
-        labels: ["", "", "", "", "", "", ""],
-        datasets: [
-            {
-                data: [...data],
-                borderColor: color,
-                borderWidth: 1,
-                backgroundColor:
-                    fill === "gradient"
-                        ? gradientFill(color)
-                        : fill === false
-                            ? undefined
-                            : fill,
-                fill: fill !== false,
-                tension,
-                pointRadius: 0,
-                pointHoverRadius: 0,
-            },
-        ],
-    };
-
-    const chartOptions: ChartOptions<"line"> = {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: { duration: 400 },
-        plugins: {
-            legend: { display: false },
-            tooltip: { enabled: false },
-        },
-        scales: {
-            x: { display: false },
-            y: { display: false, ...(yMin !== undefined ? { min: yMin } : {}) },
-        },
-    };
+    const gradientId = useId();
+    const points = useMemo(() => makePoints(data, yMin), [data, yMin]);
+    const linePath = points.map((point, index) =>
+        `${index === 0 ? "M" : "L"}${point.x.toFixed(2)} ${point.y.toFixed(2)}`,
+    ).join(" ");
+    const areaPath = linePath
+        ? `${linePath} L100 32 L0 32 Z`
+        : "";
+    const fillColor = fill === "gradient"
+        ? `url(#${gradientId})`
+        : fill === false
+            ? "none"
+            : fill;
 
     return (
-        <div className={heightClass}>
-            <Line data={chartData} options={chartOptions} />
+        <div className={heightClass} aria-hidden="true">
+            <svg
+                viewBox="0 0 100 32"
+                preserveAspectRatio="none"
+                className="block h-full w-full overflow-visible"
+            >
+                {fill === "gradient" && (
+                    <defs>
+                        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={color} stopOpacity="0.28" />
+                            <stop offset="100%" stopColor={color} stopOpacity="0.01" />
+                        </linearGradient>
+                    </defs>
+                )}
+                {areaPath && fillColor !== "none" && <path d={areaPath} fill={fillColor} />}
+                {linePath && (
+                    <path
+                        d={linePath}
+                        fill="none"
+                        stroke={color}
+                        strokeWidth="1.5"
+                        vectorEffect="non-scaling-stroke"
+                    />
+                )}
+            </svg>
         </div>
     );
 });

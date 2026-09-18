@@ -4,11 +4,20 @@
 // page.content() 落盘，所以运行时写入的标签会原样进入预渲染 HTML，
 // 不需要在 head 里做静态注入。
 
-export const SITE_ORIGIN = "https://jekit.cn";
-export const SITE_NAME = "Jekit 见客统计";
-export const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/images/default-cover.webp`;
-export const DEFAULT_OG_IMAGE_WIDTH = "1226";
-export const DEFAULT_OG_IMAGE_HEIGHT = "752";
+export {
+    DEFAULT_OG_IMAGE,
+    DEFAULT_OG_IMAGE_HEIGHT,
+    DEFAULT_OG_IMAGE_WIDTH,
+    SITE_NAME,
+    SITE_ORIGIN,
+} from "@/config/site";
+import {
+    DEFAULT_OG_IMAGE,
+    DEFAULT_OG_IMAGE_HEIGHT,
+    DEFAULT_OG_IMAGE_WIDTH,
+    SITE_NAME,
+    SITE_ORIGIN,
+} from "@/config/site";
 
 // 首页与没有单独描述的页面共用
 export const DEFAULT_DESCRIPTION =
