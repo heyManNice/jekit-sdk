@@ -64,7 +64,7 @@ export default function DashboardHeader() {
         <section className="px-3 pt-6 max-sm:px-5">
             <div className="flex items-end max-md:items-stretch gap-8 max-md:flex-col max-md:gap-5">
                 <div className="min-w-0 flex-1">
-                    <p className="flex items-center gap-1.5 text-xl font-extrabold tracking-tight text-white max-sm:text-2xl max-md:hidden mt-2 mb-1">
+                    <h1 className="flex items-center gap-1.5 text-xl font-extrabold tracking-tight text-white max-sm:text-2xl mt-2 mb-1">
                         统计查看
                         {/* 悬浮说明图标 */}
                         <HelpTooltip
@@ -77,7 +77,7 @@ export default function DashboardHeader() {
                                 </div>
                             }
                         />
-                    </p>
+                    </h1>
                     <p className="text-sm text-text-secondary max-sm:text-xs">
                         搜索域名或页面路径，查看基础数据与趋势分析。
                         <span className="md:hidden">

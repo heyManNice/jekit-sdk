@@ -16,14 +16,6 @@ export default function Stats() {
     });
     return (
         <>
-            <section className="px-3 pt-8 max-sm:px-5">
-                <h1 className="text-2xl font-extrabold tracking-tight text-white">
-                    网站访问统计查询
-                </h1>
-                <p className="mt-2 text-sm text-text-secondary">
-                    输入已接入 Jekit 的网站地址，查看访问量趋势、来源渠道、运行环境和网站性能指标。
-                </p>
-            </section>
             <DashboardHeader />
             <OverviewCards />
             <PerfEnvSection />
