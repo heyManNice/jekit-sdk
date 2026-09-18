@@ -17,6 +17,25 @@ export function cumulativeSparkline(
     return result;
 }
 
+export interface PreviousDayComparison {
+    value: number;
+    changePercent: number | null;
+}
+
+export function previousDayComparison(
+    daily: readonly number[] | undefined,
+): PreviousDayComparison | null {
+    if (!daily || daily.length < 2) return null;
+
+    const value = daily[daily.length - 2];
+    const previousValue = daily[daily.length - 3];
+    const changePercent = previousValue == null || previousValue === 0
+        ? null
+        : ((value - previousValue) / previousValue) * 100;
+
+    return { value, changePercent };
+}
+
 export interface DimensionRow {
     name: string;
     totalVisits: string;

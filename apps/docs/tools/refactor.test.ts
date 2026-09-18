@@ -4,6 +4,7 @@ import test from "node:test";
 import {
     buildDimensionRows,
     cumulativeSparkline,
+    previousDayComparison,
 } from "../src/pages/stats/model/presenters";
 import {
     blogFilenameToRoute,
@@ -21,6 +22,18 @@ test("route paths share one normalizer", () => {
 test("cumulative sparkline derives history from one total", () => {
     assert.deepEqual(cumulativeSparkline(20, [2, 3, 5]), [12, 15, 20]);
     assert.deepEqual(cumulativeSparkline(undefined, [1]), []);
+});
+
+test("previous-day comparison uses the two completed daily buckets", () => {
+    assert.deepEqual(previousDayComparison([5, 10, 12]), {
+        value: 10,
+        changePercent: 100,
+    });
+    assert.deepEqual(previousDayComparison([0, 10, 12]), {
+        value: 10,
+        changePercent: null,
+    });
+    assert.equal(previousDayComparison([12]), null);
 });
 
 test("dimension rows fill missing enum members and keep Other last", () => {

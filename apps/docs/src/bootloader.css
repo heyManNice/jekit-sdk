@@ -46,6 +46,8 @@
     --color-chart-purple: #ba74ff;
     --color-chart-purple-soft: #c68dff;
     --color-chart-green: #5ce5de;
+    --color-positive: #5ce5a4;
+    --color-negative: #fb7185;
     --color-chart-grid: rgb(27 50 66 / 50%);
     --color-chart-ttfb-start: #21dbe6;
     --color-chart-ttfb-end: #27a1ff;
