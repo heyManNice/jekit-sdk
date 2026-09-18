@@ -27,7 +27,10 @@ export default function Stats() {
                 onRemoveHistory={dashboard.removeHistory}
                 onClearHistory={dashboard.clearHistory}
             />
-            <OverviewCards resource={dashboard.overview} />
+            <OverviewCards
+                resource={dashboard.overview}
+                path={dashboard.query.path}
+            />
             <PerfEnvSection
                 performanceResource={dashboard.performance}
                 browserResource={dashboard.browserSource}
