@@ -15,6 +15,7 @@ interface DocsEntry {
     description: string;
     subPath: string;
     date: string;
+    modifiedDate: string;
 }
 
 // 侧边栏与内容目录必须一一对应：漏了一边就会出现
@@ -68,13 +69,15 @@ async function main() {
         const subPath = file.replace(/\.md$/, "");
 
         // date = git log 时间
-        const date = formatDisplayDate(getGitLastModified(fullPath));
+        const modifiedDate = getGitLastModified(fullPath);
+        const date = formatDisplayDate(modifiedDate);
 
         entries.push({
             title: frontmatter.title || path.basename(file, ".md"),
             description: frontmatter.description || "",
             subPath,
             date,
+            modifiedDate,
         });
     }
 

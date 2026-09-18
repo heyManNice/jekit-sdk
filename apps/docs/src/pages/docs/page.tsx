@@ -211,7 +211,11 @@ export default function DocsContent() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-[0.8rem] text-text-muted">
                     <span>浏览量：{jekit.pagePv}</span>
                     <span className="inline-flex items-center gap-1.5">
-                        <span>最后编辑:{entry?.date}</span>
+                        {entry ? (
+                            <time dateTime={entry.modifiedDate}>最后编辑:{entry.date}</time>
+                        ) : (
+                            <span>最后编辑时间未知</span>
+                        )}
                         <span className="doc-meta-sep">·</span>
                         <a
                             href={`${GITHUB_REPO}/commits/${GITHUB_BRANCH}/${DOCS_CONTENT_PATH}/${subPath}.md`}

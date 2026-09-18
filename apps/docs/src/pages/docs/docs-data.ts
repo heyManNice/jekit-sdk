@@ -5,6 +5,7 @@ export interface DocsEntry {
     description: string;
     subPath: string;
     date: string;
+    modifiedDate: string;
 }
 
 // 由 build 时生成，此处直接 import JSON

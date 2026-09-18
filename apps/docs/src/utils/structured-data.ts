@@ -1,6 +1,7 @@
 import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_ORIGIN, type StructuredData } from "./meta";
 
 const organizationId = `${SITE_ORIGIN}/#organization`;
+const siteLogo = `${SITE_ORIGIN}/favicon.ico`;
 
 function publisher() {
     return {
@@ -8,7 +9,7 @@ function publisher() {
         "@id": organizationId,
         name: SITE_NAME,
         url: SITE_ORIGIN,
-        logo: DEFAULT_OG_IMAGE,
+        logo: siteLogo,
     };
 }
 
@@ -21,7 +22,7 @@ export function homeStructuredData(): StructuredData {
                 "@id": organizationId,
                 name: SITE_NAME,
                 url: SITE_ORIGIN,
-                logo: DEFAULT_OG_IMAGE,
+                logo: siteLogo,
                 sameAs: ["https://github.com/heyManNice/jekit-sdk"],
             },
             {
@@ -78,6 +79,8 @@ export function blogPostStructuredData(entry: {
     image?: string | null;
     publishedDate?: string;
     modifiedDate?: string;
+    keywords?: string;
+    section?: string;
 }): StructuredData {
     const path = `/blogs/${entry.filename.replace(/\.md$/, "")}/`;
     return {
@@ -88,6 +91,8 @@ export function blogPostStructuredData(entry: {
         image: new URL(entry.image || DEFAULT_OG_IMAGE, SITE_ORIGIN).href,
         datePublished: entry.publishedDate || undefined,
         dateModified: entry.modifiedDate || undefined,
+        keywords: entry.keywords || undefined,
+        articleSection: entry.section || undefined,
         mainEntityOfPage: `${SITE_ORIGIN}${path}`,
         publisher: publisher(),
         inLanguage: "zh-CN",
@@ -99,6 +104,7 @@ export function docStructuredData(entry: {
     description: string;
     subPath: string;
     date: string;
+    modifiedDate: string;
     section?: string;
 }): StructuredData {
     const pageUrl = `${SITE_ORIGIN}/docs/${entry.subPath}/`;
@@ -116,7 +122,7 @@ export function docStructuredData(entry: {
                 "@type": "TechArticle",
                 headline: entry.title,
                 description: entry.description,
-                dateModified: entry.date.slice(0, 10),
+                dateModified: entry.modifiedDate,
                 mainEntityOfPage: pageUrl,
                 publisher: publisher(),
                 inLanguage: "zh-CN",
@@ -131,5 +137,17 @@ export function docStructuredData(entry: {
                 })),
             },
         ],
+    };
+}
+
+export function statsStructuredData(): StructuredData {
+    return {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        name: "网站访问统计查询",
+        description: "查询已接入 Jekit 的网站访问量趋势、来源渠道、运行环境和网站性能指标。",
+        url: `${SITE_ORIGIN}/stats/`,
+        isPartOf: { "@id": `${SITE_ORIGIN}/#website` },
+        inLanguage: "zh-CN",
     };
 }

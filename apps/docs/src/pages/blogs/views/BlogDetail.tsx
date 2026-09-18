@@ -90,6 +90,12 @@ export default function BlogDetail() {
             return;
         }
 
+        const section = typeMeta[entry.type]?.label ?? entry.type;
+        const tags = entry.keywords
+            .split(/[、，,]/)
+            .map((tag) => tag.trim())
+            .filter(Boolean);
+
         setTitle({
             title: `${entry.title} | Jekit 博客`,
             announcement: entry.title,
@@ -98,9 +104,12 @@ export default function BlogDetail() {
             type: "article",
             publishedTime: entry.publishedDate,
             modifiedTime: entry.modifiedDate,
+            articleSection: section,
+            articleTags: tags,
             structuredData: blogPostStructuredData({
                 ...entry,
                 image: entry.cover,
+                section,
             }),
         });
 
@@ -207,7 +216,7 @@ export default function BlogDetail() {
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-[0.8rem] text-text-muted">
                             <span>浏览量：{jekit.pagePv}</span>
                             <span className="inline-flex items-center gap-1.5">
-                                <span>最后编辑:{entry.date}</span>
+                                <time dateTime={entry.modifiedDate}>最后编辑:{entry.date}</time>
                                 <span className="doc-meta-sep">·</span>
                                 <a
                                     href={`${GITHUB_REPO}/commits/${GITHUB_BRANCH}/${BLOG_CONTENT_REPO_PATH}/${entry.type}/${entry.filename}`}

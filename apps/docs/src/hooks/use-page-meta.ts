@@ -13,7 +13,10 @@ export function usePageMeta(meta: PageMeta) {
         type,
         publishedTime,
         modifiedTime,
+        articleSection,
+        articleTags,
     } = meta;
+    const articleTagsKey = JSON.stringify(articleTags ?? []);
     const structuredDataKey = JSON.stringify(meta.structuredData ?? null);
 
     useEffect(() => {
@@ -25,6 +28,8 @@ export function usePageMeta(meta: PageMeta) {
             type,
             publishedTime,
             modifiedTime,
+            articleSection,
+            articleTags: JSON.parse(articleTagsKey),
             structuredData: structuredDataKey === "null"
                 ? undefined
                 : JSON.parse(structuredDataKey),
@@ -37,6 +42,8 @@ export function usePageMeta(meta: PageMeta) {
         type,
         publishedTime,
         modifiedTime,
+        articleSection,
+        articleTagsKey,
         structuredDataKey,
     ]);
 }

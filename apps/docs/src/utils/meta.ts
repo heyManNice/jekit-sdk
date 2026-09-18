@@ -26,6 +26,8 @@ export interface PageMeta {
     type?: "website" | "article";
     publishedTime?: string;
     modifiedTime?: string;
+    articleSection?: string;
+    articleTags?: string[];
     structuredData?: StructuredData;
 }
 
@@ -44,6 +46,16 @@ function upsertMeta(attr: "name" | "property", key: string, content: string) {
 
 function removeMeta(attr: "name" | "property", key: string) {
     document.head.querySelector(`meta[${attr}="${key}"]`)?.remove();
+}
+
+function replaceMetaList(attr: "name" | "property", key: string, values: string[]) {
+    document.head.querySelectorAll(`meta[${attr}="${key}"]`).forEach((el) => el.remove());
+    for (const value of values) {
+        const el = document.createElement("meta");
+        el.setAttribute(attr, key);
+        el.setAttribute("content", value);
+        document.head.appendChild(el);
+    }
 }
 
 function upsertCanonical(href: string) {
@@ -85,6 +97,8 @@ export function setPageMeta({
     type = "website",
     publishedTime,
     modifiedTime,
+    articleSection,
+    articleTags,
     structuredData,
 }: PageMeta) {
     const summary = description || DEFAULT_DESCRIPTION;
@@ -96,6 +110,7 @@ export function setPageMeta({
     upsertMeta("name", "description", summary);
     upsertMeta("property", "og:type", type);
     upsertMeta("property", "og:site_name", SITE_NAME);
+    upsertMeta("property", "og:locale", "zh_CN");
     upsertMeta("property", "og:title", title);
     upsertMeta("property", "og:description", summary);
     upsertMeta("property", "og:image", imageUrl);
@@ -119,6 +134,12 @@ export function setPageMeta({
     } else {
         removeMeta("property", "article:modified_time");
     }
+    if (type === "article" && articleSection) {
+        upsertMeta("property", "article:section", articleSection);
+    } else {
+        removeMeta("property", "article:section");
+    }
+    replaceMetaList("property", "article:tag", type === "article" ? articleTags ?? [] : []);
 
     setStructuredData(structuredData);
 }
