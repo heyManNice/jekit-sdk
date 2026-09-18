@@ -13,12 +13,11 @@ export function preload(routePath: string) {
     }
 }
 
-// Create a browser router.
-//
-// When we have prerendered HTML, we want to avoid an initial "hydrate fallback"
-// render that would replace/clear the prerendered DOM while lazy modules load.
-// So we eagerly load the *current* route module and register it as a normal
-// `Component` route (no `lazy`) for the initial path.
+// 创建浏览器路由器。
+// 当页面存在预渲染 HTML 时，需要避免首次渲染触发“水合回退”，
+// 否则在懒加载模块期间，预渲染的 DOM 会被替换或清空。
+// 因此，我们会预先加载“当前”路由模块，并将初始路径注册为普通的
+// `Component` 路由（不使用 `lazy`）。
 export async function createAppRouter() {
     // AppLayout 路由（首页、统计、博客等）
     const appLayout: RouteObject = {
