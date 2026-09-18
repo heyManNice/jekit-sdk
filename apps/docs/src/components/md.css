@@ -3,6 +3,10 @@
    使用传统 CSS + CSS 变量，与主题配色保持一致
    =================================================== */
 
+.md {
+    --md-code-surface: #0a1628;
+}
+
 /* ---- 标题 ---- */
 .md h1 {
     font-size: 1.5rem;
@@ -54,7 +58,7 @@
 .md :not(pre) > code {
     padding: 0.125rem 0.375rem;
     border-radius: 0.25rem;
-    background: #0a1628;
+    background: var(--md-code-surface);
     border: 1px solid var(--color-border);
     font-size: 0.875rem;
     color: var(--color-primary);
@@ -68,7 +72,7 @@
     border-radius: 0.5rem;
     border: 1px solid var(--color-border);
     overflow-x: auto;
-    background: #0a1628;
+    background: var(--md-code-surface);
 }
 
 .md pre code {
@@ -112,7 +116,7 @@
     padding: 0.125rem 0.375rem;
     border-radius: 0.25rem;
     color: var(--color-text-muted);
-    background: #0a1628;
+    background: var(--md-code-surface);
     font-size: 0.8rem;
     line-height: 1.25rem;
     cursor: pointer;
@@ -154,7 +158,7 @@
     padding: 1rem;
     border: none;
     border-radius: 0.5rem;
-    background: #0a1628 !important;
+    background: var(--md-code-surface) !important;
     font-size: 0.875rem;
     font-family: 'Cascadia Code','JetBrains Mono','SF Mono','Fira Code','Consolas','Menlo','Monaco','DejaVu Sans Mono','Ubuntu Mono',monospace;
 }
@@ -204,14 +208,15 @@
     margin: 1.5rem 0;
     font-size: 0.875rem;
     color: var(--color-text-secondary);
-    border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     border-spacing: 0;
+    background: var(--md-code-surface);
     overflow: hidden;
 }
 
 .md thead {
-    background: color-mix(in srgb, var(--color-border) 30%, transparent);
+    background: color-mix(in srgb, var(--color-primary) 4%, var(--md-code-surface));
 }
 
 .md th {
@@ -219,17 +224,17 @@
     text-align: left;
     font-weight: 600;
     color: var(--color-text-primary);
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 14%, var(--color-border));
 }
 
 .md td {
     padding: 0.55rem 1rem;
-    border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 7%, var(--color-border));
 }
 
-/* 斑马条纹：偶数行浅色底 */
+/* 斑马条纹：在代码块底色上增加轻微明度层级 */
 .md tbody tr:nth-child(even) {
-    background: color-mix(in srgb, var(--color-border) 10%, transparent);
+    background: color-mix(in srgb, var(--color-text-primary) 2%, var(--md-code-surface));
 }
 
 /* 去掉最后一行的底边 */
@@ -239,7 +244,7 @@
 
 /* 行悬停效果 */
 .md tbody tr:hover {
-    background: color-mix(in srgb, var(--color-border) 20%, transparent);
+    background: color-mix(in srgb, var(--color-primary) 5%, var(--md-code-surface));
 }
 
 /* ---- 图片 ---- */

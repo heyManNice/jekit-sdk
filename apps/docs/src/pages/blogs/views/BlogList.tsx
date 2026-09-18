@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { ChevronRight, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 import type { BlogEntry } from "../blog-data";
 import { typeMeta } from "../blog-data";
 import { GlowCard } from "@/components/glow-card";
@@ -57,8 +57,6 @@ export default function BlogList({ entries }: BlogListProps) {
                             {/* 文字内容 */}
                             <div className="flex-1 min-w-0 flex flex-col justify-between">
                                 <div>
-                                    {/* 类型标签 */}
-                                    <TypeBadge label={meta.label} color={meta.color} className="mb-2" />
                                     {/* 标题 */}
                                     <h3 className="text-text-primary font-medium text-sm leading-snug group-hover:text-primary transition-colors line-clamp-1">
                                         {entry.title}
@@ -69,17 +67,10 @@ export default function BlogList({ entries }: BlogListProps) {
                                     </p>
                                 </div>
                                 {/* 底部元信息 */}
-                                <div className="flex items-center gap-4 text-xs text-text-muted/70 mt-2">
+                                <div className="flex items-center justify-between gap-4 text-xs text-text-muted/70 mt-2">
                                     <span>{entry.date}</span>
+                                    <TypeBadge label={meta.label} color={meta.color} className="shrink-0 whitespace-nowrap" />
                                 </div>
-                            </div>
-
-                            {/* 右侧箭头 */}
-                            <div className="flex items-center">
-                                <ChevronRight
-                                    size={16}
-                                    className="text-text-muted/30 group-hover:text-primary/60 transition-colors"
-                                />
                             </div>
                         </GlowCard>
                     </Link>

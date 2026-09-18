@@ -11,7 +11,6 @@ import { useJekit } from "jekit-react";
 import { setTitle } from "@/utils/title";
 import { allEntries, typeMeta } from "../blog-data";
 import { ContentSkeleton } from "@/components/content-skeleton";
-import { TypeBadge } from "@/components/type-badge";
 import { GITHUB_REPO, GITHUB_BRANCH, BLOG_CONTENT_REPO_PATH } from "@/utils/github";
 import { blogPostStructuredData } from "@/utils/structured-data";
 
@@ -195,8 +194,6 @@ export default function BlogDetail() {
         );
     }
 
-    const meta = typeMeta[entry.type] ?? { label: entry.type, color: "#06D9D6" };
-
     return (
         <div className="mt-6 px-4 lg:px-6">
             {/* 返回链接 */}
@@ -215,7 +212,6 @@ export default function BlogDetail() {
                 <div className="flex-1 min-w-0" ref={contentRef}>
                     {/* 文章元信息 */}
                     <div className="mb-6">
-                        <TypeBadge label={meta.label} color={meta.color} className="mb-3" />
                         <h1 className="text-[2rem] font-extrabold tracking-tight text-white mb-2">
                             {entry.title}
                         </h1>
