@@ -26,6 +26,29 @@ function makePoints(data: readonly number[], yMin?: number): Point[] {
     }));
 }
 
+function makeSmoothPath(points: readonly Point[]): string {
+    if (points.length === 0) return "";
+    if (points.length === 1) {
+        return `M${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
+    }
+
+    const segments = points.slice(0, -1).map((point, index) => {
+        const previous = points[index - 1] ?? point;
+        const next = points[index + 1];
+        const following = points[index + 2] ?? next;
+        const minY = Math.min(point.y, next.y);
+        const maxY = Math.max(point.y, next.y);
+        const control1X = point.x + (next.x - previous.x) / 6;
+        const control1Y = Math.min(maxY, Math.max(minY, point.y + (next.y - previous.y) / 6));
+        const control2X = next.x - (following.x - point.x) / 6;
+        const control2Y = Math.min(maxY, Math.max(minY, next.y - (following.y - point.y) / 6));
+
+        return `C${control1X.toFixed(2)} ${control1Y.toFixed(2)} ${control2X.toFixed(2)} ${control2Y.toFixed(2)} ${next.x.toFixed(2)} ${next.y.toFixed(2)}`;
+    });
+
+    return `M${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)} ${segments.join(" ")}`;
+}
+
 // 7 个点的迷你趋势图使用 SVG，避免为每一行创建完整 Chart.js 实例。
 export const Sparkline = memo(function Sparkline({
     data,
@@ -36,9 +59,7 @@ export const Sparkline = memo(function Sparkline({
 }: SparklineProps) {
     const gradientId = useId();
     const points = useMemo(() => makePoints(data, yMin), [data, yMin]);
-    const linePath = points.map((point, index) =>
-        `${index === 0 ? "M" : "L"}${point.x.toFixed(2)} ${point.y.toFixed(2)}`,
-    ).join(" ");
+    const linePath = makeSmoothPath(points);
     const areaPath = linePath
         ? `${linePath} L100 32 L0 32 Z`
         : "";
@@ -70,6 +91,8 @@ export const Sparkline = memo(function Sparkline({
                         fill="none"
                         stroke={color}
                         strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         vectorEffect="non-scaling-stroke"
                     />
                 )}
