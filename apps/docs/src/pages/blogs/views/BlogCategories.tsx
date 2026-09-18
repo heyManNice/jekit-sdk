@@ -15,7 +15,7 @@ export default function BlogCategories({ active, onChange }: BlogCategoriesProps
                     onClick={() => onChange(cat)}
                     className={`px-4 py-1.5 rounded text-sm cursor-pointer transition-colors border ${active === cat
                         ? "bg-primary/10 border-primary/40 text-primary"
-                        : "border-[#081A2B] bg-[#03101C]/90 text-text-muted hover:text-text-primary"
+                        : "border-card-border bg-surface/90 text-text-muted hover:text-text-primary"
                         }`}
                 >
                     {cat}

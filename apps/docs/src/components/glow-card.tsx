@@ -171,9 +171,9 @@ interface GlowCardProps extends ComponentPropsWithoutRef<"div"> {
 export const GlowCard = forwardRef<HTMLDivElement, GlowCardProps>(function GlowCard({
     children,
     className = "",
-    glowColor = "rgba(6, 230, 226, 0.01)",
+    glowColor = "color-mix(in srgb, var(--color-primary) 1%, transparent)",
     glowSize = 250,
-    edgeGlowColor = "rgba(6, 230, 226, 0.1)",
+    edgeGlowColor = "color-mix(in srgb, var(--color-primary) 10%, transparent)",
     edgeGlowSize = 250,
     ...rest
 }, ref) {
@@ -314,7 +314,7 @@ export function BackgroundGlow() {
             className="pointer-events-none fixed inset-0"
             style={{
                 zIndex: 1,
-                background: "radial-gradient(1000px circle at var(--bg-glow-x, 50%) var(--bg-glow-y, 50%), rgba(6, 230, 226, 0.01), transparent 30%)",
+                background: "radial-gradient(1000px circle at var(--bg-glow-x, 50%) var(--bg-glow-y, 50%), color-mix(in srgb, var(--color-primary) 1%, transparent), transparent 30%)",
             }}
         />
     );

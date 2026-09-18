@@ -94,7 +94,7 @@ function PageNav({ subPath, prev, next }: PageNavProps) {
                 {prev ? (
                     <Link
                         to={prev.href}
-                        className="flex-1 flex items-center gap-2 rounded-lg border border-[color-mix(in_srgb,var(--color-border)_70%,var(--color-text-muted)_30%)] px-4 py-3 text-sm hover:border-primary hover:text-primary transition-colors"
+                        className="doc-nav-link"
                     >
                         <ChevronLeft size={16} className="shrink-0" />
                         <div className="min-w-0">
@@ -109,7 +109,7 @@ function PageNav({ subPath, prev, next }: PageNavProps) {
                 {next ? (
                     <Link
                         to={next.href}
-                        className="flex-1 flex items-center gap-2 rounded-lg border border-[color-mix(in_srgb,var(--color-border)_70%,var(--color-text-muted)_30%)] px-4 py-3 text-sm hover:border-primary hover:text-primary transition-colors text-right"
+                        className="doc-nav-link text-right"
                     >
                         <div className="min-w-0 flex-1">
                             <div className="text-xs text-text-muted">下一节</div>

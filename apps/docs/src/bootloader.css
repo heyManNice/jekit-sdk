@@ -3,17 +3,97 @@
 @theme {
     --color-primary: #06e6e2;
     --color-primary-hover: #00d4cc;
+    --color-primary-soft: #06d9d6;
+    --color-primary-strong: #00f8db;
+    --color-primary-bright: #01f2e0;
+    --color-primary-highlight: #02ffff;
+    --color-accent: #65dfe9;
+    --color-accent-bright: #64f6ef;
 
     --color-bg: #000713;
-    /* 博客列表的缩略图占位底色 */
+    --color-surface: #03101c;
+    --color-surface-subtle: #011122;
+    --color-surface-muted: #02111d;
+    --color-surface-code: #0a1628;
+    --color-surface-hover: #0a2740;
+    --color-surface-active: #013f4c;
+    --color-surface-active-hover: #01505e;
+    --color-surface-floating: #0a1f33;
+    --color-code-panel: #022037;
     --color-panel-bg: #1a202e;
 
     --color-text-primary: #DFE2E1;
     --color-text-secondary: #bbbfc8;
     --color-text-muted: #718096;
     --color-text-inverse: #0a0f1a;
+    --color-text-heading: #dff9ff;
+    --color-text-emphasis: #ecffff;
+    --color-text-subtle: #a7afbb;
+    --color-text-label: #9ac3ce;
+    --color-text-chart: #e7f8fb;
+    --color-text-chart-muted: #9eb0c0;
+    --color-text-data: #ecf6ff;
+    --color-text-data-alt: #eaf4ff;
 
     --color-border: #081321;
+    --color-card-border: #081a2b;
+    --color-control-border: #102336;
+    --color-strong-border: #1e4058;
+    --color-grid-border: #083142;
+
+    --color-chart-primary: #11ebe9;
+    --color-chart-secondary: #22dfe5;
+    --color-chart-purple: #ba74ff;
+    --color-chart-purple-soft: #c68dff;
+    --color-chart-green: #5ce5de;
+    --color-chart-grid: rgb(27 50 66 / 50%);
+    --color-chart-ttfb-start: #21dbe6;
+    --color-chart-ttfb-end: #27a1ff;
+    --color-chart-plt-start: #b46cff;
+    --color-chart-plt-end: #7e65ff;
+
+    --color-syntax-muted: #808080;
+    --color-syntax-keyword: #c586c0;
+    --color-syntax-punctuation: #ffb30e;
+    --color-syntax-identifier: #4ad987;
+    --color-syntax-string: #6cc2fc;
+    --color-syntax-text: #d3d3d3;
+
+}
+
+@layer components {
+    .page-section {
+        @apply px-3 pt-6 max-sm:px-5;
+    }
+
+    .surface-card {
+        @apply rounded border border-card-border bg-surface/90 backdrop-blur-sm;
+    }
+
+    .surface-popover {
+        @apply rounded border border-control-border bg-surface shadow-lg;
+    }
+
+    .secondary-action {
+        @apply rounded border border-strong-border text-text-secondary transition-colors hover:border-primary hover:text-primary;
+    }
+
+    .segmented-option {
+        @apply rounded border px-3 py-1.5 text-xs transition-colors;
+    }
+
+    .segmented-option-active {
+        @apply border-primary bg-surface-active text-primary;
+    }
+
+    .segmented-option-idle {
+        @apply border-strong-border text-text-secondary hover:border-primary hover:text-primary;
+    }
+
+    .doc-nav-link {
+        @apply flex-1 flex items-center gap-2 rounded-lg border px-4 py-3 text-sm transition-colors hover:border-primary hover:text-primary;
+        border-color: color-mix(in srgb, var(--color-border) 70%, var(--color-text-muted) 30%);
+    }
 }
 
 body {
@@ -30,7 +110,7 @@ body {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
     border-radius: 4px;
-    background-color: #00363C;
+    background-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-bg));
     transform: translateY(4px);
     transition: transform 0.2s ease;
 }
@@ -57,7 +137,7 @@ body:has(.loading-overlay) {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgb(0 0 0 / 50%);
     backdrop-filter: blur(4px);
     display: flex;
     gap: 3px;

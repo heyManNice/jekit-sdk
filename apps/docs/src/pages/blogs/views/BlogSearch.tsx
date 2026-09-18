@@ -9,7 +9,7 @@ interface BlogSearchProps {
 // 博客搜索栏
 export default function BlogSearch({ value, onChange }: BlogSearchProps) {
     return (
-        <GlowCard className="relative mb-6 rounded border border-[#102336] bg-[#03101C]/90 overflow-hidden max-md:w-full md:w-[90%] transition-colors focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/10">
+        <GlowCard className="relative mb-6 rounded border border-control-border bg-surface/90 overflow-hidden max-md:w-full md:w-[90%] transition-colors focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/10">
             <input
                 type="text"
                 data-main-content="true"

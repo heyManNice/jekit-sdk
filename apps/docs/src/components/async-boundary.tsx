@@ -36,13 +36,13 @@ export function AsyncBoundary<T>(props: {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="absolute inset-0 z-10 flex items-center justify-center bg-[#03101C]/60"
+                        className="absolute inset-0 z-10 flex items-center justify-center bg-surface/60"
                     >
                         {loading && (
                             <div className="flex flex-col items-center gap-2 text-text-secondary">
                                 <LoaderCircle
                                     size={28}
-                                    className="animate-spin text-[#65dfe9]"
+                                    className="animate-spin text-accent"
                                 />
                                 <span className="text-xs">加载中…</span>
                             </div>

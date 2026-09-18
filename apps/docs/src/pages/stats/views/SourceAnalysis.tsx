@@ -19,8 +19,8 @@ export default function SourceAnalysis({ resource }: { resource: SourceResource 
     );
 
     return (
-        <section className="px-3 pt-6 max-sm:px-5">
-            <GlowCard className="rounded border overflow-auto border-[#081A2B] bg-[#03101C]/90 px-4 py-4 backdrop-blur-sm">
+        <section className="page-section">
+            <GlowCard className="surface-card overflow-auto px-4 py-4">
                 <AsyncBoundary api={{ data: rows, loading: resource.loading, error: resource.error }}>
                     <div className="min-h-30">
                         <div className="grid grid-cols-[minmax(100px,1.15fr)_90px_90px_110px_120px] items-center gap-3 text-xs text-text-secondary">
@@ -44,7 +44,7 @@ export default function SourceAnalysis({ resource }: { resource: SourceResource 
                                         ease: "easeOut",
                                     }}
                                 >
-                                    <div className="flex min-w-0 items-center gap-3 text-[#ecf6ff]">
+                                    <div className="flex min-w-0 items-center gap-3 text-text-data">
                                         <img src={getBrandIconSrc(item.name)} alt={item.name} height={16} width={16} />
                                         <span className="truncate">{item.name}</span>
                                     </div>
@@ -55,7 +55,7 @@ export default function SourceAnalysis({ resource }: { resource: SourceResource 
                                         <Sparkline
                                             data={item.daily}
                                             heightClass="h-4 w-16"
-                                            fill="rgba(17, 235, 233, 0.12)"
+                                            fill="color-mix(in srgb, var(--color-chart-primary) 12%, transparent)"
                                         />
                                     </div>
                                 </motion.div>

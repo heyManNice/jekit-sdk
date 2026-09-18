@@ -14,6 +14,7 @@ import {
 } from "jekit-core";
 import { AsyncBoundary } from "@/components/async-boundary";
 import { gradientFill } from "@/utils/chart";
+import { themeColor } from "@/utils/theme";
 import type {
     PerformanceResource,
     SourceResource,
@@ -44,9 +45,9 @@ function TrafficChart({ rawData, chartData, chartOptions }: TrafficChartProps) {
     // 性能说明内容（桌面 tooltip 和手机弹窗共用）
     const tooltipContent = (
         <div className="space-y-1.5">
-            <p><span className="text-[#22dfe5]">TTFB</span>：首字节时间，从请求发出到收到服务器响应第一个字节的耗时。</p>
-            <p><span className="text-[#c68dff]">PLT</span>：页面加载时间，页面完全加载渲染完成的总耗时。</p>
-            <p><span className="text-[#5ce5de]">数据范围</span>：为了减少服务器储存压力。性能指标只储存当天数据。</p>
+            <p><span className="text-chart-secondary">TTFB</span>：首字节时间，从请求发出到收到服务器响应第一个字节的耗时。</p>
+            <p><span className="text-chart-purple-soft">PLT</span>：页面加载时间，页面完全加载渲染完成的总耗时。</p>
+            <p><span className="text-chart-green">数据范围</span>：为了减少服务器储存压力。性能指标只储存当天数据。</p>
         </div>
     );
 
@@ -58,8 +59,8 @@ function TrafficChart({ rawData, chartData, chartOptions }: TrafficChartProps) {
                     <HelpTooltip content={tooltipContent} />
                 </div>
                 <div className="flex items-center gap-4 text-xs text-text-secondary">
-                    <span className="flex items-center gap-2"><ChartLegendDot className="from-[#21dbe6] to-[#27a1ff]" />TTFB</span>
-                    <span className="flex items-center gap-2"><ChartLegendDot className="from-[#b46cff] to-[#7e65ff]" />PLT</span>
+                    <span className="flex items-center gap-2"><ChartLegendDot className="from-chart-ttfb-start to-chart-ttfb-end" />TTFB</span>
+                    <span className="flex items-center gap-2"><ChartLegendDot className="from-chart-plt-start to-chart-plt-end" />PLT</span>
                 </div>
             </div>
 
@@ -85,7 +86,7 @@ interface SourceTableProps {
 // 来源表格（浏览器 / 操作系统）
 function SourceTable({ title, api }: SourceTableProps) {
     return (
-        <GlowCard className="rounded border overflow-hidden border-[#081A2B] bg-[#03101C]/90 px-4 py-4 backdrop-blur-sm">
+        <GlowCard className="surface-card overflow-hidden px-4 py-4">
             <AsyncBoundary api={api}>
                 <div className="min-h-53">
                     {/* 表头 — 不滚动 */}
@@ -110,7 +111,7 @@ function SourceTable({ title, api }: SourceTableProps) {
                                         ease: "easeOut",
                                     }}
                                 >
-                                    <div className="flex min-w-0 items-center gap-2 text-[#eaf4ff]">
+                                    <div className="flex min-w-0 items-center gap-2 text-text-data-alt">
                                         <img src={getBrandIconSrc(row.name)} alt={row.name} height={16} width={16} />
                                         <span className="truncate">{row.name}</span>
                                     </div>
@@ -139,6 +140,16 @@ export default function PerfEnvSection({
     osResource,
 }: PerfEnvSectionProps) {
 
+    const chartTheme = useMemo(() => ({
+        ttfb: themeColor("--color-chart-secondary"),
+        plt: themeColor("--color-chart-purple"),
+        surface: themeColor("--color-surface"),
+        text: themeColor("--color-text-chart"),
+        textMuted: themeColor("--color-text-chart-muted"),
+        border: themeColor("--color-control-border"),
+        grid: themeColor("--color-chart-grid"),
+    }), []);
+
     const browserRows = useMemo(
         () => (browserResource.data ? buildDimensionRows(browserResource.data, whichBrowserOption) : null),
         [browserResource.data],
@@ -162,30 +173,30 @@ export default function PerfEnvSection({
                 {
                     label: "TTFB",
                     data: perfRawData.map((d) => d.ttfb),
-                    borderColor: "#22dfe5",
-                    backgroundColor: gradientFill("#22dfe5", 0.2),
+                    borderColor: chartTheme.ttfb,
+                    backgroundColor: gradientFill(chartTheme.ttfb, 0.2),
                     fill: true,
                     tension: 0.3,
                     borderWidth: 1,
-                    pointBackgroundColor: "#22dfe5",
+                    pointBackgroundColor: chartTheme.ttfb,
                     pointRadius: 0,
                     pointHoverRadius: 2,
                 },
                 {
                     label: "PLT",
                     data: perfRawData.map((d) => d.plt),
-                    borderColor: "#ba74ff",
-                    backgroundColor: gradientFill("#ba74ff", 0.2),
+                    borderColor: chartTheme.plt,
+                    backgroundColor: gradientFill(chartTheme.plt, 0.2),
                     fill: true,
                     tension: 0.3,
                     borderWidth: 1,
-                    pointBackgroundColor: "#ba74ff",
+                    pointBackgroundColor: chartTheme.plt,
                     pointRadius: 0,
                     pointHoverRadius: 2,
                 },
             ],
         }),
-        [perfRawData],
+        [perfRawData, chartTheme],
     );
 
     const perfChartOptions: ChartOptions<"line"> = useMemo(
@@ -207,10 +218,10 @@ export default function PerfEnvSection({
                 tooltip: {
                     enabled: true,
                     intersect: false,
-                    backgroundColor: "#03101C",
-                    titleColor: "#9eb0c0",
-                    bodyColor: "#e7f8fb",
-                    borderColor: "#102336",
+                    backgroundColor: chartTheme.surface,
+                    titleColor: chartTheme.textMuted,
+                    bodyColor: chartTheme.text,
+                    borderColor: chartTheme.border,
                     borderWidth: 1,
                     padding: 10,
                     callbacks: {
@@ -232,15 +243,15 @@ export default function PerfEnvSection({
                 x: {
                     grid: { display: false },
                     ticks: {
-                        color: "#9eb0c0",
+                        color: chartTheme.textMuted,
                         font: { size: 11 },
                         maxTicksLimit: 8,
                     },
                 },
                 y: {
-                    grid: { color: "rgba(27, 50, 66, 0.5)" },
+                    grid: { color: chartTheme.grid },
                     ticks: {
-                        color: "#9eb0c0",
+                        color: chartTheme.textMuted,
                         font: { size: 11 },
                         maxTicksLimit: 5,
                         callback: (value) => `${value}%`,
@@ -249,13 +260,13 @@ export default function PerfEnvSection({
                 },
             },
         }),
-        [perfRawData],
+        [perfRawData, chartTheme],
     );
 
     return (
-        <section className="px-3 pt-6 max-sm:px-5">
+        <section className="page-section">
             <div className="grid grid-cols-1 gap-3 xl:grid-cols-[1.25fr_1fr_1fr]">
-                <GlowCard className="min-w-0 rounded border overflow-hidden border-[#081A2B] bg-[#03101C]/90 px-4 py-4 backdrop-blur-sm">
+                <GlowCard className="surface-card min-w-0 overflow-hidden px-4 py-4">
                     <AsyncBoundary api={performanceResource} className="h-full">
                         <TrafficChart
                             rawData={perfRawData}

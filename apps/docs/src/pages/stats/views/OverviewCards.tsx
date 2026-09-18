@@ -27,7 +27,7 @@ export default function OverviewCards({ resource }: { resource: StatsResource })
     ] as const;
 
     return (
-        <section className="px-3 pt-6 max-sm:px-5">
+        <section className="page-section">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 {cards.map((card) => {
                     const Icon = card.icon;
@@ -35,12 +35,12 @@ export default function OverviewCards({ resource }: { resource: StatsResource })
                     return (
                         <GlowCard
                             key={card.label}
-                            className="rounded border overflow-hidden border-[#081A2B] bg-[#03101C]/90 px-4 py-3 backdrop-blur-sm"
+                            className="surface-card overflow-hidden px-4 py-3"
                         >
                             <AsyncBoundary api={resource}>
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="min-w-0">
-                                        <div className="flex items-center gap-2 text-[#64f6ef]">
+                                        <div className="flex items-center gap-2 text-accent-bright">
                                             <Icon size={14} className="shrink-0" />
                                             <span className="truncate">{card.label}</span>
                                         </div>
@@ -51,7 +51,7 @@ export default function OverviewCards({ resource }: { resource: StatsResource })
 
                                     <div className="flex flex-col items-end gap-2 pt-1">
                                         <Icon size={16} className="text-primary/10" />
-                                        <Sparkline data={card.daily ?? []} color="#06e6e2" heightClass="h-8 w-20 shrink-0" yMin={0} />
+                                        <Sparkline data={card.daily ?? []} color="var(--color-primary)" heightClass="h-8 w-20 shrink-0" yMin={0} />
                                     </div>
                                 </div>
                             </AsyncBoundary>

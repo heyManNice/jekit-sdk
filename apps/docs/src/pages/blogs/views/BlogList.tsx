@@ -27,7 +27,7 @@ export default function BlogList({ entries }: BlogListProps) {
             {entries.map((entry) => {
                 const meta = typeMeta[entry.type] ?? {
                     label: entry.type,
-                    color: "#06D9D6",
+                    color: "var(--color-primary-soft)",
                 };
                 return (
                     <Link
@@ -35,7 +35,7 @@ export default function BlogList({ entries }: BlogListProps) {
                         to={`/blogs/${entry.filename.replace(/\.md$/, "")}/`}
                         className="group"
                     >
-                        <GlowCard className="flex gap-4 p-4 rounded border border-[#081A2B] bg-[#03101C]/90 backdrop-blur-sm">
+                        <GlowCard className="surface-card flex gap-4 p-4">
                             {/* 封面图 */}
                             <div className="w-32 h-24 shrink-0 rounded-sm overflow-hidden bg-panel-bg">
                                 {entry.cover ? (

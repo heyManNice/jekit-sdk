@@ -41,7 +41,7 @@ export function Features() {
                             key={item.label}
                             className={"flex items-center gap-3"}
                         >
-                            <Icon size={12} color="#06D9D6" />
+                            <Icon size={12} className="text-primary-soft" />
                             <span className="text-xs leading-none whitespace-nowrap">{item.label}</span>
                         </div>
                     );

@@ -100,7 +100,7 @@ export function Dropdown<T = number>({
                 type="button"
                 aria-expanded={open}
                 onClick={toggle}
-                className={`relative z-20 flex ${minWidth} items-center justify-between gap-3 rounded border border-[#102336] bg-[#03101C]/90 px-3 py-2 text-left text-xs text-white transition-colors hover:border-primary/60 hover:text-primary ${className}`}
+                className={`relative z-20 flex ${minWidth} items-center justify-between gap-3 rounded border border-control-border bg-surface/90 px-3 py-2 text-left text-xs text-white transition-colors hover:border-primary/60 hover:text-primary ${className}`}
             >
                 <span className="truncate">{activeLabel}</span>
                 <ChevronDown
@@ -128,7 +128,7 @@ export function Dropdown<T = number>({
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ y: -8, opacity: 0 }}
                         transition={{ duration: 0.15, ease: "easeOut" }}
-                        className={`absolute left-0 top-full z-20 mt-1 w-full rounded border border-[#102336] bg-[#03101C] shadow-lg max-h-40 overflow-y-auto`}
+                        className="surface-popover absolute left-0 top-full z-20 mt-1 w-full max-h-40 overflow-y-auto"
                     >
                         {items.map((item) => (
                             <button
@@ -138,7 +138,7 @@ export function Dropdown<T = number>({
                                     onSelect(item.value);
                                     close();
                                 }}
-                                className={`block w-full px-3 py-2 text-left text-xs transition-colors hover:bg-[#0A2740] ${item.value === selected
+                                className={`block w-full px-3 py-2 text-left text-xs transition-colors hover:bg-surface-hover ${item.value === selected
                                     ? "text-white"
                                     : "text-text-secondary"
                                     }`}

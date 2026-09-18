@@ -19,6 +19,7 @@ import { Dropdown } from "@/components/dropdown";
 import { useAsyncResource } from "@/hooks/use-async-resource";
 import { gradientFill } from "@/utils/chart";
 import { fmtMonthDay } from "@/utils/format";
+import { themeColor } from "@/utils/theme";
 import {
     buildCsv,
     buildXlsHtml,
@@ -37,6 +38,15 @@ import {
     type ExportFormat,
 } from "./ExportDialog";
 
+const chartTheme = {
+    primary: themeColor("--color-chart-primary"),
+    surface: themeColor("--color-surface"),
+    text: themeColor("--color-text-chart"),
+    textMuted: themeColor("--color-text-chart-muted"),
+    border: themeColor("--color-control-border"),
+    grid: themeColor("--color-chart-grid"),
+} as const;
+
 // 趋势折线图的通用配置（不含数据，模块级常量避免每次渲染重建）
 const TREND_CHART_OPTIONS: ChartOptions<"line"> = {
     responsive: true,
@@ -48,10 +58,10 @@ const TREND_CHART_OPTIONS: ChartOptions<"line"> = {
         tooltip: {
             enabled: true,
             intersect: false,
-            backgroundColor: "#03101C",
-            titleColor: "#9eb0c0",
-            bodyColor: "#e7f8fb",
-            borderColor: "#102336",
+            backgroundColor: chartTheme.surface,
+            titleColor: chartTheme.textMuted,
+            bodyColor: chartTheme.text,
+            borderColor: chartTheme.border,
             borderWidth: 1,
             padding: 10,
         },
@@ -59,12 +69,12 @@ const TREND_CHART_OPTIONS: ChartOptions<"line"> = {
     scales: {
         x: {
             grid: { display: false },
-            ticks: { color: "#9eb0c0", font: { size: 10 } },
+            ticks: { color: chartTheme.textMuted, font: { size: 10 } },
         },
         y: {
-            grid: { color: "rgba(27, 50, 66, 0.5)" },
+            grid: { color: chartTheme.grid },
             ticks: {
-                color: "#9eb0c0",
+                color: chartTheme.textMuted,
                 font: { size: 10 },
                 callback: (value) => {
                     const v = Number(value);
@@ -209,12 +219,12 @@ export default function TrendAnalysis({ query, refreshToken }: TrendAnalysisProp
                 datasets: [
                     {
                         data: rawData.map((d) => d.visits),
-                        borderColor: "#11ebe9",
+                        borderColor: chartTheme.primary,
                         borderWidth: 1.5,
-                        backgroundColor: gradientFill("#11ebe9", 0.5),
+                        backgroundColor: gradientFill(chartTheme.primary, 0.5),
                         fill: true,
                         tension: 0.3,
-                        pointBackgroundColor: "#11ebe9",
+                        pointBackgroundColor: chartTheme.primary,
                         pointRadius: 2,
                         pointHoverRadius: 4,
                     },
@@ -225,8 +235,8 @@ export default function TrendAnalysis({ query, refreshToken }: TrendAnalysisProp
     );
 
     return (
-        <section className="px-3 pt-6 max-sm:px-5">
-            <GlowCard className="rounded border overflow-hidden border-[#081A2B] bg-[#02111d]/70 backdrop-blur-sm">
+        <section className="page-section">
+            <GlowCard className="rounded border overflow-hidden border-card-border bg-surface-muted/70 backdrop-blur-sm">
                 <AsyncBoundary api={api}>
                     <div className="min-h-50 px-5">
                         {/* 子栏：趋势指标 + 时间选择 */}
@@ -266,13 +276,13 @@ export default function TrendAnalysis({ query, refreshToken }: TrendAnalysisProp
                             </div>
 
                             {/* 时间选择按钮组 */}
-                            <div className="flex flex-wrap items-center gap-1 rounded border border-[#102336] bg-[#03101C]/90 p-1 sm:flex-nowrap max-sm:w-full">
+                            <div className="flex flex-wrap items-center gap-1 rounded border border-control-border bg-surface/90 p-1 sm:flex-nowrap max-sm:w-full">
                                 {RANGE_CONFIG.map((cfg) => (
                                     <button
                                         key={cfg.label}
                                         type="button"
                                         onClick={() => setActiveRange(cfg)}
-                                        className={`rounded cursor-pointer px-2 py-1 text-xs transition-colors max-sm:flex-1 sm:px-2.5 ${cfg.label === activeRange.label ? "bg-[#013F4C]" : "text-text-secondary hover:text-white"}`}
+                                        className={`rounded cursor-pointer px-2 py-1 text-xs transition-colors max-sm:flex-1 sm:px-2.5 ${cfg.label === activeRange.label ? "bg-surface-active" : "text-text-secondary hover:text-white"}`}
                                         aria-label={cfg.label}
                                     >
                                         {cfg.label}
@@ -283,7 +293,7 @@ export default function TrendAnalysis({ query, refreshToken }: TrendAnalysisProp
                             <button
                                 type="button"
                                 onClick={() => setShowExportModal(true)}
-                                className="max-sm:hidden flex items-center ml-auto gap-1.5 rounded border border-[#1e4058] px-3 py-1.5 text-xs text-text-secondary transition-colors hover:border-primary hover:text-primary"
+                                className="secondary-action max-sm:hidden flex items-center ml-auto gap-1.5 px-3 py-1.5 text-xs"
                                 aria-label="导出数据"
                             >
                                 <Download size={14} />
@@ -306,7 +316,7 @@ export default function TrendAnalysis({ query, refreshToken }: TrendAnalysisProp
                         <button
                             type="button"
                             onClick={() => setShowExportModal(true)}
-                            className="sm:hidden flex w-full items-center justify-center mb-4 gap-1.5 rounded border border-[#1e4058] px-5 py-2.5 text-xs text-text-secondary transition-colors hover:border-primary hover:text-primary"
+                            className="secondary-action sm:hidden flex w-full items-center justify-center mb-4 gap-1.5 px-5 py-2.5 text-xs"
                             aria-label="导出数据"
                         >
                             <Download size={14} />

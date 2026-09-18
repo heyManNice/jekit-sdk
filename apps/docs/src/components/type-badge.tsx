@@ -9,7 +9,10 @@ export function TypeBadge({ label, color, className = "" }: TypeBadgeProps) {
     return (
         <span
             className={`inline-block text-xs px-2 py-0.5 rounded-full ${className}`}
-            style={{ color, backgroundColor: `${color}18` }}
+            style={{
+                color,
+                backgroundColor: `color-mix(in srgb, ${color} 9%, transparent)`,
+            }}
         >
             {label}
         </span>

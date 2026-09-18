@@ -29,7 +29,7 @@ function makePoints(data: readonly number[], yMin?: number): Point[] {
 // 7 个点的迷你趋势图使用 SVG，避免为每一行创建完整 Chart.js 实例。
 export const Sparkline = memo(function Sparkline({
     data,
-    color = "#11ebe9",
+    color = "var(--color-chart-primary)",
     heightClass = "h-4 w-16",
     fill = "gradient",
     yMin,

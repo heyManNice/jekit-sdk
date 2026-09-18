@@ -1,7 +1,7 @@
 export const BLOG_TYPE_META = {
-    post: { label: "产品动态", color: "#06D9D6" },
-    show: { label: "行业洞察", color: "#06D9D6" },
-    tech: { label: "技术文章", color: "#06D9D6" },
+    post: { label: "产品动态", color: "var(--color-primary-soft)" },
+    show: { label: "行业洞察", color: "var(--color-primary-soft)" },
+    tech: { label: "技术文章", color: "var(--color-primary-soft)" },
 } as const;
 
 export type BlogType = keyof typeof BLOG_TYPE_META;

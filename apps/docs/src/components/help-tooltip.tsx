@@ -63,7 +63,7 @@ export function HelpTooltip({
                 onClick={handleClick}
                 className={className}
             >
-                <CircleHelp size={size} className="text-[#65dfe9] cursor-help" />
+                <CircleHelp size={size} className="text-accent cursor-help" />
             </span>
 
             {/* 桌面版 — Portal tooltip → body */}
@@ -81,11 +81,11 @@ export function HelpTooltip({
                             exit={{ opacity: 0, y: -6 }}
                             transition={{ duration: 0.15, ease: "easeOut" }}
                         >
-                            <div className="-translate-x-1/2 w-56 rounded border border-[#102336] bg-[#03101C] px-3 py-2 text-xs text-text-secondary shadow-lg">
+                            <div className="surface-popover -translate-x-1/2 w-56 px-3 py-2 text-xs text-text-secondary">
                                 {content}
                                 {/* 小三角 */}
-                                <span className="absolute -top-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-[#102336]" />
-                                <span className="absolute -top-0.75 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-[#03101C]" />
+                                <span className="absolute -top-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-control-border" />
+                                <span className="absolute -top-0.75 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-surface" />
                             </div>
                         </motion.div>
                     )}
@@ -108,7 +108,7 @@ export function HelpTooltip({
                         >
                             <motion.div
                                 key="help-mobile-dialog"
-                                className="w-full max-w-sm rounded border border-[#102336] bg-[#03101C] p-5 shadow-2xl"
+                                className="surface-popover w-full max-w-sm p-5 shadow-2xl"
                                 initial={{ opacity: 0, scale: 0.92, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.92, y: 20 }}
@@ -121,7 +121,7 @@ export function HelpTooltip({
                                 <button
                                     type="button"
                                     onClick={() => setShowMobileModal(false)}
-                                    className="w-full rounded border border-primary bg-[#013F4C] py-2 text-xs text-primary transition-colors hover:bg-[#01505E]"
+                                    className="w-full rounded border border-primary bg-surface-active py-2 text-xs text-primary transition-colors hover:bg-surface-active-hover"
                                 >
                                     确定
                                 </button>

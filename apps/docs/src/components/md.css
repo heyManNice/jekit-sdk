@@ -4,7 +4,7 @@
    =================================================== */
 
 .md {
-    --md-code-surface: #0a1628;
+    --md-code-surface: var(--color-surface-code);
 }
 
 /* ---- 标题 ---- */
@@ -51,7 +51,7 @@
 }
 
 .md a:hover {
-    color: #00f8db;
+    color: var(--color-primary-strong);
 }
 
 /* ---- 行内代码 ---- */

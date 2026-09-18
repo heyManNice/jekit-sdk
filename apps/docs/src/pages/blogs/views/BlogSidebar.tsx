@@ -24,7 +24,7 @@ export default function BlogSidebar({ entries, keywords, onTagClick }: BlogSideb
     return (
         <aside className="w-72 shrink-0 space-y-6">
             {/* 关于 Jekit */}
-            <GlowCard className="rounded border border-[#081A2B] bg-[#03101C]/90 backdrop-blur-sm p-5">
+            <GlowCard className="surface-card p-5">
                 <h3 className="text-text-primary font-medium text-sm mb-2 flex items-center gap-2">
                     <BookOpen size={14} className="text-primary" />
                     关于 Jekit
@@ -54,7 +54,7 @@ export default function BlogSidebar({ entries, keywords, onTagClick }: BlogSideb
             </GlowCard>
 
             {/* 热门标签 */}
-            <GlowCard className="rounded border border-[#081A2B] bg-[#03101C]/90 backdrop-blur-sm p-5">
+            <GlowCard className="surface-card p-5">
                 <h3 className="text-text-primary font-medium text-sm mb-3 flex items-center gap-2">
                     <Tags size={14} className="text-primary" />
                     热门标签
@@ -73,7 +73,7 @@ export default function BlogSidebar({ entries, keywords, onTagClick }: BlogSideb
             </GlowCard>
 
             {/* 最新文章 */}
-            <GlowCard className="rounded border border-[#081A2B] bg-[#03101C]/90 backdrop-blur-sm p-5">
+            <GlowCard className="surface-card p-5">
                 <h3 className="text-text-primary font-medium text-sm mb-3 flex items-center gap-2">
                     <TrendingUp size={14} className="text-primary" />
                     最新文章

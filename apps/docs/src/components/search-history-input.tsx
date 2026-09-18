@@ -126,7 +126,7 @@ export function SearchHistoryInput({
     return (
         <div className="relative mt-5 max-w-180">
             {/* 搜索框本体 */}
-            <GlowCard className="flex items-stretch gap-0 overflow-hidden rounded border border-[#102336] bg-[#03101C]/90 max-sm:flex-col transition-colors focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/10">
+            <GlowCard className="flex items-stretch gap-0 overflow-hidden rounded border border-control-border bg-surface/90 max-sm:flex-col transition-colors focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/10">
                 <div className="flex min-w-0 flex-1 items-center gap-3 px-2 py-2">
                     <span className="sr-only">{ariaLabel}</span>
                     <input
@@ -175,10 +175,10 @@ export function SearchHistoryInput({
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ y: -8, opacity: 0 }}
                         transition={{ duration: 0.15, ease: "easeOut" }}
-                        className="absolute top-full left-0 right-0 z-30 mt-1 overflow-hidden rounded border border-[#102336] bg-[#03101C] shadow-lg"
+                        className="surface-popover absolute top-full left-0 right-0 z-30 mt-1 overflow-hidden"
                     >
                         {/* 下拉头部 */}
-                        <div className="flex items-center justify-between border-b border-[#102336] px-3 py-1.5 text-xs text-text-muted">
+                        <div className="flex items-center justify-between border-b border-control-border px-3 py-1.5 text-xs text-text-muted">
                             <span>最近查询</span>
                             <button
                                 type="button"
@@ -207,7 +207,7 @@ export function SearchHistoryInput({
                                     aria-label={item}
                                     aria-selected={index === activeIndex}
                                     className={`group flex items-center gap-2 px-3 py-2 text-xs transition-colors ${index === activeIndex
-                                        ? "bg-[#0A2740] text-white"
+                                        ? "bg-surface-hover text-white"
                                         : "text-text-secondary"
                                         }`}
                                     onMouseEnter={() => setActiveIndex(index)}

@@ -55,24 +55,12 @@ export function buildDimensionRows(
         .map(({ sortKey: _sortKey, ...row }) => row);
 }
 
-const SEARCH_COLORS: Readonly<Record<string, string>> = {
-    Google: "from-[#4cc7ff] to-[#06e6e2]",
-    Baidu: "from-[#7a8dff] to-[#b46cff]",
-    Direct: "from-[#6a7a8e] to-[#9aa7ba]",
-    Bing: "from-[#60d8ff] to-[#22dfe5]",
-    Doubao: "from-[#ff8d4a] to-[#ff5f6d]",
-    Copilot: "from-[#8a67ff] to-[#53d5ff]",
-    Claude: "from-[#ffb36b] to-[#ff8b3d]",
-    Other: "from-[#c3cad5] to-[#8f9db4]",
-};
-
 export interface SearchRow {
     name: string;
     visitsToday: string;
     visitsTotal: string;
     ratio: string;
     daily: readonly number[];
-    color: string;
 }
 
 export function buildSearchRows(
@@ -95,7 +83,6 @@ export function buildSearchRows(
                 visitsTotal: total.toLocaleString(),
                 ratio: grandTotal > 0 ? `${((total / grandTotal) * 100).toFixed(1)}%` : "0%",
                 daily: item?.dailyRequest ?? [],
-                color: SEARCH_COLORS[name] ?? "from-[#c3cad5] to-[#8f9db4]",
                 sortKey: total,
             };
         })

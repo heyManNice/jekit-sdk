@@ -290,7 +290,7 @@ export default function BlogDetail() {
             {showTopBtn && (
                 <button
                     onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                    className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-[#0a1f33]/95 border border-border backdrop-blur-sm text-text-muted hover:text-primary hover:border-primary transition-colors shadow-lg"
+                    className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-surface-floating/95 border border-border backdrop-blur-sm text-text-muted hover:text-primary hover:border-primary transition-colors shadow-lg"
                     aria-label="回到顶部"
                 >
                     <ArrowUp size={18} />
