@@ -232,6 +232,19 @@
     border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 7%, var(--color-border));
 }
 
+/* marked 会根据 Markdown 分隔行输出 align 属性；确保表头与正文采用同一对齐方式 */
+.md :is(th, td)[align="center"] {
+    text-align: center;
+}
+
+.md :is(th, td)[align="right"] {
+    text-align: right;
+}
+
+.md :is(th, td)[align="left"] {
+    text-align: left;
+}
+
 /* 斑马条纹：在代码块底色上增加轻微明度层级 */
 .md tbody tr:nth-child(even) {
     background: color-mix(in srgb, var(--color-text-primary) 2%, var(--md-code-surface));
