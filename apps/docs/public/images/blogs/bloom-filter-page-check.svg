@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">布隆过滤器判断页面是否访问过</title>
+  <desc id="desc">页面地址经过哈希计算得到七个位置，再检查一百零四位过滤器。任意位置为零即可确认是新页面，全部为一只能说明可能访问过。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#06111f"/>
+      <stop offset="1" stop-color="#0a1628"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#06e6e2"/>
+      <stop offset="1" stop-color="#27a1ff"/>
+    </linearGradient>
+    <pattern id="bits" width="16" height="16" patternUnits="userSpaceOnUse">
+      <rect width="12" height="12" rx="3" fill="#142c42" stroke="#20445d"/>
+    </pattern>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#65dfe9"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="520" rx="28" fill="url(#bg)"/>
+  <rect x="1" y="1" width="1198" height="518" rx="27" fill="none" stroke="#16364c" stroke-width="2"/>
+
+  <g font-family="Inter, 'Microsoft YaHei', sans-serif">
+    <g transform="translate(54 92)">
+      <rect width="268" height="246" rx="20" fill="#081a2b" stroke="#1e4058" stroke-width="2"/>
+      <rect x="32" y="43" width="204" height="116" rx="12" fill="#0b2237" stroke="#27a1ff" stroke-width="2"/>
+      <circle cx="52" cy="61" r="4" fill="#06e6e2"/>
+      <circle cx="66" cy="61" r="4" fill="#27a1ff"/>
+      <circle cx="80" cy="61" r="4" fill="#718096"/>
+      <path d="M32 76h204" stroke="#1e4058"/>
+      <text x="134" y="112" fill="#dff9ff" font-size="18" text-anchor="middle">规范化页面地址</text>
+      <rect x="28" y="184" width="212" height="38" rx="10" fill="#06111f" stroke="#16364c"/>
+      <text x="134" y="209" fill="#9ac3ce" font-size="16" text-anchor="middle">/blogs/pv-uv/</text>
+    </g>
+
+    <path d="M342 215H401" fill="none" stroke="#65dfe9" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <g transform="translate(420 116)">
+      <rect width="170" height="198" rx="20" fill="#081a2b" stroke="#1e4058" stroke-width="2"/>
+      <text x="85" y="40" fill="#9ac3ce" font-size="15" text-anchor="middle">32 位页面哈希</text>
+      <circle cx="85" cy="91" r="39" fill="#092b3d" stroke="#06e6e2" stroke-width="2"/>
+      <path d="M66 92l13 13 27-31" fill="none" stroke="url(#cyan)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="85" y="157" fill="#dff9ff" font-size="16" text-anchor="middle">两个种子</text>
+      <text x="85" y="180" fill="#718096" font-size="14" text-anchor="middle">生成 7 个位置</text>
+    </g>
+
+    <path d="M610 215H663" fill="none" stroke="#65dfe9" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <g transform="translate(680 76)">
+      <rect width="466" height="292" rx="20" fill="#081a2b" stroke="#1e4058" stroke-width="2"/>
+      <text x="28" y="43" fill="#dff9ff" font-size="18">104 位过滤器</text>
+      <text x="438" y="43" fill="#718096" font-size="14" text-anchor="end">只保存位，不保存 URL</text>
+      <rect x="25" y="82" width="416" height="64" fill="url(#bits)"/>
+
+      <g fill="#06e6e2" stroke="#9ffff9" stroke-width="1" filter="url(#glow)">
+        <rect x="73" y="82" width="12" height="12" rx="3"/>
+        <rect x="297" y="82" width="12" height="12" rx="3"/>
+        <rect x="57" y="98" width="12" height="12" rx="3"/>
+        <rect x="393" y="98" width="12" height="12" rx="3"/>
+        <rect x="345" y="114" width="12" height="12" rx="3"/>
+        <rect x="185" y="130" width="12" height="12" rx="3"/>
+        <rect x="425" y="130" width="12" height="12" rx="3"/>
+      </g>
+
+      <g transform="translate(25 183)">
+        <rect width="196" height="72" rx="14" fill="#082a31" stroke="#06e6e2" stroke-width="2"/>
+        <circle cx="29" cy="27" r="9" fill="#06111f" stroke="#06e6e2" stroke-width="3"/>
+        <text x="51" y="31" fill="#dff9ff" font-size="16">任意一位是 0</text>
+        <text x="98" y="56" fill="#06e6e2" font-size="15" text-anchor="middle">确定是新页面</text>
+      </g>
+
+      <g transform="translate(245 183)">
+        <rect width="196" height="72" rx="14" fill="#201a39" stroke="#ba74ff" stroke-width="2"/>
+        <circle cx="29" cy="27" r="9" fill="#ba74ff"/>
+        <text x="51" y="31" fill="#dff9ff" font-size="16">七位全是 1</text>
+        <text x="98" y="56" fill="#c68dff" font-size="15" text-anchor="middle">只能说可能访问过</text>
+      </g>
+    </g>
+
+    <path d="M781 383v49" stroke="#06e6e2" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M1001 383v49" stroke="#ba74ff" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="891" y="474" fill="#9ac3ce" font-size="16" text-anchor="middle">误差只会出现在“七位全是 1”的分支</text>
+  </g>
+</svg>

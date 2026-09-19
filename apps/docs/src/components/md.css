@@ -285,6 +285,31 @@
     border-radius: 0.5rem;
 }
 
+.blog-content .blog-figure {
+    margin: 1.5rem 0;
+}
+
+.blog-content .blog-figure img {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+}
+
+.blog-content .blog-figure figcaption {
+    width: 70%;
+    margin: 0 auto;
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .blog-content img,
+    .blog-content .blog-figure figcaption {
+        width: 100%;
+    }
+}
+
 /* ---- 强调 ---- */
 .md strong {
     font-weight: 600;
