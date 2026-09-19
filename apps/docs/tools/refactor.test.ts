@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
     buildDimensionRows,
+    buildSearchRows,
     cumulativeSparkline,
     previousDayComparison,
 } from "../src/pages/stats/model/presenters";
@@ -55,4 +56,14 @@ test("dimension rows fill missing enum members and keep Other last", () => {
     assert.equal(rows[0]?.name, "Chrome");
     assert.equal(rows[0]?.ratio, "100.0%");
     assert.equal(rows.at(-1)?.name, "Other");
+});
+
+test("search rows render a zero trend for missing sources", () => {
+    const searchOptions = {
+        1: "Direct",
+        Direct: 1,
+    };
+    const rows = buildSearchRows([], searchOptions);
+
+    assert.deepEqual(rows[0]?.daily, [0, 0, 0, 0, 0, 0, 0]);
 });

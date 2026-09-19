@@ -82,6 +82,8 @@ export interface SearchRow {
     daily: readonly number[];
 }
 
+const EMPTY_DAILY_TREND = [0, 0, 0, 0, 0, 0, 0] as const;
+
 export function buildSearchRows(
     data: SourceData | null,
     searchEngineOptions: Record<string, string | number>,
@@ -101,7 +103,7 @@ export function buildSearchRows(
                 visitsToday: (item?.todayRequest ?? 0).toLocaleString(),
                 visitsTotal: total.toLocaleString(),
                 ratio: grandTotal > 0 ? `${((total / grandTotal) * 100).toFixed(1)}%` : "0%",
-                daily: item?.dailyRequest ?? [],
+                daily: item?.dailyRequest ?? EMPTY_DAILY_TREND,
                 sortKey: total,
             };
         })
