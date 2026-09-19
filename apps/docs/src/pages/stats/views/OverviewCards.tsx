@@ -10,15 +10,28 @@ import { AsyncBoundary } from "@/components/async-boundary";
 import { HelpTooltip } from "@/components/help-tooltip";
 import { Sparkline } from "@/components/sparkline";
 import type { StatsResource } from "../model/types";
-import {
-    cumulativeSparkline,
-    previousDayComparison,
-} from "../model/presenters";
+import { cumulativeSparkline } from "../model/presenters";
+
+function previousDayComparison(daily: readonly number[] | undefined) {
+    if (!daily?.length) return null;
+
+    const value = daily[daily.length - 1];
+    const previousValue = daily[daily.length - 2];
+    const changePercent = previousValue == null || previousValue === 0
+        ? null
+        : ((value - previousValue) / previousValue) * 100;
+
+    return { value, changePercent };
+}
 
 function comparisonText(changePercent: number | null) {
     if (changePercent == null) return { visual: "—", spoken: "暂无环比", className: "text-text-muted" };
-    if (changePercent > 0) return { visual: `↑${changePercent.toFixed(1)}%`, spoken: `较前日增长 ${changePercent.toFixed(1)}%`, className: "text-positive" };
-    if (changePercent < 0) return { visual: `↓${Math.abs(changePercent).toFixed(1)}%`, spoken: `较前日下降 ${Math.abs(changePercent).toFixed(1)}%`, className: "text-negative" };
+    const absolutePercent = Math.abs(changePercent);
+    const formattedPercent = absolutePercent >= 100
+        ? absolutePercent.toFixed(0)
+        : absolutePercent.toFixed(1);
+    if (changePercent > 0) return { visual: `↑${formattedPercent}%`, spoken: `较前日增长 ${formattedPercent}%`, className: "text-positive" };
+    if (changePercent < 0) return { visual: `↓${formattedPercent}%`, spoken: `较前日下降 ${formattedPercent}%`, className: "text-negative" };
     return { visual: "0.0%", spoken: "较前日持平", className: "text-text-muted" };
 }
 
