@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://jekit.cn" target="_blank">
-    <img height="180" src="./apps//docs/public/images/slogan.webp" alt="Jekit slogan">
+    <img height="180" src="./apps/docs/public/images/slogan.webp" alt="Jekit slogan">
   </a>
 </p>
 
@@ -11,23 +11,62 @@ Jekit 是一个免费的公共统计基础工具，支持 CDN 引入、NPM 引�
 
 # jekit-sdk
 
-## 如何构建?
+## 仓库结构
+
+本仓库使用 npm workspaces 管理所有子项目，依赖统一安装在仓库根目录，并且只维护根目录的一份 `package-lock.json`。
+
+```text
+packages/       可发布的 Core、CDN、Vue、React SDK
+apps/docs/      文档与统计面板
+apps/demos/     CDN、Vue、React 接入示例
+functions/      独立部署的边缘函数
+tools/          全仓库共用的构建工具
+```
+
+安装全部子项目依赖：
+
+```bash
+npm install
+```
+
+## 开发与验证
+
+- 启动文档站开发环境
+
+```bash
+npm run dev
+```
+
+- 检查全仓库（lint、类型检查和测试）
+
+```bash
+npm run check
+```
+
 - 构建文档
+
 ```bash
 npm run docs
-# 输出目录在/app/docs/dist
+# 输出目录在 apps/docs/dist
 ```
 
 - 构建所有 packages
+
 ```bash
 npm run packages
-# 输出目录在/packages/*/dist
+# 输出目录在 packages/*/dist
 ```
 
-- 构建全部
+- 构建全部正式产物和 demos
+
+```bash
+npm run build
+```
+
+- 完整检查并构建全部子项目
+
 ```bash
 npm run all
-# 输出目录在如上所述
 ```
 
 ## 版本号规则

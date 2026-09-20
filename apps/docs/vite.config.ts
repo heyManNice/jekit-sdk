@@ -1,10 +1,10 @@
 import { defineConfig } from 'vite';
 import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import { vitePluginMd } from './vite-plugin-md';
+import { vitePluginMd } from './vite-plugin-md.ts';
 import { codeInspectorPlugin } from 'code-inspector-plugin';
 import babel from '@rolldown/plugin-babel'
-import { helloScreen } from '../hello-screen';
+import { helloScreen } from '../hello-screen.ts';
 
 // https://vite.dev/config/
 export default defineConfig(async ({ mode }) => {

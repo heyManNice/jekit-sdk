@@ -2,30 +2,36 @@
   "name": "jekit-sdk",
   "private": true,
   "version": "1.5",
+  "type": "module",
   "scripts": {
     "dev": "npm run dev --workspace jekit-docs",
+    "build": "npm run build:packages && npm run build:badge && npm run build:docs && npm run build:demos",
     "build:docs": "npm run build --workspace jekit-docs",
+    "build:badge": "npm run build --workspace jekit-badge",
     "build:core": "npm run build --workspace jekit-core",
     "build:cdn": "npm run build --workspace jekit-cdn",
     "build:vue": "npm run build --workspace jekit-vue",
     "build:react": "npm run build --workspace jekit-react",
     "build:packages": "npm run build:core && npm run build:cdn && npm run build:vue && npm run build:react",
+    "build:demos": "npm run build --workspace jekit-demo-cdn && npm run build --workspace jekit-demo-react && npm run build --workspace jekit-demo-vue",
     "install:playwright": "npx playwright install --with-deps chromium",
     "lint": "eslint apps/docs",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm test --workspaces --if-present",
+    "check": "npm run lint && npm run typecheck && npm test",
     "docs": "npm run build:docs",
     "packages": "npm run build:packages",
-    "all": "npm run packages && npm run docs"
+    "all": "npm run check && npm run build"
   },
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/docs",
+    "apps/demos/*",
+    "functions/*"
   ],
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.59.0",
-    "code-inspector-plugin": "^2.0.6",
     "eslint": "^10.10.0",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "typescript-eslint": "^8.70.0",
-    "vue": "^3.5.0"
+    "typescript-eslint": "^8.70.0"
   }
 }

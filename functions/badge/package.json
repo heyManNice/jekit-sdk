@@ -1,9 +1,19 @@
 {
+    "name": "jekit-badge",
+    "private": true,
+    "version": "0.0.0",
     "type": "module",
     "scripts": {
         "dev": "bun --watch run dev.ts",
         "build": "vite build",
         "typecheck": "tsc --project tsconfig.json",
         "test": "npm run typecheck && npm run build && node --experimental-strip-types --test tests/badge.test.mjs"
+    },
+    "dependencies": {
+        "jekit-core": "*"
+    },
+    "devDependencies": {
+        "typescript": "^6.0.3",
+        "vite": "^8.0.14"
     }
 }
