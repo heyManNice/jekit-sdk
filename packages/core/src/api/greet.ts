@@ -51,24 +51,31 @@ export function spaGreet(props: {
 }) {
     let timer: ReturnType<typeof setTimeout> | null = null;
     let seq = 0;
+    let disposed = false;
     // 记录上一次导航的 URL，只有本次导航与上次不同才发送请求
     let lastHref: string | null = null;
 
     function handleRouteChange() {
+        if (disposed) return;
+
         const currentHref = location.href;
         if (currentHref === lastHref) return;
         lastHref = currentHref;
 
+        // 路由一旦变化就立即让旧请求失效，不能等到防抖定时器执行时才推进序号。
+        // 否则旧请求可能在这 50ms 内返回，并把上一页的数据写到新页面。
+        const currentSeq = ++seq;
+
         props.onLoading();
         if (timer !== null) clearTimeout(timer);
         timer = setTimeout(() => {
-            const currentSeq = ++seq;
+            timer = null;
             greet()
                 .then((res) => {
-                    if (currentSeq === seq) props.onSuccess(res);
+                    if (!disposed && currentSeq === seq) props.onSuccess(res);
                 })
                 .catch((err) => {
-                    if (currentSeq === seq) props.onError(err);
+                    if (!disposed && currentSeq === seq) props.onError(err);
                 });
         }, 50);
     }
@@ -82,9 +89,16 @@ export function spaGreet(props: {
 
     // 返回取消订阅函数，组件卸载时调用
     return () => {
+        if (disposed) return;
+        disposed = true;
+        // 让已经发出、但尚未返回的请求失效。
+        ++seq;
         window.removeEventListener('pushstate', handleRouteChange);
         window.removeEventListener('replacestate', handleRouteChange);
         window.removeEventListener('popstate', handleRouteChange);
-        if (timer !== null) clearTimeout(timer);
+        if (timer !== null) {
+            clearTimeout(timer);
+            timer = null;
+        }
     };
 }

@@ -28,7 +28,8 @@ function emitChange(newStats: JekitStats) {
     Object.assign(statsState, newStats);
 }
 
-let initialized = false;
+let consumerCount = 0;
+let stopJekit: (() => void) | null = null;
 
 function emitLoading(props: {
     defaultText?: string;
@@ -61,43 +62,51 @@ function emitLoading(props: {
 export function initJekitVue(props: {
     defaultText?: string;
 }) {
-    if (initialized) return () => { };
-    initialized = true;
+    consumerCount++;
 
-    const unsubscribe = spaGreet({
-        onLoading: () => {
-            emitLoading({ defaultText: props.defaultText });
-        },
-        onSuccess: (res) => {
-            emitChange({
-                sitePv: res.totalRequestForSite.toString(),
-                siteUv: res.totalVisitorForSite.toString(),
-                pagePv: res.totalRequestForPage.toString(),
-                pageUv: res.totalVisitorForPage.toString(),
-                sitePvToday: res.todayRequestForSite.toString(),
-                siteUvToday: res.todayVisitorForSite.toString(),
-                pagePvToday: res.todayRequestForPage.toString(),
-                pageUvToday: res.todayVisitorForPage.toString(),
-            });
-        },
-        onError: (err) => {
-            emitChange({
-                sitePv: _error,
-                siteUv: _error,
-                pagePv: _error,
-                pageUv: _error,
-                sitePvToday: _error,
-                siteUvToday: _error,
-                pagePvToday: _error,
-                pageUvToday: _error,
-            });
-            console.error('[Jekit] Greet failed:', err);
-        },
-    });
+    if (consumerCount === 1) {
+        stopJekit = spaGreet({
+            onLoading: () => {
+                emitLoading({ defaultText: props.defaultText });
+            },
+            onSuccess: (res) => {
+                emitChange({
+                    sitePv: res.totalRequestForSite.toString(),
+                    siteUv: res.totalVisitorForSite.toString(),
+                    pagePv: res.totalRequestForPage.toString(),
+                    pageUv: res.totalVisitorForPage.toString(),
+                    sitePvToday: res.todayRequestForSite.toString(),
+                    siteUvToday: res.todayVisitorForSite.toString(),
+                    pagePvToday: res.todayRequestForPage.toString(),
+                    pageUvToday: res.todayVisitorForPage.toString(),
+                });
+            },
+            onError: (err) => {
+                emitChange({
+                    sitePv: _error,
+                    siteUv: _error,
+                    pagePv: _error,
+                    pageUv: _error,
+                    sitePvToday: _error,
+                    siteUvToday: _error,
+                    pagePvToday: _error,
+                    pageUvToday: _error,
+                });
+                console.error('[Jekit] Greet failed:', err);
+            },
+        });
+    }
 
+    let released = false;
     return () => {
-        initialized = false;
-        unsubscribe();
+        if (released) return;
+        released = true;
+        consumerCount--;
+
+        if (consumerCount === 0) {
+            stopJekit?.();
+            stopJekit = null;
+        }
     };
 }
 

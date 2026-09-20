@@ -63,50 +63,60 @@ function emitLoading(props: {
     }
 }
 
-let initialized = false;
+let consumerCount = 0;
+let stopJekit: (() => void) | null = null;
 
 export function initJekitReact(props: {
     defaultText?: string;
 }) {
-    // 防止多个组件同时调用 useJekit 导致重复初始化
-    if (initialized) return () => { };
-    initialized = true;
+    consumerCount++;
 
-    // SPA 路由切换时自动采集（首次 + 虚拟路由变化），返回取消订阅函数
-    const unsubscribe = spaGreet({
-        onLoading: () => {
-            emitLoading({
-                defaultText: props.defaultText
-            });
-        },
-        onSuccess: (res) => {
-            jekitStore.emitChange({
-                sitePv: res.totalRequestForSite.toString(),
-                siteUv: res.totalVisitorForSite.toString(),
-                pagePv: res.totalRequestForPage.toString(),
-                pageUv: res.totalVisitorForPage.toString(),
-                sitePvToday: res.todayRequestForSite.toString(),
-                siteUvToday: res.todayVisitorForSite.toString(),
-                pagePvToday: res.todayRequestForPage.toString(),
-                pageUvToday: res.todayVisitorForPage.toString()
-            });
-        },
-        onError: (err) => {
-            jekitStore.emitChange({
-                sitePv: _error,
-                siteUv: _error,
-                pagePv: _error,
-                pageUv: _error,
-                sitePvToday: _error,
-                siteUvToday: _error,
-                pagePvToday: _error,
-                pageUvToday: _error
-            });
-            console.error('[Jekit] Greet failed:', err);
-        },
-    });
+    // 第一位消费者负责启动全局监听；后续消费者共享同一份数据源。
+    if (consumerCount === 1) {
+        stopJekit = spaGreet({
+            onLoading: () => {
+                emitLoading({
+                    defaultText: props.defaultText
+                });
+            },
+            onSuccess: (res) => {
+                jekitStore.emitChange({
+                    sitePv: res.totalRequestForSite.toString(),
+                    siteUv: res.totalVisitorForSite.toString(),
+                    pagePv: res.totalRequestForPage.toString(),
+                    pageUv: res.totalVisitorForPage.toString(),
+                    sitePvToday: res.todayRequestForSite.toString(),
+                    siteUvToday: res.todayVisitorForSite.toString(),
+                    pagePvToday: res.todayRequestForPage.toString(),
+                    pageUvToday: res.todayVisitorForPage.toString()
+                });
+            },
+            onError: (err) => {
+                jekitStore.emitChange({
+                    sitePv: _error,
+                    siteUv: _error,
+                    pagePv: _error,
+                    pageUv: _error,
+                    sitePvToday: _error,
+                    siteUvToday: _error,
+                    pagePvToday: _error,
+                    pageUvToday: _error
+                });
+                console.error('[Jekit] Greet failed:', err);
+            },
+        });
+    }
+
+    let released = false;
     return () => {
-        initialized = false;
-        unsubscribe();
+        if (released) return;
+        released = true;
+        consumerCount--;
+
+        // 只有最后一位消费者卸载时才关闭全局监听。
+        if (consumerCount === 0) {
+            stopJekit?.();
+            stopJekit = null;
+        }
     };
 }

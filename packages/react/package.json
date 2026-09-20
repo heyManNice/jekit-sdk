@@ -7,7 +7,8 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "build": "vite build && node ../../tools/postbuild.mjs react"
+    "build": "npm run test && vite build && node ../../tools/postbuild.mjs react",
+    "test": "vitest run src/tests/"
   },
   "dependencies": {
     "jekit-core": "*"
@@ -19,6 +20,7 @@
     "@types/react": "^19.2.15",
     "tsx": "^4.22.3",
     "vite": "^8.0.14",
-    "vite-plugin-dts": "^5.0.1"
+    "vite-plugin-dts": "^5.0.1",
+    "vitest": "^4.1.6"
   }
 }
