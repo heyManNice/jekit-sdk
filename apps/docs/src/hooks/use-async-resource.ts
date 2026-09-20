@@ -24,7 +24,6 @@ export function useAsyncResource<T>(key: string, load: () => Promise<T>): AsyncR
     const loadRef = useRef(load);
     loadRef.current = load;
 
-    const requestIdRef = useRef(0);
     const [refreshToken, setRefreshToken] = useState(0);
     const [state, setState] = useState<{
         data: T | null;
@@ -37,16 +36,16 @@ export function useAsyncResource<T>(key: string, load: () => Promise<T>): AsyncR
     }, []);
 
     useEffect(() => {
-        const requestId = ++requestIdRef.current;
+        let active = true;
         setState((previous) => ({ data: previous.data, status: "loading", error: null }));
 
         void loadRef.current().then(
             (data) => {
-                if (requestId !== requestIdRef.current) return;
+                if (!active) return;
                 setState({ data, status: "success", error: null });
             },
             (error: unknown) => {
-                if (requestId !== requestIdRef.current) return;
+                if (!active) return;
                 setState((previous) => ({
                     data: previous.data,
                     status: "error",
@@ -56,7 +55,7 @@ export function useAsyncResource<T>(key: string, load: () => Promise<T>): AsyncR
         );
 
         return () => {
-            if (requestId === requestIdRef.current) requestIdRef.current++;
+            active = false;
         };
     }, [key, refreshToken]);
 
