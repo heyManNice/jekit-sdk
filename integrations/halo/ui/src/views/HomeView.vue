@@ -5,6 +5,7 @@ import {
   IconSettings,
   IconUserFollow,
   IconUserLine,
+  Toast,
   VButton,
   VEmpty,
   VPageHeader,
@@ -23,25 +24,20 @@ import {
 import NumberFlow from '@number-flow/vue'
 import { computed, markRaw, onMounted } from 'vue'
 import { Line } from 'vue-chartjs'
-import { buildPerformancePoints, useSitePerformance, useSiteStats } from '@/model/site-stats'
+import { buildPerformancePoints, toFlowNumber, useSitePerformance, useSiteStats } from '@/model/site-stats'
 import { neutral } from '@/utils/theme'
+import IconShareLine from '~icons/ri/share-line'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler)
-
-// NumberFlow 只接受 number（core 的累计指标是 bigint），加载完成前先给 0，
-// 数据到位后由 0 → 实际值的过渡产生入场动画，与 Halo 仪表盘的卡片一致
-function toNumber(value: number | bigint | undefined): number {
-  return value === undefined || value === null ? 0 : Number(value)
-}
 
 const dashboard = useSiteStats()
 const performance = useSitePerformance()
 
 const cards = computed(() => [
-  { label: '今日浏览', number: toNumber(dashboard.data.value?.todayRequestForSite), icon: markRaw(IconEye) },
-  { label: '今日访客', number: toNumber(dashboard.data.value?.todayVisitorForSite), icon: markRaw(IconUserLine) },
-  { label: '累计浏览', number: toNumber(dashboard.data.value?.totalRequestForSite), icon: markRaw(IconHistoryLine) },
-  { label: '累计访客', number: toNumber(dashboard.data.value?.totalVisitorForSite), icon: markRaw(IconUserFollow) },
+  { label: '今日浏览', number: toFlowNumber(dashboard.data.value?.todayRequestForSite), icon: markRaw(IconEye) },
+  { label: '今日访客', number: toFlowNumber(dashboard.data.value?.todayVisitorForSite), icon: markRaw(IconUserLine) },
+  { label: '累计浏览', number: toFlowNumber(dashboard.data.value?.totalRequestForSite), icon: markRaw(IconHistoryLine) },
+  { label: '累计访客', number: toFlowNumber(dashboard.data.value?.totalVisitorForSite), icon: markRaw(IconUserFollow) },
 ])
 
 const daily = computed(() => {
@@ -194,6 +190,18 @@ function refresh() {
   void performance.refresh()
 }
 
+// 分享：复制官网统计面板地址（官网约定 ?query= 之后整体视为要查询的站点地址）
+const shareLink = computed(() => `https://jekit.cn/stats/?query=${dashboard.domain.value}`)
+
+async function share() {
+  try {
+    await navigator.clipboard.writeText(shareLink.value)
+    Toast.success('已复制官网统计面板链接')
+  } catch {
+    Toast.error(`复制失败，请手动复制：${shareLink.value}`)
+  }
+}
+
 onMounted(refresh)
 </script>
 
@@ -203,6 +211,12 @@ onMounted(refresh)
       <IconEye />
     </template>
     <template #actions>
+      <VButton @click="share">
+        <template #icon>
+          <IconShareLine />
+        </template>
+        分享
+      </VButton>
       <VButton type="secondary" :route="{ path: '/plugins/jekit-halo' }">
         <template #icon>
           <IconSettings />
@@ -228,7 +242,7 @@ onMounted(refresh)
           <div class="metric-copy">
             <span>{{ card.label }}</span>
             <!-- 数字滚动入场动画，与 Halo 仪表盘上方卡片的实现一致 -->
-            <NumberFlow class="metric-value" :value="card.number" :format="{ notation: 'standard' }" />
+            <NumberFlow class="metric-value" :value="card.number" :format="{ notation: 'compact' }" />
           </div>
         </div>
       </WidgetCard>

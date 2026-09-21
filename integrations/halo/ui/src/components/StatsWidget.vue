@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import NumberFlow from '@number-flow/vue'
 import { IconEye, IconUserLine } from '@halo-dev/components'
 import { onMounted } from 'vue'
-import { formatMetric, useSiteStats } from '@/model/site-stats'
+import { toFlowNumber, useSiteStats } from '@/model/site-stats'
 
 defineProps<{ editMode?: boolean; previewMode?: boolean; config?: Record<string, unknown> }>()
 
@@ -23,7 +24,8 @@ onMounted(() => dashboard.refresh('/'))
             </span>
             <div class="widget-copy">
               <span>今日浏览</span>
-              <strong>{{ formatMetric(dashboard.data.value?.todayRequestForSite) }}</strong>
+              <NumberFlow class="widget-value" :value="toFlowNumber(dashboard.data.value?.todayRequestForSite)"
+                :format="{ notation: 'compact' }" />
             </div>
           </div>
           <div class="widget-metric">
@@ -32,7 +34,8 @@ onMounted(() => dashboard.refresh('/'))
             </span>
             <div class="widget-copy">
               <span>今日访客</span>
-              <strong>{{ formatMetric(dashboard.data.value?.todayVisitorForSite) }}</strong>
+              <NumberFlow class="widget-value" :value="toFlowNumber(dashboard.data.value?.todayVisitorForSite)"
+                :format="{ notation: 'compact' }" />
             </div>
           </div>
         </template>
@@ -48,13 +51,19 @@ onMounted(() => dashboard.refresh('/'))
 /* 与统计页保持同一套配色：数据色各自保留，通用元素（灰阶、错误提示）取 Halo 的取值与令牌 */
 .widget-container {
   container-type: inline-size;
+  display: flex;
+  height: 100%;
   min-width: 0;
 }
 
+/* 只有两个指标：等分宽度，内容水平垂直居中 */
 .widget-body {
   display: grid;
+  flex: 1;
   min-width: 0;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  justify-items: center;
   gap: .75rem;
   padding: 1rem;
 }
@@ -63,6 +72,7 @@ onMounted(() => dashboard.refresh('/'))
   display: flex;
   min-width: 0;
   align-items: center;
+  justify-content: center;
   gap: .75rem;
 }
 
@@ -94,7 +104,7 @@ onMounted(() => dashboard.refresh('/'))
   font-size: .75rem;
 }
 
-.widget-copy strong {
+.widget-value {
   display: block;
   overflow: hidden;
   color: #111827;

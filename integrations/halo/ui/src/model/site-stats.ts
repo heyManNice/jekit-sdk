@@ -106,8 +106,8 @@ export function buildPerformancePoints(data: SitePerformance | null): Performanc
   })
 }
 
-export function formatMetric(value: unknown): string {
-  if (value === null || value === undefined) return '--'
-  const numeric = Number(value)
-  return Number.isFinite(numeric) ? new Intl.NumberFormat('zh-CN').format(numeric) : String(value)
+// NumberFlow 只接受 number（core 的累计指标是 bigint）。
+// 数据未就绪时返回 0，数据到位后由 0 → 实际值的过渡产生入场动画（与 Halo 仪表盘卡片一致）
+export function toFlowNumber(value: number | bigint | undefined): number {
+  return value === undefined || value === null ? 0 : Number(value)
 }

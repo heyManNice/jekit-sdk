@@ -12,7 +12,7 @@ spec:
     name: heyManNice
     website: https://github.com/heyManNice
   logo: favicon.ico
-  homepage: https://github.com/heyManNice/jekit-sdk#readme
+  homepage: https://jekit.cn
   repo: https://github.com/heyManNice/jekit-sdk
   issues: https://github.com/heyManNice/jekit-sdk/issues
   displayName: "Jekit 统计"
