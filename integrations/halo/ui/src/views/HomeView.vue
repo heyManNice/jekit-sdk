@@ -2,7 +2,7 @@
 import {
   IconEye,
   IconHistoryLine,
-  IconRefreshLine,
+  IconSettings,
   IconUserFollow,
   IconUserLine,
   VButton,
@@ -187,15 +187,11 @@ onMounted(refresh)
       <IconEye />
     </template>
     <template #actions>
-      <VButton
-        type="secondary"
-        :loading="dashboard.loading.value || performance.loading.value"
-        @click="refresh"
-      >
+      <VButton type="secondary" :route="{ path: '/plugins/jekit-halo' }">
         <template #icon>
-          <IconRefreshLine />
+          <IconSettings />
         </template>
-        刷新
+        插件设置
       </VButton>
     </template>
   </VPageHeader>
