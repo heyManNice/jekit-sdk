@@ -1,5 +1,5 @@
 import { definePlugin } from '@halo-dev/ui-shared'
-import { IconPlug } from '@halo-dev/components'
+import { IconEye } from '@halo-dev/components'
 import { markRaw } from 'vue'
 import StatsWidget from './components/StatsWidget.vue'
 
@@ -18,7 +18,7 @@ export default definePlugin({
           menu: {
             name: 'Jekit 统计',
             group: 'dashboard',
-            icon: markRaw(IconPlug),
+            icon: markRaw(IconEye),
             priority: 40,
           },
         },
