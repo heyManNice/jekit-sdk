@@ -16,6 +16,7 @@
     "@halo-dev/api-client": "^2.26.0",
     "@halo-dev/components": "^2.26.0",
     "@halo-dev/ui-shared": "^2.26.0",
+    "@number-flow/vue": "^0.5.2",
     "axios": "^1.19.0",
     "chart.js": "4.5.1",
     "jekit-core": "file:../../../packages/core",

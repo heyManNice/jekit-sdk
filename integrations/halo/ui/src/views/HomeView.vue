@@ -20,21 +20,28 @@ import {
   type ChartData,
   type ChartOptions,
 } from 'chart.js'
+import NumberFlow from '@number-flow/vue'
 import { computed, markRaw, onMounted } from 'vue'
 import { Line } from 'vue-chartjs'
-import { buildPerformancePoints, formatMetric, useSitePerformance, useSiteStats } from '@/model/site-stats'
+import { buildPerformancePoints, useSitePerformance, useSiteStats } from '@/model/site-stats'
 import { neutral } from '@/utils/theme'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler)
+
+// NumberFlow 只接受 number（core 的累计指标是 bigint），加载完成前先给 0，
+// 数据到位后由 0 → 实际值的过渡产生入场动画，与 Halo 仪表盘的卡片一致
+function toNumber(value: number | bigint | undefined): number {
+  return value === undefined || value === null ? 0 : Number(value)
+}
 
 const dashboard = useSiteStats()
 const performance = useSitePerformance()
 
 const cards = computed(() => [
-  { label: '今日浏览', value: dashboard.data.value?.todayRequestForSite, icon: markRaw(IconEye) },
-  { label: '今日访客', value: dashboard.data.value?.todayVisitorForSite, icon: markRaw(IconUserLine) },
-  { label: '累计浏览', value: dashboard.data.value?.totalRequestForSite, icon: markRaw(IconHistoryLine) },
-  { label: '累计访客', value: dashboard.data.value?.totalVisitorForSite, icon: markRaw(IconUserFollow) },
+  { label: '今日浏览', number: toNumber(dashboard.data.value?.todayRequestForSite), icon: markRaw(IconEye) },
+  { label: '今日访客', number: toNumber(dashboard.data.value?.todayVisitorForSite), icon: markRaw(IconUserLine) },
+  { label: '累计浏览', number: toNumber(dashboard.data.value?.totalRequestForSite), icon: markRaw(IconHistoryLine) },
+  { label: '累计访客', number: toNumber(dashboard.data.value?.totalVisitorForSite), icon: markRaw(IconUserFollow) },
 ])
 
 const daily = computed(() => {
@@ -71,6 +78,10 @@ const trendChartOptions: ChartOptions<'line'> = {
   responsive: true,
   maintainAspectRatio: false,
   animation: { duration: 500 },
+  // 首帧容器测量会触发一次 resize，开启 resize 动画即可让图表「画」出来
+  transitions: {
+    resize: { animation: { duration: 600 } },
+  },
   interaction: { intersect: false, mode: 'index' },
   plugins: {
     legend: { display: false },
@@ -137,6 +148,10 @@ const performanceChartOptions: ChartOptions<'line'> = {
   responsive: true,
   maintainAspectRatio: false,
   animation: { duration: 500 },
+  // 同趋势图，靠 resize transition 播放入场动画
+  transitions: {
+    resize: { animation: { duration: 600 } },
+  },
   interaction: { intersect: false, mode: 'index' },
   plugins: {
     legend: { display: false },
@@ -212,7 +227,8 @@ onMounted(refresh)
           </span>
           <div class="metric-copy">
             <span>{{ card.label }}</span>
-            <strong>{{ formatMetric(card.value) }}</strong>
+            <!-- 数字滚动入场动画，与 Halo 仪表盘上方卡片的实现一致 -->
+            <NumberFlow class="metric-value" :value="card.number" :format="{ notation: 'standard' }" />
           </div>
         </div>
       </WidgetCard>
@@ -362,7 +378,7 @@ onMounted(refresh)
   font-size: .875rem;
 }
 
-.metric-copy strong {
+.metric-copy .metric-value {
   color: #111827;
   font-size: 1.5rem;
   line-height: 1.35;
