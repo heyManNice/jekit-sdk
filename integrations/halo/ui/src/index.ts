@@ -16,8 +16,8 @@ export default definePlugin({
           title: 'Jekit 统计',
           searchable: true,
           menu: {
-            name: '访问统计',
-            group: 'tool',
+            name: 'Jekit 统计',
+            group: 'dashboard',
             icon: markRaw(IconPlug),
             priority: 40,
           },
