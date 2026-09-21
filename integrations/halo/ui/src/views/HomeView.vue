@@ -43,8 +43,10 @@ const cards = computed(() => [
 const daily = computed(() => {
   const values = dashboard.data.value?.dailyRequestForSite ?? []
   const dateFormatter = new Intl.DateTimeFormat('zh-CN', { month: 'numeric', day: 'numeric' })
+  // daily 数组的最后一格是「昨天」（今天的数据由 todayRequestForSite 单独返回），
+  // 所以日期整体往前推一天：最右 = 昨天，最左 = 7 天前
   return values.map((value, index) => ({
-    label: dateFormatter.format(new Date(Date.now() - (values.length - 1 - index) * 86_400_000)),
+    label: dateFormatter.format(new Date(Date.now() - (values.length - index) * 86_400_000)),
     value: Number(value),
   }))
 })

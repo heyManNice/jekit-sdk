@@ -11,6 +11,7 @@ declare module 'jekit-core' {
     subPageCount: number
     pageLimitForSite: number
     registeredAt: bigint
+    // 逐日数组固定 7 格，且最后一格是「昨天」；今天的数据由上面的 today* 字段单独返回
     dailyRequestForSite: [number, number, number, number, number, number, number]
     dailyRequestForPage: [number, number, number, number, number, number, number]
     dailyVisitorForSite: [number, number, number, number, number, number, number]
