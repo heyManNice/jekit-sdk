@@ -18,4 +18,11 @@ declare module 'jekit-core' {
   }
 
   export function stats(props: { domain: string; path: string }): Promise<StatsResult>
+
+  export interface PerformanceResult {
+    ttfbHist: number[]
+    pltHist: number[]
+  }
+
+  export function performance(props: { domain: string }): Promise<PerformanceResult>
 }
