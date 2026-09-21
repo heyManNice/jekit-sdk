@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "npm run dev --workspace jekit-docs",
-    "build": "npm run build:packages && npm run build:badge && npm run build:docs && npm run build:demos",
+    "build": "npm run build:packages && npm run build:badge && npm run build:docs && npm run build:demos && npm run build:integrations",
     "build:docs": "npm run build --workspace jekit-docs",
     "build:badge": "npm run build --workspace jekit-badge",
     "build:core": "npm run build --workspace jekit-core",
@@ -14,6 +14,8 @@
     "build:react": "npm run build --workspace jekit-react",
     "build:packages": "npm run build:core && npm run build:cdn && npm run build:vue && npm run build:react",
     "build:demos": "npm run build --workspace jekit-demo-cdn && npm run build --workspace jekit-demo-react && npm run build --workspace jekit-demo-vue",
+    "build:halo": "node tools/build-halo.mjs",
+    "build:integrations": "npm run build:halo",
     "install:playwright": "npx playwright install --with-deps chromium",
     "lint": "eslint apps/docs",
     "typecheck": "npm run typecheck --workspaces --if-present",

@@ -13,13 +13,14 @@ Jekit 是一个免费的公共统计基础工具，支持 CDN 引入、NPM 引�
 
 ## 仓库结构
 
-本仓库使用 npm workspaces 管理所有子项目，依赖统一安装在仓库根目录，并且只维护根目录的一份 `package-lock.json`。
+JavaScript 子项目使用 npm workspaces 管理，依赖统一安装在仓库根目录，并且只维护根目录的一份 `package-lock.json`。跨语言平台集成保留各自的官方构建结构和锁文件。
 
 ```text
 packages/       可发布的 Core、CDN、Vue、React SDK
 apps/docs/      文档与统计面板
 apps/demos/     CDN、Vue、React 接入示例
 functions/      独立部署的边缘函数
+integrations/   Halo 等平台原生集成
 tools/          全仓库共用的构建工具
 ```
 
@@ -68,6 +69,15 @@ npm run build
 ```bash
 npm run all
 ```
+
+`npm run build` 和 `npm run all` 会一并构建 `integrations/halo`，因此需要 Java 21。Halo 插件也可以在其目录中独立构建：
+
+```powershell
+cd integrations/halo
+.\gradlew.bat build
+```
+
+构建不会启动 Docker，插件 JAR 输出到 `integrations/halo/build/libs/`。
 
 ## 版本号规则
 - `apps/docs` 为线上实时更新，没有版本号记录  

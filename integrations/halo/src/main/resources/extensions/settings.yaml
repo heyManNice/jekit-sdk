@@ -1,0 +1,75 @@
+apiVersion: v1alpha1
+kind: Setting
+metadata:
+  name: jekit-settings
+spec:
+  forms:
+    - group: tracking
+      label: 统计设置
+      formSchema:
+        - $formkit: switch
+          name: enabled
+          label: 启用访问统计
+          help: 统计站点前台页面的访问数据，管理后台访问不计入统计。
+          value: true
+
+    - group: postViews
+      label: 文章阅读量
+      formSchema:
+        - $formkit: switch
+          name: enabled
+          label: 显示文章阅读量
+          help: 在文章正文前或正文后显示 Jekit 阅读量。
+          value: false
+        - $formkit: select
+          name: position
+          label: 显示位置
+          value: before
+          options:
+            - label: 正文前
+              value: before
+            - label: 正文后
+              value: after
+        - $formkit: text
+          name: template
+          label: 显示模板
+          help: 可用变量：{pagePv}、{pageUv}、{pagePvToday}、{pageUvToday}
+          value: "阅读 {pagePv} 次"
+          validation: required
+        - $formkit: select
+          name: preset
+          label: 样式
+          value: minimal
+          options:
+            - label: 跟随主题
+              value: inherit
+            - label: 极简文本
+              value: minimal
+            - label: 徽章
+              value: badge
+
+    - group: footer
+      label: 页脚指标
+      formSchema:
+        - $formkit: switch
+          name: enabled
+          label: 显示页脚指标
+          help: 在主题页脚显示站点统计。
+          value: false
+        - $formkit: text
+          name: template
+          label: 显示模板
+          help: 可用变量：{sitePv}、{siteUv}、{sitePvToday}、{siteUvToday}
+          value: "总浏览 {sitePv} 次 · 总访客 {siteUv} 人 · 今日浏览 {sitePvToday} 次 · 今日访客 {siteUvToday} 人"
+          validation: required
+        - $formkit: select
+          name: preset
+          label: 样式
+          value: inherit
+          options:
+            - label: 跟随主题
+              value: inherit
+            - label: 极简文本
+              value: minimal
+            - label: 徽章
+              value: badge

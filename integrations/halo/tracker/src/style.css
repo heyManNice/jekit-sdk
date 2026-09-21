@@ -1,0 +1,30 @@
+.jekit-halo-stats {
+  color: inherit;
+  font: inherit;
+}
+
+.jekit-halo-stats--post {
+  display: block;
+  margin-block: 0.75rem;
+}
+
+.jekit-halo-stats--footer {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.jekit-halo-stats--minimal {
+  color: color-mix(in srgb, currentColor 72%, transparent);
+  font-size: 0.875em;
+}
+
+.jekit-halo-stats--badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2em 0.6em;
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  border-radius: 999px;
+  font-size: 0.875em;
+}

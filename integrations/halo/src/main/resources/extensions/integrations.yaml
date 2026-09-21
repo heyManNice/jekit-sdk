@@ -1,0 +1,38 @@
+apiVersion: plugin.halo.run/v1alpha1
+kind: ExtensionDefinition
+metadata:
+  name: jekit-head-processor
+spec:
+  extensionPointName: template-head-processor
+  className: cn.jekit.jekit.JekitHeadProcessor
+  displayName: Jekit 前台资源加载器
+  description: 为站点前台页面启用访问统计。
+---
+apiVersion: plugin.halo.run/v1alpha1
+kind: ExtensionDefinition
+metadata:
+  name: jekit-footer-processor
+spec:
+  extensionPointName: template-footer-processor
+  className: cn.jekit.jekit.JekitFooterProcessor
+  displayName: Jekit 页脚指标
+  description: 在主题页脚显示站点统计。
+---
+apiVersion: plugin.halo.run/v1alpha1
+kind: ExtensionDefinition
+metadata:
+  name: jekit-post-content-handler
+spec:
+  extensionPointName: reactive-post-content-handler
+  className: cn.jekit.jekit.JekitPostContentHandler
+  displayName: Jekit 文章阅读量
+  description: 在文章正文前或正文后显示阅读量。
+---
+apiVersion: plugin.halo.run/v1alpha1
+kind: ReverseProxy
+metadata:
+  name: jekit-tracker-assets
+rules:
+  - path: /static/**
+    file:
+      directory: static

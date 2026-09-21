@@ -1,0 +1,8 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+rootProject.name = 'plugin-jekit-halo'
+include 'ui'
+include 'tracker'
