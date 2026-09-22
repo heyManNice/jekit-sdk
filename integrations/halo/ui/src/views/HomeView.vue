@@ -22,7 +22,7 @@ import {
   type ChartOptions,
 } from 'chart.js'
 import NumberFlow from '@number-flow/vue'
-import { computed, markRaw, onMounted } from 'vue'
+import { computed, markRaw, onMounted, ref } from 'vue'
 import { Line } from 'vue-chartjs'
 import { buildPerformancePoints, toFlowNumber, useSitePerformance, useSiteStats } from '@/model/site-stats'
 import { neutral } from '@/utils/theme'
@@ -204,6 +204,16 @@ async function share() {
   }
 }
 
+// 首屏提示：统计信息存在 Jekit 服务器、数据公开可查询。
+// 点过「我已知晓」后写进浏览器本地记录，刷新页面不再出现
+const NOTICE_KEY = 'jekit-halo:notice:privacy'
+const noticeVisible = ref(localStorage.getItem(NOTICE_KEY) !== '1')
+
+function dismissNotice() {
+  noticeVisible.value = false
+  localStorage.setItem(NOTICE_KEY, '1')
+}
+
 onMounted(refresh)
 </script>
 
@@ -229,6 +239,16 @@ onMounted(refresh)
   </VPageHeader>
 
   <main class="jekit-dashboard">
+
+    <!-- 数据公开提示：点过「我已知晓」后本浏览器不再显示 -->
+    <div v-if="noticeVisible" class="notice-banner">
+      <p class="notice-text">
+        您正在使用的 Jekit 统计将统计信息储存在 Jekit 服务器，你的Jekit 数据将公开可查询。
+        <a class="notice-link" href="https://jekit.cn/docs/intro/what-this-is/" target="_blank"
+          rel="noopener noreferrer">了解更多</a>
+      </p>
+      <VButton type="secondary" size="sm" @click="dismissNotice">我已知晓</VButton>
+    </div>
 
     <div v-if="dashboard.error.value" class="error-banner">
       <strong>读取失败</strong>
@@ -326,6 +346,37 @@ onMounted(refresh)
   border-radius: .5rem;
   color: rgb(var(--colors-danger) / 1);
   background: rgb(var(--colors-danger) / .06);
+}
+
+/* 数据公开提示：Halo 只有 primary/secondary/danger 三个颜色令牌、没有 warning，
+   所以这里自配一缕琥珀色（黄色系）；文案与右侧「我已知晓」并排，窄面板时换行 */
+.notice-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem .75rem;
+  padding: .75rem 1rem;
+  border-radius: .5rem;
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.notice-text {
+  /* 基准宽度给一个较小值：文字放不下时自己在块内折行，而不是把「我已知晓」挤到第二行 */
+  flex: 1 1 16rem;
+  min-width: 0;
+  margin: 0;
+  font-size: .9375rem;
+  line-height: 1.6;
+}
+
+.notice-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  /* 中文可以在任意字之间断行，链接不能被拆到两行 */
+  white-space: nowrap;
 }
 
 .metric-grid {
