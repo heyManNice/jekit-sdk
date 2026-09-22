@@ -305,6 +305,8 @@ onMounted(refresh)
   min-width: 0;
   gap: .625rem;
   margin: 1rem;
+  /* 下方的容器查询要按「面板宽度」而不是视口宽度判断，因为面板宽度还要减去侧边栏等 */
+  container-type: inline-size;
 }
 
 .jekit-dashboard>*,
@@ -459,7 +461,10 @@ onMounted(refresh)
   justify-content: center;
 }
 
-@media (max-width: 800px) {
+/* 指标卡与下方图表卡在同一节点换行：
+   56.625rem = 2 × 28rem（.analysis-grid 里图表卡的最小宽度）+ .625rem（间距），
+   也就是「面板放不下两张图表卡、图表卡收成单列」的那一刻。 */
+@container (max-width: 56.625rem) {
   .metric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
