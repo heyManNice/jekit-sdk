@@ -279,10 +279,7 @@ onMounted(refresh)
 
       <WidgetCard>
         <template #title>
-          <div class="panel-title">最近 7 天浏览趋势</div>
-        </template>
-        <template #actions>
-          <span class="metric-type">PV</span>
+          <div class="panel-title">最近 7 天浏览量</div>
         </template>
         <div class="trend-card">
           <div v-if="dashboard.loading.value && !dashboard.data.value" class="performance-state">
@@ -400,15 +397,6 @@ onMounted(refresh)
   line-height: 1.35;
   font-weight: 500;
   letter-spacing: -.025em;
-}
-
-.metric-type {
-  border-radius: 999px;
-  padding: .25rem .6rem;
-  color: #15803d;
-  background: #f0fdf4;
-  font-size: .75rem;
-  font-weight: 600;
 }
 
 .performance-legend {
