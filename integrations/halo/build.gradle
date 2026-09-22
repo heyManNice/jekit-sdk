@@ -49,13 +49,13 @@ tasks.register('processUiResources', Copy) {
     shouldRunAfter tasks.named('processResources')
 }
 
-tasks.register('processTrackerResources', Copy) {
-    from project(':tracker').layout.buildDirectory.dir('dist')
-    into layout.buildDirectory.dir('resources/main/static/tracker')
-    dependsOn project(':tracker').tasks.named('assemble')
+tasks.register('processGreeterResources', Copy) {
+    from project(':greeter').layout.buildDirectory.dir('dist')
+    into layout.buildDirectory.dir('resources/main/static/greeter')
+    dependsOn project(':greeter').tasks.named('assemble')
     shouldRunAfter tasks.named('processResources')
 }
 
 tasks.named('classes') {
-    dependsOn tasks.named('processUiResources'), tasks.named('processTrackerResources')
+    dependsOn tasks.named('processUiResources'), tasks.named('processGreeterResources')
 }

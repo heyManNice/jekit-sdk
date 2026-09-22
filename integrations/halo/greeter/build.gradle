@@ -3,11 +3,11 @@ plugins {
     id "com.github.node-gradle.node" version "7.1.0"
 }
 
-group 'cn.jekit.jekit.tracker'
+group 'cn.jekit.jekit.greeter'
 
 tasks.register('pnpmBuild', PnpmTask) {
     group = 'build'
-    description = 'Build the Jekit browser tracker using pnpm'
+    description = 'Build the Jekit greeter for Halo using pnpm'
     args = ['build']
     dependsOn tasks.named('pnpmInstall')
     inputs.dir(layout.projectDirectory.dir('src'))

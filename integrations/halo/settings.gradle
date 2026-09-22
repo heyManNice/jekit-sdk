@@ -5,4 +5,4 @@ pluginManagement {
 }
 rootProject.name = 'plugin-jekit-halo'
 include 'ui'
-include 'tracker'
+include 'greeter'

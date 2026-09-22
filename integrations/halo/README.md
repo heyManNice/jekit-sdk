@@ -1,6 +1,6 @@
 # Jekit for Halo
 
-Jekit 的 Halo 2.26+ 集成插件。插件将统计 Tracker 打包在 JAR 内，不依赖公共 CDN，也不需要部署 Umami 或额外数据库。
+Jekit 的 Halo 2.26+ 集成插件。插件将见客脚本（greeter）打包在 JAR 内，不依赖公共 CDN，也不需要部署 Umami 或额外数据库。
 
 ## 功能
 

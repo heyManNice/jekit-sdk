@@ -1,10 +1,11 @@
 {
-  "name": "jekit-halo-tracker",
+  "name": "jekit-halo-greeter",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "vite build"
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "jekit-core": "file:../../../packages/core"

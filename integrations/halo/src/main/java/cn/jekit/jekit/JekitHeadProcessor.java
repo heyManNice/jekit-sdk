@@ -12,7 +12,7 @@ import run.halo.app.theme.dialect.TemplateHeadProcessor;
 
 @Component
 public class JekitHeadProcessor implements TemplateHeadProcessor {
-    private static final String ASSET_ROOT = "/plugins/jekit-halo/assets/static/tracker/";
+    private static final String ASSET_ROOT = "/plugins/jekit-halo/assets/static/greeter/";
     private final ReactiveSettingFetcher settingFetcher;
 
     public JekitHeadProcessor(ReactiveSettingFetcher settingFetcher) {
