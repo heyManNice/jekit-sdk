@@ -8,6 +8,7 @@ import {
   scopeOption,
   type dimensionOption,
 } from 'jekit-core'
+import { consoleApiClient, ListPostsPublishPhaseEnum } from '@halo-dev/api-client'
 import { stores } from '@halo-dev/ui-shared'
 import { computed, ref } from 'vue'
 
@@ -27,6 +28,16 @@ export interface PerformanceSummary {
   prefix: string
   suffix: string
   fractionDigits: number
+}
+
+export interface DocumentStatsRow {
+  title: string
+  path: string
+  href: string
+  totalRequests: string
+  totalVisitors: string
+  todayRequests: string
+  todayVisitors: string
 }
 
 export interface PerformancePoint {
@@ -173,6 +184,73 @@ export function useSiteUserHistory() {
       })
     } catch (reason) {
       error.value = reason instanceof Error ? reason.message : '无法读取用户历史数据'
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return { data, loading, error, refresh }
+}
+
+export function useLatestDocumentStats() {
+  const globalInfoStore = stores.globalInfo()
+  const data = ref<DocumentStatsRow[] | null>(null)
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+
+  const domain = computed(() => {
+    const value = globalInfoStore.globalInfo?.externalUrl || window.location.origin
+    try {
+      return new URL(value).origin
+    } catch {
+      return value
+    }
+  })
+
+  async function refresh() {
+    loading.value = true
+    error.value = null
+    try {
+      if (!globalInfoStore.globalInfo) {
+        await globalInfoStore.fetchGlobalInfo()
+      }
+
+      const response = await consoleApiClient.content.post.listPosts({
+        page: 1,
+        size: 3,
+        sort: ['spec.publishTime,desc'],
+        publishPhase: ListPostsPublishPhaseEnum.Published,
+      })
+
+      const targets = [
+        { title: '首页', path: '/', href: new URL('/', domain.value).toString() },
+        ...response.data.items.map(({ post }) => {
+          const permalink = post.status?.permalink
+          let path = `/archives/${post.spec.slug}`
+          if (permalink) {
+            const url = new URL(permalink, domain.value)
+            path = `${url.pathname}${url.search}${url.hash}`
+          }
+          return {
+            title: post.spec.title,
+            path,
+            href: new URL(path, domain.value).toString(),
+          }
+        }),
+      ]
+
+      data.value = await Promise.all(targets.map(async (target) => {
+        const result = await stats({ domain: domain.value, path: target.path })
+        return {
+          ...target,
+          totalRequests: result.totalRequestForPage.toString(),
+          totalVisitors: result.totalVisitorForPage.toString(),
+          todayRequests: result.todayRequestForPage.toString(),
+          todayVisitors: result.todayVisitorForPage.toString(),
+        }
+      }))
+    } catch (reason) {
+      error.value = reason instanceof Error ? reason.message : '无法读取最新文章数据'
     } finally {
       loading.value = false
     }
