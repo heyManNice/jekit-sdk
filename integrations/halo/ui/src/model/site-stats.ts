@@ -1,5 +1,8 @@
 import {
+  history as fetchHistory,
+  metricOption,
   performance as fetchPerformance,
+  rangeOption,
   source as fetchSource,
   stats,
   scopeOption,
@@ -11,6 +14,7 @@ import { computed, ref } from 'vue'
 export type SiteStats = Awaited<ReturnType<typeof stats>>
 export type SitePerformance = Awaited<ReturnType<typeof fetchPerformance>>
 export type SiteSource = Awaited<ReturnType<typeof fetchSource>>
+export type SiteHistory = Awaited<ReturnType<typeof fetchHistory>>
 
 export interface SourceRow {
   name: string
@@ -129,6 +133,46 @@ export function useSiteSource(dimension: dimensionOption) {
       })
     } catch (reason) {
       error.value = reason instanceof Error ? reason.message : '无法读取来源数据'
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return { data, loading, error, refresh }
+}
+
+export function useSiteUserHistory() {
+  const globalInfoStore = stores.globalInfo()
+  const data = ref<SiteHistory | null>(null)
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+
+  const domain = computed(() => {
+    const value = globalInfoStore.globalInfo?.externalUrl || window.location.origin
+    try {
+      return new URL(value).origin
+    } catch {
+      return value
+    }
+  })
+
+  async function refresh() {
+    loading.value = true
+    error.value = null
+    try {
+      if (!globalInfoStore.globalInfo) {
+        await globalInfoStore.fetchGlobalInfo()
+      }
+      type HistoryParams = Parameters<typeof fetchHistory>[0]
+      data.value = await fetchHistory({
+        domain: domain.value,
+        path: '/',
+        range: rangeOption.Daily,
+        metric: metricOption.totalUserForSite,
+        dimensionValue: 0 as HistoryParams['dimensionValue'],
+      })
+    } catch (reason) {
+      error.value = reason instanceof Error ? reason.message : '无法读取用户历史数据'
     } finally {
       loading.value = false
     }

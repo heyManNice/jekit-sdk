@@ -37,6 +37,7 @@ import {
   useSitePerformance,
   useSiteSource,
   useSiteStats,
+  useSiteUserHistory,
 } from '@/model/site-stats'
 import { neutral } from '@/utils/theme'
 import IconShareLine from '~icons/ri/share-line'
@@ -45,6 +46,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 
 const dashboard = useSiteStats()
 const performance = useSitePerformance()
+const userHistory = useSiteUserHistory()
 const searchSource = useSiteSource(dimensionOption.SearchEngine)
 const browserSource = useSiteSource(dimensionOption.Browser)
 const osSource = useSiteSource(dimensionOption.OS)
@@ -117,6 +119,30 @@ const daily = computed(() => {
 })
 const hasTrendData = computed(() => daily.value.some((item) => item.requests > 0 || item.visitors > 0))
 
+const userHistoryPoints = computed(() => {
+  const dateFormatter = new Intl.DateTimeFormat('zh-CN', { month: 'numeric', day: 'numeric' })
+  const valueByDate = new Map<number, number>()
+
+  for (const item of userHistory.data.value ?? []) {
+    const date = new Date(Number(item.date))
+    date.setHours(0, 0, 0, 0)
+    valueByDate.set(date.getTime(), Number(item.value))
+  }
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(today)
+    date.setDate(today.getDate() - (6 - index))
+    return {
+      label: dateFormatter.format(date),
+      value: valueByDate.get(date.getTime()) ?? 0,
+    }
+  })
+})
+const hasUserHistory = computed(() => userHistory.data.value !== null)
+
 const trendChartData = computed<ChartData<'line'>>(() => ({
   labels: daily.value.map((item) => item.label),
   datasets: [
@@ -187,6 +213,44 @@ const trendChartOptions: ChartOptions<'line'> = {
         font: { size: 11 },
         precision: 0,
         maxTicksLimit: 5,
+      },
+    },
+  },
+}
+
+const userHistoryChartData = computed<ChartData<'line'>>(() => ({
+  labels: userHistoryPoints.value.map((item) => item.label),
+  datasets: [
+    {
+      label: '用户数',
+      data: userHistoryPoints.value.map((item) => item.value),
+      borderColor: '#9333ea',
+      backgroundColor: 'rgba(147, 51, 234, 0.1)',
+      fill: true,
+      tension: 0.35,
+      borderWidth: 2,
+      pointBackgroundColor: '#9333ea',
+      pointBorderColor: '#ffffff',
+      pointBorderWidth: 2,
+      pointRadius: 3,
+      pointHoverRadius: 5,
+    },
+  ],
+}))
+
+const userHistoryChartOptions: ChartOptions<'line'> = {
+  ...trendChartOptions,
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: '#ffffff',
+      titleColor: neutral.textMuted,
+      bodyColor: neutral.text,
+      borderColor: neutral.grid,
+      borderWidth: 1,
+      padding: 10,
+      callbacks: {
+        label: (context) => `用户数：${context.parsed.y} 人`,
       },
     },
   },
@@ -278,6 +342,7 @@ const performanceChartOptions: ChartOptions<'line'> = {
 function refresh() {
   void dashboard.refresh('/')
   void performance.refresh()
+  void userHistory.refresh()
   void searchSource.refresh()
   void browserSource.refresh()
   void osSource.refresh()
@@ -407,6 +472,32 @@ onMounted(refresh)
           </div>
           <div v-else class="trend-empty">
             <VEmpty title="暂无趋势数据" message="最近 7 天没有浏览记录" />
+          </div>
+        </div>
+      </WidgetCard>
+
+      <WidgetCard>
+        <template #title>
+          <div class="panel-title">最近 7 天用户数</div>
+        </template>
+        <template #actions>
+          <div class="performance-legend" aria-label="图例">
+            <span><i class="legend-dot legend-dot--users" />用户数</span>
+          </div>
+        </template>
+        <div class="trend-card">
+          <div v-if="userHistory.loading.value && !userHistory.data.value" class="performance-state">
+            正在加载用户数据…
+          </div>
+          <div v-else-if="userHistory.error.value" class="performance-state performance-state--error">
+            暂时无法读取用户数据，请稍后重试。
+          </div>
+          <div v-else-if="hasUserHistory" class="chart-container">
+            <Line :data="userHistoryChartData" :options="userHistoryChartOptions" role="img"
+              aria-label="最近 7 天累计站点用户数趋势" />
+          </div>
+          <div v-else class="trend-empty">
+            <VEmpty title="暂无用户数据" message="最近 7 天没有用户记录" />
           </div>
         </div>
       </WidgetCard>
@@ -656,6 +747,10 @@ onMounted(refresh)
 
 .legend-dot--uv {
   background: #2563eb;
+}
+
+.legend-dot--users {
+  background: #9333ea;
 }
 
 .performance-state {
