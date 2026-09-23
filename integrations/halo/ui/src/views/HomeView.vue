@@ -134,7 +134,8 @@ const userHistoryPoints = computed(() => {
 
   return Array.from({ length: 7 }, (_, index) => {
     const date = new Date(today)
-    date.setDate(today.getDate() - (6 - index))
+    // history 日趋势与 stats 的最近 7 天口径一致：最右侧为昨天，不补今天。
+    date.setDate(today.getDate() - (7 - index))
     return {
       label: dateFormatter.format(date),
       value: valueByDate.get(date.getTime()) ?? 0,
