@@ -1,9 +1,29 @@
-import { performance as fetchPerformance, stats } from 'jekit-core'
+import {
+  performance as fetchPerformance,
+  source as fetchSource,
+  stats,
+  scopeOption,
+  type dimensionOption,
+} from 'jekit-core'
 import { stores } from '@halo-dev/ui-shared'
 import { computed, ref } from 'vue'
 
 export type SiteStats = Awaited<ReturnType<typeof stats>>
 export type SitePerformance = Awaited<ReturnType<typeof fetchPerformance>>
+export type SiteSource = Awaited<ReturnType<typeof fetchSource>>
+
+export interface SourceRow {
+  name: string
+  total: number
+  percent: number
+}
+
+export interface PerformanceSummary {
+  flowValue: number
+  prefix: string
+  suffix: string
+  fractionDigits: number
+}
 
 export interface PerformancePoint {
   label: string
@@ -77,6 +97,109 @@ export function useSitePerformance() {
   }
 
   return { data, loading, error, refresh }
+}
+
+export function useSiteSource(dimension: dimensionOption) {
+  const globalInfoStore = stores.globalInfo()
+  const data = ref<SiteSource | null>(null)
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+
+  const domain = computed(() => {
+    const value = globalInfoStore.globalInfo?.externalUrl || window.location.origin
+    try {
+      return new URL(value).origin
+    } catch {
+      return value
+    }
+  })
+
+  async function refresh() {
+    loading.value = true
+    error.value = null
+    try {
+      if (!globalInfoStore.globalInfo) {
+        await globalInfoStore.fetchGlobalInfo()
+      }
+      data.value = await fetchSource({
+        domain: domain.value,
+        path: '/',
+        scope: scopeOption.Site,
+        dimension,
+      })
+    } catch (reason) {
+      error.value = reason instanceof Error ? reason.message : '无法读取来源数据'
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return { data, loading, error, refresh }
+}
+
+export function buildSourceRows(
+  data: SiteSource | null,
+  labels: Readonly<Record<number, string>>,
+  limit = 5,
+): SourceRow[] {
+  if (!data) return []
+
+  const grandTotal = data.reduce((sum, item) => sum + Number(item.totalRequest), 0)
+  if (grandTotal === 0) return []
+
+  const totalsByName = new Map<string, number>()
+  data.forEach((item) => {
+    const name = labels[item.dimensionIndex] ?? '其他'
+    totalsByName.set(name, (totalsByName.get(name) ?? 0) + Number(item.totalRequest))
+  })
+
+  const rows = Array.from(totalsByName, ([name, total]) => ({ name, total }))
+    .filter((item) => item.total > 0)
+    .sort((left, right) => right.total - left.total)
+
+  if (rows.length > limit) {
+    const visible = rows.slice(0, limit - 1)
+    const restRows = rows.slice(limit - 1)
+    const rest = restRows.reduce((sum, item) => sum + item.total, 0)
+    const otherName = visible.some((item) => item.name === '其他') ? '其余来源' : '其他'
+    rows.splice(0, rows.length, ...visible, { name: otherName, total: rest })
+  }
+
+  return rows.slice(0, limit).map((item) => ({
+    ...item,
+    percent: (item.total / grandTotal) * 100,
+  }))
+}
+
+export function getPerformanceSummary(
+  histogram: readonly number[] | undefined,
+): PerformanceSummary {
+  const valid = histogram?.slice(0, 254) ?? []
+  const samples = valid.reduce((sum, count) => sum + count, 0)
+  if (samples === 0) {
+    return {
+      flowValue: 0,
+      prefix: '',
+      suffix: '',
+      fractionDigits: 0,
+    }
+  }
+
+  const target = Math.ceil(samples * 0.75)
+  let cumulative = 0
+  let bucket = 0
+  for (; bucket < valid.length; bucket++) {
+    cumulative += valid[bucket] ?? 0
+    if (cumulative >= target) break
+  }
+
+  const useSeconds = bucket >= 100
+  return {
+    flowValue: useSeconds ? Math.min(bucket, 253) / 100 : bucket * 10,
+    prefix: bucket >= 253 ? '≥' : '',
+    suffix: useSeconds ? 's' : 'ms',
+    fractionDigits: useSeconds ? 2 : 0,
+  }
 }
 
 export function buildPerformancePoints(data: SitePerformance | null): PerformancePoint[] {

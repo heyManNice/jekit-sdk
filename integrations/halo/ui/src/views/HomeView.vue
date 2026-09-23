@@ -22,9 +22,22 @@ import {
   type ChartOptions,
 } from 'chart.js'
 import NumberFlow from '@number-flow/vue'
+import {
+  dimensionOption,
+  whereWasIFromOption,
+  whichBrowserOption,
+  whichOsOption,
+} from 'jekit-core'
 import { computed, markRaw, onMounted, ref } from 'vue'
 import { Line } from 'vue-chartjs'
-import { buildPerformancePoints, toFlowNumber, useSitePerformance, useSiteStats } from '@/model/site-stats'
+import {
+  buildPerformancePoints,
+  buildSourceRows,
+  toFlowNumber,
+  useSitePerformance,
+  useSiteSource,
+  useSiteStats,
+} from '@/model/site-stats'
 import { neutral } from '@/utils/theme'
 import IconShareLine from '~icons/ri/share-line'
 
@@ -32,6 +45,56 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 
 const dashboard = useSiteStats()
 const performance = useSitePerformance()
+const searchSource = useSiteSource(dimensionOption.SearchEngine)
+const browserSource = useSiteSource(dimensionOption.Browser)
+const osSource = useSiteSource(dimensionOption.OS)
+
+const sourceLabels: Readonly<Record<number, string>> = {
+  [whereWasIFromOption.Other]: '其他',
+  [whereWasIFromOption.Direct]: '直接访问',
+  [whereWasIFromOption.Bing]: 'Bing',
+  [whereWasIFromOption.Google]: 'Google',
+  [whereWasIFromOption.Baidu]: '百度',
+  [whereWasIFromOption.Doubao]: '豆包',
+  [whereWasIFromOption.Copilot]: 'Copilot',
+  [whereWasIFromOption.Claude]: 'Claude',
+  [whereWasIFromOption.ChatGPT]: 'ChatGPT',
+  [whereWasIFromOption.DeepSeek]: 'DeepSeek',
+  [whereWasIFromOption.Perplexity]: 'Perplexity',
+  [whereWasIFromOption.Grok]: 'Grok',
+  [whereWasIFromOption.Gemini]: 'Gemini',
+  [whereWasIFromOption.Kimi]: 'Kimi',
+  [whereWasIFromOption.Yuanbao]: '元宝',
+  [whereWasIFromOption.Sogou]: '搜狗',
+  [whereWasIFromOption.Search360]: '360 搜索',
+  [whereWasIFromOption.Brave]: 'Brave',
+  [whereWasIFromOption.DuckDuckGo]: 'DuckDuckGo',
+  [whereWasIFromOption.Yandex]: 'Yandex',
+  [whereWasIFromOption.Wenxin]: '文心一言',
+  [whereWasIFromOption.Qwen]: '通义千问',
+  [whereWasIFromOption.Spark]: '讯飞星火',
+}
+
+const browserLabels: Readonly<Record<number, string>> = {
+  [whichBrowserOption.Other]: '其他',
+  [whichBrowserOption.Chrome]: 'Chrome',
+  [whichBrowserOption.Edge]: 'Edge',
+  [whichBrowserOption.Safari]: 'Safari',
+  [whichBrowserOption.Firefox]: 'Firefox',
+  [whichBrowserOption.Opera]: 'Opera',
+  [whichBrowserOption.WeChat]: '微信',
+  [whichBrowserOption.Browser360]: '360 浏览器',
+}
+
+const osLabels: Readonly<Record<number, string>> = {
+  [whichOsOption.Other]: '其他',
+  [whichOsOption.Windows]: 'Windows',
+  [whichOsOption.MacOS]: 'macOS',
+  [whichOsOption.Linux]: 'Linux',
+  [whichOsOption.Android]: 'Android',
+  [whichOsOption.iOS]: 'iOS',
+  [whichOsOption.HarmonyOS]: 'HarmonyOS',
+}
 
 const cards = computed(() => [
   { label: '今日浏览', number: toFlowNumber(dashboard.data.value?.todayRequestForSite), icon: markRaw(IconEye) },
@@ -41,29 +104,45 @@ const cards = computed(() => [
 ])
 
 const daily = computed(() => {
-  const values = dashboard.data.value?.dailyRequestForSite ?? []
+  const requests = dashboard.data.value?.dailyRequestForSite ?? []
+  const visitors = dashboard.data.value?.dailyVisitorForSite ?? []
   const dateFormatter = new Intl.DateTimeFormat('zh-CN', { month: 'numeric', day: 'numeric' })
   // daily 数组的最后一格是「昨天」（今天的数据由 todayRequestForSite 单独返回），
   // 所以日期整体往前推一天：最右 = 昨天，最左 = 7 天前
-  return values.map((value, index) => ({
-    label: dateFormatter.format(new Date(Date.now() - (values.length - index) * 86_400_000)),
-    value: Number(value),
+  return requests.map((value, index) => ({
+    label: dateFormatter.format(new Date(Date.now() - (requests.length - index) * 86_400_000)),
+    requests: Number(value),
+    visitors: Number(visitors[index] ?? 0),
   }))
 })
-const hasTrendData = computed(() => daily.value.some((item) => item.value > 0))
+const hasTrendData = computed(() => daily.value.some((item) => item.requests > 0 || item.visitors > 0))
 
 const trendChartData = computed<ChartData<'line'>>(() => ({
   labels: daily.value.map((item) => item.label),
   datasets: [
     {
       label: '浏览量',
-      data: daily.value.map((item) => item.value),
+      data: daily.value.map((item) => item.requests),
       borderColor: '#16a34a',
       backgroundColor: 'rgba(22, 163, 74, 0.12)',
       fill: true,
       tension: 0.35,
       borderWidth: 2,
       pointBackgroundColor: '#16a34a',
+      pointBorderColor: '#ffffff',
+      pointBorderWidth: 2,
+      pointRadius: 3,
+      pointHoverRadius: 5,
+    },
+    {
+      label: '访客数',
+      data: daily.value.map((item) => item.visitors),
+      borderColor: '#2563eb',
+      backgroundColor: 'rgba(37, 99, 235, 0.06)',
+      fill: false,
+      tension: 0.35,
+      borderWidth: 2,
+      pointBackgroundColor: '#2563eb',
       pointBorderColor: '#ffffff',
       pointBorderWidth: 2,
       pointRadius: 3,
@@ -91,7 +170,7 @@ const trendChartOptions: ChartOptions<'line'> = {
       borderWidth: 1,
       padding: 10,
       callbacks: {
-        label: (context) => `浏览量：${context.parsed.y} 次`,
+        label: (context) => `${context.dataset.label}：${context.parsed.y} ${context.datasetIndex === 0 ? '次' : '人'}`,
       },
     },
   },
@@ -114,6 +193,16 @@ const trendChartOptions: ChartOptions<'line'> = {
 }
 
 const performancePoints = computed(() => buildPerformancePoints(performance.data.value))
+const sourceRows = computed(() => buildSourceRows(searchSource.data.value, sourceLabels))
+const browserRows = computed(() => buildSourceRows(browserSource.data.value, browserLabels, 4))
+const osRows = computed(() => buildSourceRows(osSource.data.value, osLabels, 4))
+const sourceLoading = computed(() => searchSource.loading.value && !searchSource.data.value)
+const sourceError = computed(() => Boolean(searchSource.error.value))
+const environmentLoading = computed(() =>
+  (browserSource.loading.value && !browserSource.data.value)
+  || (osSource.loading.value && !osSource.data.value),
+)
+const environmentError = computed(() => Boolean(browserSource.error.value || osSource.error.value))
 const performanceChartData = computed<ChartData<'line'>>(() => ({
   labels: performancePoints.value.map((point) => point.label),
   datasets: [
@@ -190,6 +279,9 @@ const performanceChartOptions: ChartOptions<'line'> = {
 function refresh() {
   void dashboard.refresh('/')
   void performance.refresh()
+  void searchSource.refresh()
+  void browserSource.refresh()
+  void osSource.refresh()
 }
 
 // 分享：复制官网统计面板地址（官网约定 ?query= 之后整体视为要查询的站点地址）
@@ -273,7 +365,7 @@ onMounted(refresh)
     <section class="analysis-grid" aria-label="趋势分析">
       <WidgetCard>
         <template #title>
-          <div class="panel-title">今日性能指标</div>
+          <div class="panel-title">今日网站性能</div>
         </template>
         <template #actions>
           <div class="performance-legend" aria-label="图例">
@@ -299,18 +391,83 @@ onMounted(refresh)
 
       <WidgetCard>
         <template #title>
-          <div class="panel-title">最近 7 天浏览量</div>
+          <div class="panel-title">最近 7 天访问趋势</div>
+        </template>
+        <template #actions>
+          <div class="performance-legend" aria-label="图例">
+            <span><i class="legend-dot legend-dot--pv" />浏览量</span>
+            <span><i class="legend-dot legend-dot--uv" />访客数</span>
+          </div>
         </template>
         <div class="trend-card">
           <div v-if="dashboard.loading.value && !dashboard.data.value" class="performance-state">
             正在加载统计数据…
           </div>
           <div v-else-if="hasTrendData" class="chart-container">
-            <Line :data="trendChartData" :options="trendChartOptions" role="img" aria-label="最近 7 天站点浏览量趋势" />
+            <Line :data="trendChartData" :options="trendChartOptions" role="img" aria-label="最近 7 天站点浏览量和访客数趋势" />
           </div>
           <div v-else class="trend-empty">
             <VEmpty title="暂无趋势数据" message="最近 7 天没有浏览记录" />
           </div>
+        </div>
+      </WidgetCard>
+
+      <WidgetCard>
+        <template #title>
+          <div class="panel-title">访问来源</div>
+        </template>
+        <div class="ranking-card">
+          <div v-if="sourceLoading" class="performance-state">正在加载来源数据…</div>
+          <div v-else-if="sourceError" class="performance-state performance-state--error">
+            暂时无法读取来源数据，请稍后重试。
+          </div>
+          <div v-else-if="sourceRows.length" class="ranking-list">
+            <div v-for="row in sourceRows" :key="row.name" class="ranking-row">
+              <div class="ranking-copy">
+                <span>{{ row.name }}</span>
+                <span>{{ row.total.toLocaleString() }} 次 · {{ row.percent.toFixed(1) }}%</span>
+              </div>
+              <div class="progress-track" aria-hidden="true">
+                <span class="progress-value progress-value--source" :style="{ width: `${row.percent}%` }" />
+              </div>
+            </div>
+          </div>
+          <div v-else class="performance-state">暂无来源数据</div>
+        </div>
+      </WidgetCard>
+
+      <WidgetCard>
+        <template #title>
+          <div class="panel-title">访客环境</div>
+        </template>
+        <div class="environment-card">
+          <div v-if="environmentLoading" class="performance-state">正在加载访客环境…</div>
+          <div v-else-if="environmentError" class="performance-state performance-state--error">
+            暂时无法读取访客环境，请稍后重试。
+          </div>
+          <div v-else-if="browserRows.length || osRows.length" class="environment-grid">
+            <div class="environment-group">
+              <h3>浏览器</h3>
+              <div v-for="row in browserRows" :key="row.name" class="environment-row">
+                <span>{{ row.name }}</span>
+                <div class="progress-track" aria-hidden="true">
+                  <span class="progress-value progress-value--browser" :style="{ width: `${row.percent}%` }" />
+                </div>
+                <span>{{ row.percent.toFixed(1) }}%</span>
+              </div>
+            </div>
+            <div class="environment-group">
+              <h3>操作系统</h3>
+              <div v-for="row in osRows" :key="row.name" class="environment-row">
+                <span>{{ row.name }}</span>
+                <div class="progress-track" aria-hidden="true">
+                  <span class="progress-value progress-value--os" :style="{ width: `${row.percent}%` }" />
+                </div>
+                <span>{{ row.percent.toFixed(1) }}%</span>
+              </div>
+            </div>
+          </div>
+          <div v-else class="performance-state">暂无访客环境数据</div>
         </div>
       </WidgetCard>
     </section>
@@ -391,7 +548,7 @@ onMounted(refresh)
 
 .analysis-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
   gap: .625rem;
 }
@@ -481,6 +638,14 @@ onMounted(refresh)
   background: #9333ea;
 }
 
+.legend-dot--pv {
+  background: #16a34a;
+}
+
+.legend-dot--uv {
+  background: #2563eb;
+}
+
 .performance-state {
   display: flex;
   min-height: 12rem;
@@ -495,7 +660,9 @@ onMounted(refresh)
 }
 
 .performance-card,
-.trend-card {
+.trend-card,
+.ranking-card,
+.environment-card {
   min-width: 0;
   padding: .75rem 1rem;
 }
@@ -512,6 +679,106 @@ onMounted(refresh)
   justify-content: center;
 }
 
+.ranking-list {
+  display: grid;
+  min-height: 15rem;
+  align-content: center;
+  gap: 1rem;
+}
+
+.ranking-row {
+  display: grid;
+  gap: .375rem;
+}
+
+.ranking-copy {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #374151;
+  font-size: .8125rem;
+}
+
+.ranking-copy span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ranking-copy span:last-child {
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.progress-track {
+  height: .375rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #f3f4f6;
+}
+
+.progress-value {
+  display: block;
+  height: 100%;
+  min-width: .125rem;
+  border-radius: inherit;
+}
+
+.progress-value--source {
+  background: #16a34a;
+}
+
+.progress-value--browser {
+  background: #2563eb;
+}
+
+.progress-value--os {
+  background: #9333ea;
+}
+
+.environment-grid {
+  display: grid;
+  min-height: 15rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: center;
+  gap: 1.5rem;
+}
+
+.environment-group {
+  display: grid;
+  align-content: start;
+  gap: .875rem;
+}
+
+.environment-group h3 {
+  margin: 0;
+  color: #6b7280;
+  font-size: .75rem;
+  font-weight: 500;
+}
+
+.environment-row {
+  display: grid;
+  grid-template-columns: minmax(4.5rem, auto) minmax(2rem, 1fr) 3rem;
+  align-items: center;
+  gap: .5rem;
+  color: #374151;
+  font-size: .75rem;
+}
+
+.environment-row>span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.environment-row>span:last-child {
+  color: #9ca3af;
+  text-align: right;
+}
+
 /* 指标卡与下方图表卡在同一节点换行：
    56.625rem = 2 × 28rem（.analysis-grid 里图表卡的最小宽度）+ .625rem（间距），
    也就是「面板放不下两张图表卡、图表卡收成单列」的那一刻。 */
@@ -519,10 +786,18 @@ onMounted(refresh)
   .metric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .analysis-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 480px) {
   .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .environment-grid {
     grid-template-columns: 1fr;
   }
 }

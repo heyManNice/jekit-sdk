@@ -11,7 +11,7 @@ onMounted(() => dashboard.refresh('/'))
 </script>
 
 <template>
-  <WidgetCard title="Jekit 今日统计">
+  <WidgetCard title="今日统计">
     <div class="widget-container">
       <div class="widget-body">
         <template v-if="dashboard.error.value">

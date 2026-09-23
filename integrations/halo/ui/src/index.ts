@@ -1,6 +1,7 @@
 import { definePlugin } from '@halo-dev/ui-shared'
 import { IconEye } from '@halo-dev/components'
 import { markRaw } from 'vue'
+import PerformanceWidget from './components/PerformanceWidget.vue'
 import StatsWidget from './components/StatsWidget.vue'
 
 export default definePlugin({
@@ -30,6 +31,17 @@ export default definePlugin({
       {
         id: 'jekit-stats-widget',
         component: markRaw(StatsWidget),
+        group: 'Jekit',
+        defaultSize: {
+          w: 4,
+          h: 5,
+          minW: 3,
+          minH: 4,
+        },
+      },
+      {
+        id: 'jekit-performance-widget',
+        component: markRaw(PerformanceWidget),
         group: 'Jekit',
         defaultSize: {
           w: 4,
