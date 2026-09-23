@@ -141,20 +141,23 @@ export function buildSourceRows(
   data: SiteSource | null,
   labels: Readonly<Record<number, string>>,
   limit = 5,
+  includeZero = false,
 ): SourceRow[] {
   if (!data) return []
 
   const grandTotal = data.reduce((sum, item) => sum + Number(item.totalRequest), 0)
-  if (grandTotal === 0) return []
 
   const totalsByName = new Map<string, number>()
+  if (includeZero) {
+    Object.values(labels).forEach((name) => totalsByName.set(name, 0))
+  }
   data.forEach((item) => {
     const name = labels[item.dimensionIndex] ?? '其他'
     totalsByName.set(name, (totalsByName.get(name) ?? 0) + Number(item.totalRequest))
   })
 
   const rows = Array.from(totalsByName, ([name, total]) => ({ name, total }))
-    .filter((item) => item.total > 0)
+    .filter((item) => includeZero || item.total > 0)
     .sort((left, right) => right.total - left.total)
 
   if (rows.length > limit) {
@@ -167,7 +170,7 @@ export function buildSourceRows(
 
   return rows.slice(0, limit).map((item) => ({
     ...item,
-    percent: (item.total / grandTotal) * 100,
+    percent: grandTotal > 0 ? (item.total / grandTotal) * 100 : 0,
   }))
 }
 

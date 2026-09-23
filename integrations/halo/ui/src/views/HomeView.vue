@@ -193,7 +193,7 @@ const trendChartOptions: ChartOptions<'line'> = {
 }
 
 const performancePoints = computed(() => buildPerformancePoints(performance.data.value))
-const sourceRows = computed(() => buildSourceRows(searchSource.data.value, sourceLabels))
+const sourceRows = computed(() => buildSourceRows(searchSource.data.value, sourceLabels, Number.POSITIVE_INFINITY, true))
 const browserRows = computed(() => buildSourceRows(browserSource.data.value, browserLabels, 4))
 const osRows = computed(() => buildSourceRows(osSource.data.value, osLabels, 4))
 const sourceLoading = computed(() => searchSource.loading.value && !searchSource.data.value)
@@ -681,14 +681,16 @@ onMounted(refresh)
 
 .ranking-list {
   display: grid;
-  min-height: 15rem;
-  align-content: center;
-  gap: 1rem;
+  height: 15rem;
+  align-content: start;
+  gap: .625rem;
+  overflow-y: auto;
+  padding-right: .25rem;
 }
 
 .ranking-row {
   display: grid;
-  gap: .375rem;
+  gap: .25rem;
 }
 
 .ranking-copy {
@@ -728,6 +730,18 @@ onMounted(refresh)
 
 .progress-value--source {
   background: #16a34a;
+  transform-origin: left center;
+  animation: source-progress-enter 500ms cubic-bezier(.25, 1, .5, 1) both;
+}
+
+@keyframes source-progress-enter {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
 }
 
 .progress-value--browser {
@@ -799,6 +813,12 @@ onMounted(refresh)
 
   .environment-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-value--source {
+    animation: none;
   }
 }
 </style>
