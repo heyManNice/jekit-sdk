@@ -28,7 +28,7 @@ import {
   whichBrowserOption,
   whichOsOption,
 } from 'jekit-core'
-import { computed, markRaw, onMounted, ref } from 'vue'
+import { computed, markRaw, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { Line } from 'vue-chartjs'
 import {
   buildPerformancePoints,
@@ -53,6 +53,9 @@ const userHistory = useSiteUserHistory()
 const searchSource = useSiteSource(dimensionOption.SearchEngine)
 const browserSource = useSiteSource(dimensionOption.Browser)
 const osSource = useSiteSource(dimensionOption.OS)
+const latestDocumentRowLimit = ref(7)
+const documentsTableElement = ref<HTMLElement | null>(null)
+let documentsResizeObserver: ResizeObserver | undefined
 
 const sourceLabels: Readonly<Record<number, string>> = {
   [whereWasIFromOption.Other]: '其他',
@@ -345,7 +348,7 @@ const performanceChartOptions: ChartOptions<'line'> = {
 
 function refresh() {
   void dashboard.refresh('/')
-  void latestDocuments.refresh()
+  void latestDocuments.refresh(latestDocumentRowLimit.value)
   void performance.refresh()
   void userHistory.refresh()
   void searchSource.refresh()
@@ -375,7 +378,29 @@ function dismissNotice() {
   localStorage.setItem(NOTICE_KEY, '1')
 }
 
+function updateLatestDocumentRowLimit(element: HTMLElement) {
+  const firstRow = element.querySelector<HTMLElement>('.documents-row')
+  const rowHeight = firstRow?.getBoundingClientRect().height ?? 0
+  if (rowHeight <= 0) return
+
+  const nextLimit = Math.max(1, Math.floor((element.clientHeight + .5) / rowHeight))
+  if (nextLimit === latestDocumentRowLimit.value) return
+
+  latestDocumentRowLimit.value = nextLimit
+  void latestDocuments.refresh(nextLimit)
+}
+
+watch(documentsTableElement, (element) => {
+  documentsResizeObserver?.disconnect()
+  if (!element) return
+
+  documentsResizeObserver = new ResizeObserver(() => updateLatestDocumentRowLimit(element))
+  documentsResizeObserver.observe(element)
+  updateLatestDocumentRowLimit(element)
+}, { flush: 'post' })
+
 onMounted(refresh)
+onBeforeUnmount(() => documentsResizeObserver?.disconnect())
 </script>
 
 <template>
@@ -469,7 +494,7 @@ onMounted(refresh)
           <div v-else-if="latestDocuments.error.value" class="performance-state performance-state--error">
             暂时无法读取文档数据，请稍后重试。
           </div>
-          <div v-else-if="latestDocuments.data.value?.length" class="documents-table">
+          <div v-else-if="latestDocuments.data.value?.length" ref="documentsTableElement" class="documents-table">
             <div v-for="(item, index) in latestDocuments.data.value" :key="item.path" class="documents-row"
               :style="{ animationDelay: `${index * 50}ms` }">
               <div class="document-name">
@@ -821,7 +846,7 @@ onMounted(refresh)
   min-width: 26rem;
   grid-template-columns: max-content minmax(0, 1fr);
   grid-auto-rows: 2rem;
-  align-content: start;
+  align-content: space-between;
   overflow: auto;
 }
 

@@ -207,7 +207,7 @@ export function useLatestDocumentStats() {
     }
   })
 
-  async function refresh() {
+  async function refresh(rowLimit = 7) {
     loading.value = true
     error.value = null
     try {
@@ -215,16 +215,20 @@ export function useLatestDocumentStats() {
         await globalInfoStore.fetchGlobalInfo()
       }
 
-      const response = await consoleApiClient.content.post.listPosts({
-        page: 1,
-        size: 3,
-        sort: ['spec.publishTime,desc'],
-        publishPhase: ListPostsPublishPhaseEnum.Published,
-      })
+      // 首页固定占第一行，其余行按卡片当前能完整容纳的数量查询最新文章。
+      const articleLimit = Math.max(0, Math.min(99, Math.floor(rowLimit) - 1))
+      const posts = articleLimit > 0
+        ? (await consoleApiClient.content.post.listPosts({
+            page: 1,
+            size: articleLimit,
+            sort: ['spec.publishTime,desc'],
+            publishPhase: ListPostsPublishPhaseEnum.Published,
+          })).data.items
+        : []
 
       const targets = [
         { title: '首页', path: '/', href: new URL('/', domain.value).toString() },
-        ...response.data.items.map(({ post }) => {
+        ...posts.map(({ post }) => {
           const permalink = post.status?.permalink
           let path = `/archives/${post.spec.slug}`
           if (permalink) {
