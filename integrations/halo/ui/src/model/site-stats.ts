@@ -268,10 +268,14 @@ export function buildSourceRows(
   labels: Readonly<Record<number, string>>,
   limit = 5,
   includeZero = false,
+  period: 'today' | 'total' = 'total',
 ): SourceRow[] {
   if (!data) return []
 
-  const grandTotal = data.reduce((sum, item) => sum + Number(item.totalRequest), 0)
+  const requestValue = (item: SiteSource[number]) => Number(
+    period === 'today' ? item.todayRequest : item.totalRequest,
+  )
+  const grandTotal = data.reduce((sum, item) => sum + requestValue(item), 0)
 
   const totalsByName = new Map<string, number>()
   if (includeZero) {
@@ -279,7 +283,7 @@ export function buildSourceRows(
   }
   data.forEach((item) => {
     const name = labels[item.dimensionIndex] ?? '其他'
-    totalsByName.set(name, (totalsByName.get(name) ?? 0) + Number(item.totalRequest))
+    totalsByName.set(name, (totalsByName.get(name) ?? 0) + requestValue(item))
   })
 
   const rows = Array.from(totalsByName, ([name, total]) => ({ name, total }))

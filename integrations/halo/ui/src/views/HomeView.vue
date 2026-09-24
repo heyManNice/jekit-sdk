@@ -60,6 +60,13 @@ const osSource = useSiteSource(dimensionOption.OS)
 const latestDocumentRowLimit = ref(7)
 const documentsTableElement = ref<HTMLElement | null>(null)
 let documentsResizeObserver: ResizeObserver | undefined
+const sourcePeriod = ref<'today' | 'total'>('today')
+const browserPeriod = ref<'today' | 'total'>('today')
+const osPeriod = ref<'today' | 'total'>('today')
+const sourcePeriodOptions = [
+  { label: '今日', value: 'today' },
+  { label: '累计', value: 'total' },
+] as const
 
 const sourceLabels: Readonly<Record<number, string>> = {
   [whereWasIFromOption.Other]: '其他',
@@ -268,9 +275,27 @@ const userHistoryChartOptions: ChartOptions<'line'> = {
 }
 
 const performancePoints = computed(() => buildPerformancePoints(performance.data.value))
-const sourceRows = computed(() => buildSourceRows(searchSource.data.value, sourceLabels, Number.POSITIVE_INFINITY, true))
-const browserRows = computed(() => buildSourceRows(browserSource.data.value, browserLabels, Number.POSITIVE_INFINITY, true))
-const osRows = computed(() => buildSourceRows(osSource.data.value, osLabels, Number.POSITIVE_INFINITY, true))
+const sourceRows = computed(() => buildSourceRows(
+  searchSource.data.value,
+  sourceLabels,
+  Number.POSITIVE_INFINITY,
+  true,
+  sourcePeriod.value,
+))
+const browserRows = computed(() => buildSourceRows(
+  browserSource.data.value,
+  browserLabels,
+  Number.POSITIVE_INFINITY,
+  true,
+  browserPeriod.value,
+))
+const osRows = computed(() => buildSourceRows(
+  osSource.data.value,
+  osLabels,
+  Number.POSITIVE_INFINITY,
+  true,
+  osPeriod.value,
+))
 const sourceLoading = computed(() => searchSource.loading.value && !searchSource.data.value)
 const sourceError = computed(() => Boolean(searchSource.error.value))
 const browserLoading = computed(() => browserSource.loading.value && !browserSource.data.value)
@@ -601,6 +626,15 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
         <template #title>
           <div class="panel-title">访问来源</div>
         </template>
+        <template #actions>
+          <div class="source-period-tabs" aria-label="来源统计范围">
+            <button v-for="option in sourcePeriodOptions" :key="option.value" type="button"
+              :class="{ 'is-active': sourcePeriod === option.value }"
+              :aria-pressed="sourcePeriod === option.value" @click="sourcePeriod = option.value">
+              {{ option.label }}
+            </button>
+          </div>
+        </template>
         <div class="ranking-card">
           <div v-if="sourceLoading" class="performance-state">正在加载来源数据…</div>
           <div v-else-if="sourceError" class="card-error-state" role="alert">
@@ -609,7 +643,7 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
             <span>暂时无法读取数据，请稍后重试。</span>
           </div>
           <div v-else-if="sourceRows.length" class="ranking-list">
-            <div v-for="row in sourceRows" :key="row.name" class="ranking-row">
+            <div v-for="row in sourceRows" :key="`${sourcePeriod}:${row.name}`" class="ranking-row">
               <div class="ranking-copy">
                 <span>{{ row.name }}</span>
                 <span>{{ row.total.toLocaleString() }} 次 · {{ row.percent.toFixed(1) }}%</span>
@@ -627,6 +661,15 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
         <template #title>
           <div class="panel-title">浏览器来源</div>
         </template>
+        <template #actions>
+          <div class="source-period-tabs" aria-label="浏览器统计范围">
+            <button v-for="option in sourcePeriodOptions" :key="option.value" type="button"
+              :class="{ 'is-active': browserPeriod === option.value }"
+              :aria-pressed="browserPeriod === option.value" @click="browserPeriod = option.value">
+              {{ option.label }}
+            </button>
+          </div>
+        </template>
         <div class="ranking-card">
           <div v-if="browserLoading" class="performance-state">正在加载浏览器数据…</div>
           <div v-else-if="browserError" class="card-error-state" role="alert">
@@ -635,7 +678,7 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
             <span>暂时无法读取数据，请稍后重试。</span>
           </div>
           <div v-else-if="browserRows.length" class="ranking-list">
-            <div v-for="row in browserRows" :key="row.name" class="ranking-row">
+            <div v-for="row in browserRows" :key="`${browserPeriod}:${row.name}`" class="ranking-row">
               <div class="ranking-copy">
                 <span>{{ row.name }}</span>
                 <span>{{ row.total.toLocaleString() }} 次 · {{ row.percent.toFixed(1) }}%</span>
@@ -653,6 +696,15 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
         <template #title>
           <div class="panel-title">操作系统来源</div>
         </template>
+        <template #actions>
+          <div class="source-period-tabs" aria-label="操作系统统计范围">
+            <button v-for="option in sourcePeriodOptions" :key="option.value" type="button"
+              :class="{ 'is-active': osPeriod === option.value }"
+              :aria-pressed="osPeriod === option.value" @click="osPeriod = option.value">
+              {{ option.label }}
+            </button>
+          </div>
+        </template>
         <div class="ranking-card">
           <div v-if="osLoading" class="performance-state">正在加载操作系统数据…</div>
           <div v-else-if="osError" class="card-error-state" role="alert">
@@ -661,7 +713,7 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
             <span>暂时无法读取数据，请稍后重试。</span>
           </div>
           <div v-else-if="osRows.length" class="ranking-list">
-            <div v-for="row in osRows" :key="row.name" class="ranking-row">
+            <div v-for="row in osRows" :key="`${osPeriod}:${row.name}`" class="ranking-row">
               <div class="ranking-copy">
                 <span>{{ row.name }}</span>
                 <span>{{ row.total.toLocaleString() }} 次 · {{ row.percent.toFixed(1) }}%</span>
@@ -864,6 +916,43 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
   display: flex;
   align-items: center;
   gap: .375rem;
+}
+
+.source-period-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: .125rem;
+  padding: .125rem;
+  border-radius: .375rem;
+  background: #f3f4f6;
+}
+
+.source-period-tabs button {
+  border: 0;
+  border-radius: .25rem;
+  padding: .1875rem .5rem;
+  color: #6b7280;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: .75rem;
+  line-height: 1.25rem;
+  transition: color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.source-period-tabs button:hover {
+  color: #374151;
+}
+
+.source-period-tabs button:focus-visible {
+  outline: 2px solid rgb(var(--colors-primary) / .45);
+  outline-offset: 1px;
+}
+
+.source-period-tabs button.is-active {
+  color: #111827;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / .08);
 }
 
 .legend-dot {
