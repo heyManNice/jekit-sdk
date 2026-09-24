@@ -16,7 +16,7 @@ spec:
   repo: https://github.com/heyManNice/jekit-sdk
   issues: https://github.com/heyManNice/jekit-sdk/issues
   displayName: "Jekit 统计"
-  description: "无需部署额外统计服务，为 Halo 提供访问统计、文章阅读量和页脚指标。"
+  description: "安装即用，无需自建统计服务。为 Halo 提供访问趋势、来源分析与网站性能指标，并支持文章阅读量和页脚统计。"
   settingName: jekit-settings
   configMapName: jekit-config
   license:
