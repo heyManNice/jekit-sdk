@@ -897,6 +897,7 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
 }
 
 .documents-card {
+  container: documents-card / inline-size;
   overflow-x: auto;
 }
 
@@ -1118,6 +1119,24 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
   display: flex;
   flex-wrap: wrap;
   gap: .625rem;
+}
+
+@container documents-card (max-width: 36rem) {
+  .documents-table {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) max-content;
+  }
+
+  .document-name {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .document-name strong {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 /* 指标卡与下方图表卡在同一节点换行：
