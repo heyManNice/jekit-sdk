@@ -818,7 +818,7 @@ onMounted(refresh)
 .documents-table {
   display: grid;
   height: 15rem;
-  min-width: 36rem;
+  min-width: 26rem;
   grid-template-columns: max-content minmax(0, 1fr);
   grid-auto-rows: 2rem;
   align-content: start;
@@ -1005,6 +1005,7 @@ onMounted(refresh)
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .progress-value,
   .documents-row {
     animation: none;
