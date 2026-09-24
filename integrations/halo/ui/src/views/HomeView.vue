@@ -42,7 +42,10 @@ import {
 } from '@/model/site-stats'
 import { neutral } from '@/utils/theme'
 import IconExternalLinkLine from '~icons/ri/external-link-line'
+import IconInformationLine from '~icons/ri/information-line'
+import IconLineChartLine from '~icons/ri/line-chart-line'
 import IconShareLine from '~icons/ri/share-line'
+import sloganImage from '../../../../../apps/docs/public/images/slogan.webp'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler)
 
@@ -368,6 +371,18 @@ async function share() {
   }
 }
 
+function openExternalLink(url: string) {
+  window.open(url, '_blank', 'noopener,noreferrer')
+}
+
+function openMoreMetrics() {
+  openExternalLink(shareLink.value)
+}
+
+function openAboutJekit() {
+  openExternalLink('https://jekit.cn/docs/intro/what-this-is/')
+}
+
 // 首屏提示：统计信息存在 Jekit 服务器、数据公开可查询。
 // 点过「我已知晓」后写进浏览器本地记录，刷新页面不再出现
 const NOTICE_KEY = 'jekit-halo:notice:privacy'
@@ -637,6 +652,37 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
             </div>
           </div>
           <div v-else class="performance-state">暂无操作系统数据</div>
+        </div>
+      </WidgetCard>
+
+      <WidgetCard>
+        <template #title>
+          <div class="panel-title">更多信息</div>
+        </template>
+        <div class="more-info-card">
+          <div class="slogan-frame">
+            <img :src="sloganImage" alt="Jekit，极简统计，为开发者而生">
+          </div>
+          <div class="more-info-content">
+            <div>
+              <h3>了解网站的更多数据</h3>
+              <p>访问 Jekit 完整统计面板，或者进一步了解 Jekit。</p>
+            </div>
+            <div class="more-info-actions">
+              <VButton @click="openMoreMetrics">
+                <template #icon>
+                  <IconLineChartLine />
+                </template>
+                访问更多指标
+              </VButton>
+              <VButton type="secondary" @click="openAboutJekit">
+                <template #icon>
+                  <IconInformationLine />
+                </template>
+                关于 Jekit
+              </VButton>
+            </div>
+          </div>
         </div>
       </WidgetCard>
     </section>
@@ -1008,6 +1054,70 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
 
 .progress-value--os {
   background: #9333ea;
+}
+
+.more-info-card {
+  display: grid;
+  height: 15rem;
+  min-width: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 1rem;
+  padding: .75rem 1rem;
+}
+
+.slogan-frame {
+  display: flex;
+  width: 75%;
+  height: 50%;
+  min-width: 0;
+  min-height: 0;
+  align-self: center;
+  align-items: center;
+  justify-self: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: .5rem;
+  background: #111827;
+}
+
+.slogan-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 12rem;
+  object-fit: contain;
+}
+
+.more-info-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 1rem;
+}
+
+.more-info-content h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.more-info-content p {
+  margin: .375rem 0 0;
+  color: #6b7280;
+  font-size: .875rem;
+  line-height: 1.6;
+}
+
+.more-info-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .625rem;
 }
 
 /* 指标卡与下方图表卡在同一节点换行：
