@@ -453,8 +453,10 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
     </div>
 
     <div v-if="dashboard.error.value" class="error-banner">
-      <strong>读取失败</strong>
-      <span>暂时无法读取统计数据，请稍后重试。</span>
+      <span>
+        暂时无法读取统计数据，请稍后重试。如果你是初次安装 Jekit 统计，请确保你的域名在安装后至少有一次访问。
+        <a class="error-banner-link" :href="dashboard.domain.value" target="_blank" rel="noopener noreferrer">去访问</a>
+      </span>
     </div>
 
     <section class="metric-grid" aria-label="访问概览" aria-live="polite">
@@ -732,9 +734,14 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
   display: grid;
   gap: .2rem;
   padding: 1rem;
-  border-radius: .5rem;
   color: rgb(var(--colors-danger) / 1);
   background: rgb(var(--colors-danger) / .06);
+}
+
+.error-banner-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 /* 数据公开提示：Halo 只有 primary/secondary/danger 三个颜色令牌、没有 warning，
@@ -746,9 +753,13 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
   justify-content: space-between;
   gap: .5rem .75rem;
   padding: .75rem 1rem;
-  border-radius: .5rem;
   color: #92400e;
   background: #fef3c7;
+}
+
+.error-banner,
+.notice-banner {
+  border-radius: .5rem;
 }
 
 .notice-text {
