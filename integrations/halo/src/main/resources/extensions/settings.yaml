@@ -30,10 +30,10 @@ spec:
               value: before
             - label: 正文后
               value: after
-        - $formkit: text
+        - $formkit: jekitTemplate
           name: template
           label: 显示模板
-          help: 可用变量：{pagePv}、{pageUv}、{pagePvToday}、{pageUvToday}
+          templateKind: page
           value: "阅读 {pagePv} 次"
           validation: required
         - $formkit: select
@@ -55,11 +55,11 @@ spec:
           name: enabled
           label: 显示页脚指标
           help: 在主题页脚显示站点统计。
-          value: false
-        - $formkit: text
+          value: true
+        - $formkit: jekitTemplate
           name: template
           label: 显示模板
-          help: 可用变量：{sitePv}、{siteUv}、{sitePvToday}、{siteUvToday}
+          templateKind: site
           value: "总浏览 {sitePv} 次 · 总访客 {siteUv} 人 · 今日浏览 {sitePvToday} 次 · 今日访客 {siteUvToday} 人"
           validation: required
         - $formkit: select

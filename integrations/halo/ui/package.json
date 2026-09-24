@@ -13,6 +13,7 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
+    "@formkit/vue": "2.1.2",
     "@halo-dev/api-client": "^2.26.0",
     "@halo-dev/components": "^2.26.0",
     "@halo-dev/ui-shared": "^2.26.0",

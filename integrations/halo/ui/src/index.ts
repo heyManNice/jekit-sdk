@@ -1,11 +1,18 @@
+import { createInput } from '@formkit/vue'
 import { definePlugin } from '@halo-dev/ui-shared'
 import { IconEye } from '@halo-dev/components'
 import { markRaw } from 'vue'
 import PerformanceWidget from './components/PerformanceWidget.vue'
 import StatsWidget from './components/StatsWidget.vue'
+import TemplateVariableInput from './components/TemplateVariableInput.vue'
 
 export default definePlugin({
   components: {},
+  formkit: {
+    inputs: {
+      jekitTemplate: createInput(TemplateVariableInput, { props: ['templateKind'] }),
+    },
+  },
   routes: [
     {
       parentName: 'Root',
