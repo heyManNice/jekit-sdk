@@ -43,8 +43,7 @@ import {
 import { neutral } from '@/utils/theme'
 import IconErrorWarningLine from '~icons/ri/error-warning-line'
 import IconExternalLinkLine from '~icons/ri/external-link-line'
-import IconInformationLine from '~icons/ri/information-line'
-import IconLineChartLine from '~icons/ri/line-chart-line'
+import IconQuestionLine from '~icons/ri/question-line'
 import IconShareLine from '~icons/ri/share-line'
 import sloganImage from '../../../../../apps/docs/public/images/slogan.webp'
 
@@ -121,6 +120,20 @@ const cards = computed(() => [
   { label: '累计浏览', number: toFlowNumber(dashboard.data.value?.totalRequestForSite), icon: markRaw(IconHistoryLine) },
   { label: '累计访客', number: toFlowNumber(dashboard.data.value?.totalVisitorForSite), icon: markRaw(IconUserFollow) },
 ])
+
+const registeredDate = computed(() => {
+  const timestamp = Number(dashboard.data.value?.registeredAt ?? 0)
+  if (!Number.isFinite(timestamp) || timestamp <= 0) return '—'
+  const date = new Date(timestamp)
+  return Number.isNaN(date.getTime())
+    ? '—'
+    : new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }).format(date)
+})
+const subPageCount = computed(() => dashboard.data.value ? Number(dashboard.data.value.subPageCount) : null)
+const pageLimit = computed(() => {
+  const limit = Number(dashboard.data.value?.pageLimitForSite ?? 0)
+  return Number.isFinite(limit) && limit > 0 ? limit : null
+})
 
 const daily = computed(() => {
   const requests = dashboard.data.value?.dailyRequestForSite ?? []
@@ -395,18 +408,6 @@ async function share() {
   } catch {
     Toast.error(`复制失败，请手动复制：${shareLink.value}`)
   }
-}
-
-function openExternalLink(url: string) {
-  window.open(url, '_blank', 'noopener,noreferrer')
-}
-
-function openMoreMetrics() {
-  openExternalLink(shareLink.value)
-}
-
-function openAboutJekit() {
-  openExternalLink('https://jekit.cn/docs/intro/what-this-is/')
 }
 
 // 首屏提示：统计信息存在 Jekit 服务器、数据公开可查询。
@@ -736,23 +737,32 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
             <img :src="sloganImage" alt="Jekit，极简统计，为开发者而生">
           </div>
           <div class="more-info-content">
-            <div>
+            <div class="more-info-intro">
               <h3>了解网站的更多数据</h3>
-              <p>访问 Jekit 完整统计面板，或者进一步了解 Jekit。</p>
+              <p>查看完整统计面板，了解访问趋势与访客来源。</p>
+            </div>
+            <div class="more-info-details">
+              <div class="more-info-detail">
+                <span>接入 Jekit 时间：{{ registeredDate }}</span>
+              </div>
+              <div class="more-info-detail">
+                <span>已统计子页面：{{ subPageCount ?? '—' }}<template v-if="pageLimit !== null"> / {{ pageLimit }}</template></span>
+                <span class="page-limit-help-wrap">
+                  <button class="page-limit-help" type="button" aria-label="了解子页面数量限制"
+                    aria-describedby="page-limit-tooltip">
+                    <IconQuestionLine aria-hidden="true" />
+                  </button>
+                  <span id="page-limit-tooltip" class="page-limit-tooltip" role="tooltip">
+                    子页面数量限制是为了防止服务器资源被无限耗尽。如果当前配置不足以使用，你可以添加
+                    <a href="https://jekit.cn/docs/intro/what-this-is/" target="_blank" rel="noopener noreferrer">交流群</a>
+                    免费提高限制。
+                  </span>
+                </span>
+              </div>
             </div>
             <div class="more-info-actions">
-              <VButton @click="openMoreMetrics">
-                <template #icon>
-                  <IconLineChartLine />
-                </template>
-                访问更多指标
-              </VButton>
-              <VButton type="secondary" @click="openAboutJekit">
-                <template #icon>
-                  <IconInformationLine />
-                </template>
-                关于 Jekit
-              </VButton>
+              <a :href="shareLink" target="_blank" rel="noopener noreferrer">访问更多指标</a>
+              <a href="https://jekit.cn/docs/intro/what-this-is/" target="_blank" rel="noopener noreferrer">关于 Jekit</a>
             </div>
           </div>
         </div>
@@ -1232,31 +1242,131 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
   display: flex;
   min-width: 0;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: center;
-  gap: 1.25rem;
-  padding: 1rem;
+  gap: .875rem;
+  padding: .75rem 0;
 }
 
-.more-info-content h3 {
+.more-info-intro h3 {
   margin: 0;
-  color: #111827;
-  font-size: 1.125rem;
-  line-height: 1.5;
+  color: #374151;
+  font-size: .9375rem;
   font-weight: 500;
+  line-height: 1.5;
 }
 
-.more-info-content p {
-  margin: .375rem 0 0;
+.more-info-intro p {
+  margin: .25rem 0 0;
   color: #6b7280;
-  font-size: .875rem;
+  font-size: .8125rem;
+  line-height: 1.5;
+}
+
+.more-info-details {
+  display: grid;
+  gap: .25rem;
+}
+
+.more-info-detail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .125rem;
+  color: #6b7280;
+  font-size: .8125rem;
+  line-height: 1.5;
+}
+
+.page-limit-help-wrap {
+  position: relative;
+  display: inline-flex;
+  width: 1rem;
+  height: 1.25rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.page-limit-help {
+  display: inline-flex;
+  width: 1rem;
+  height: 1rem;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  padding: 0;
+  color: #9ca3af;
+  background: transparent;
+  cursor: help;
+}
+
+.page-limit-help:hover {
+  color: #374151;
+}
+
+.page-limit-help:focus-visible {
+  outline: 2px solid rgb(var(--colors-primary) / .45);
+  outline-offset: 2px;
+}
+
+.page-limit-help :deep(svg) {
+  display: block;
+  width: .875rem;
+  height: .875rem;
+}
+
+.page-limit-tooltip {
+  position: absolute;
+  z-index: 10;
+  top: 50%;
+  right: calc(100% - .125rem);
+  width: min(17rem, calc(100vw - 2rem));
+  box-sizing: border-box;
+  border-radius: .5rem;
+  padding: .625rem .75rem;
+  color: #fff;
+  background: #374151;
+  font-size: .75rem;
   line-height: 1.6;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: opacity 150ms ease, visibility 150ms ease;
+}
+
+.page-limit-help-wrap:hover .page-limit-tooltip,
+.page-limit-help-wrap:focus-within .page-limit-tooltip {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.page-limit-tooltip a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .more-info-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: .625rem;
+  gap: .375rem 1rem;
+}
+
+.more-info-actions a {
+  color: #374151;
+  font-size: .8125rem;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.more-info-actions a:hover {
+  color: #111827;
 }
 
 @container documents-card (max-width: 36rem) {
