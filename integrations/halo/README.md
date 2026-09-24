@@ -20,10 +20,10 @@ cd integrations\halo
 .\gradlew.bat clean build
 ```
 
-构建产物位于：
+Halo 插件版本由根目录 `package.json` 的两位版本和本目录 `gradle.properties` 中独立递增的 `haloRevision` 组成。根目录版本更新时，`haloRevision` 不重置。例如当前版本为 `1.5`、修订号为 `1`，构建产物位于：
 
 ```text
-build/libs/plugin-jekit-halo-1.0.0-SNAPSHOT.jar
+build/libs/plugin-jekit-halo-1.5.1.jar
 ```
 
 构建任务不会启动 Docker。不要执行 `haloServer`，即可保持“本机只构建、远程 Halo 验证”的工作流。

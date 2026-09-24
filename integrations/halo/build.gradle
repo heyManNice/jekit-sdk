@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 plugins {
     id 'java'
     id "io.freefair.lombok" version "9.2.0"
@@ -5,6 +7,20 @@ plugins {
 }
 
 group 'cn.jekit.jekit'
+
+def sdkVersion = new JsonSlurper().parseText(
+    providers.fileContents(layout.projectDirectory.file('../../package.json')).asText.get()
+).version
+def haloRevision = providers.gradleProperty('haloRevision').get()
+
+if (!(sdkVersion instanceof String) || !(sdkVersion ==~ /\d+\.\d+/)) {
+    throw new GradleException('Root package.json version must contain exactly two numeric parts, such as 1.5')
+}
+if (!(haloRevision ==~ /0|[1-9]\d*/)) {
+    throw new GradleException('haloRevision must be a non-negative integer without leading zeros')
+}
+
+version = "${sdkVersion}.${haloRevision}".toString()
 
 repositories {
     mavenCentral()
