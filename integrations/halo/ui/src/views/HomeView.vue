@@ -444,7 +444,7 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
     <!-- 数据公开提示：点过「我已知晓」后本浏览器不再显示 -->
     <div v-if="noticeVisible" class="notice-banner">
       <p class="notice-text">
-        您正在使用的 Jekit 统计将统计信息储存在 Jekit 服务器，你的Jekit 数据将公开可查询。
+        您正在使用的 Jekit 统计将统计信息储存在 Jekit 服务器，你的 Jekit 数据将公开可查询。
         <a class="notice-link" href="https://jekit.cn/docs/intro/what-this-is/" target="_blank"
           rel="noopener noreferrer">了解更多</a>
       </p>
