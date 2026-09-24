@@ -41,6 +41,7 @@ import {
   useSiteUserHistory,
 } from '@/model/site-stats'
 import { neutral } from '@/utils/theme'
+import IconErrorWarningLine from '~icons/ri/error-warning-line'
 import IconExternalLinkLine from '~icons/ri/external-link-line'
 import IconInformationLine from '~icons/ri/information-line'
 import IconLineChartLine from '~icons/ri/line-chart-line'
@@ -487,8 +488,10 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
           <div v-if="performance.loading.value && !performance.data.value" class="performance-state">
             正在加载性能数据…
           </div>
-          <div v-else-if="performance.error.value" class="performance-state performance-state--error">
-            暂时无法读取性能数据，请稍后重试。
+          <div v-else-if="performance.error.value" class="card-error-state" role="alert">
+            <IconErrorWarningLine aria-hidden="true" />
+            <strong>读取失败</strong>
+            <span>暂时无法读取数据，请稍后重试。</span>
           </div>
           <div v-else-if="performancePoints.length" class="chart-container">
             <Line :data="performanceChartData" :options="performanceChartOptions" role="img"
@@ -506,8 +509,10 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
           <div v-if="latestDocuments.loading.value && !latestDocuments.data.value" class="performance-state">
             正在加载文档数据…
           </div>
-          <div v-else-if="latestDocuments.error.value" class="performance-state performance-state--error">
-            暂时无法读取文档数据，请稍后重试。
+          <div v-else-if="latestDocuments.error.value" class="card-error-state" role="alert">
+            <IconErrorWarningLine aria-hidden="true" />
+            <strong>读取失败</strong>
+            <span>暂时无法读取数据，请稍后重试。</span>
           </div>
           <div v-else-if="latestDocuments.data.value?.length" ref="documentsTableElement" class="documents-table">
             <div v-for="(item, index) in latestDocuments.data.value" :key="item.path" class="documents-row"
@@ -548,6 +553,11 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
           <div v-if="dashboard.loading.value && !dashboard.data.value" class="performance-state">
             正在加载统计数据…
           </div>
+          <div v-else-if="dashboard.error.value" class="card-error-state" role="alert">
+            <IconErrorWarningLine aria-hidden="true" />
+            <strong>读取失败</strong>
+            <span>暂时无法读取数据，请稍后重试。</span>
+          </div>
           <div v-else-if="hasTrendData" class="chart-container">
             <Line :data="trendChartData" :options="trendChartOptions" role="img" aria-label="最近 7 天站点浏览量和访客数趋势" />
           </div>
@@ -570,8 +580,10 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
           <div v-if="userHistory.loading.value && !userHistory.data.value" class="performance-state">
             正在加载用户数据…
           </div>
-          <div v-else-if="userHistory.error.value" class="performance-state performance-state--error">
-            暂时无法读取用户数据，请稍后重试。
+          <div v-else-if="userHistory.error.value" class="card-error-state" role="alert">
+            <IconErrorWarningLine aria-hidden="true" />
+            <strong>读取失败</strong>
+            <span>暂时无法读取数据，请稍后重试。</span>
           </div>
           <div v-else-if="hasUserHistory" class="chart-container">
             <Line :data="userHistoryChartData" :options="userHistoryChartOptions" role="img"
@@ -589,8 +601,10 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
         </template>
         <div class="ranking-card">
           <div v-if="sourceLoading" class="performance-state">正在加载来源数据…</div>
-          <div v-else-if="sourceError" class="performance-state performance-state--error">
-            暂时无法读取来源数据，请稍后重试。
+          <div v-else-if="sourceError" class="card-error-state" role="alert">
+            <IconErrorWarningLine aria-hidden="true" />
+            <strong>读取失败</strong>
+            <span>暂时无法读取数据，请稍后重试。</span>
           </div>
           <div v-else-if="sourceRows.length" class="ranking-list">
             <div v-for="row in sourceRows" :key="row.name" class="ranking-row">
@@ -613,8 +627,10 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
         </template>
         <div class="ranking-card">
           <div v-if="browserLoading" class="performance-state">正在加载浏览器数据…</div>
-          <div v-else-if="browserError" class="performance-state performance-state--error">
-            暂时无法读取浏览器数据，请稍后重试。
+          <div v-else-if="browserError" class="card-error-state" role="alert">
+            <IconErrorWarningLine aria-hidden="true" />
+            <strong>读取失败</strong>
+            <span>暂时无法读取数据，请稍后重试。</span>
           </div>
           <div v-else-if="browserRows.length" class="ranking-list">
             <div v-for="row in browserRows" :key="row.name" class="ranking-row">
@@ -637,8 +653,10 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
         </template>
         <div class="ranking-card">
           <div v-if="osLoading" class="performance-state">正在加载操作系统数据…</div>
-          <div v-else-if="osError" class="performance-state performance-state--error">
-            暂时无法读取操作系统数据，请稍后重试。
+          <div v-else-if="osError" class="card-error-state" role="alert">
+            <IconErrorWarningLine aria-hidden="true" />
+            <strong>读取失败</strong>
+            <span>暂时无法读取数据，请稍后重试。</span>
           </div>
           <div v-else-if="osRows.length" class="ranking-list">
             <div v-for="row in osRows" :key="row.name" class="ranking-row">
@@ -714,7 +732,6 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
   display: grid;
   gap: .2rem;
   padding: 1rem;
-  border: 1px solid rgb(var(--colors-danger) / .25);
   border-radius: .5rem;
   color: rgb(var(--colors-danger) / 1);
   background: rgb(var(--colors-danger) / .06);
@@ -874,8 +891,29 @@ onBeforeUnmount(() => documentsResizeObserver?.disconnect())
   font-size: .875rem;
 }
 
-.performance-state--error {
+.card-error-state {
+  display: flex;
+  height: 15rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .375rem;
+  color: #6b7280;
+  text-align: center;
+  font-size: .8125rem;
+}
+
+.card-error-state :deep(svg) {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-bottom: .125rem;
   color: rgb(var(--colors-danger) / 1);
+}
+
+.card-error-state strong {
+  color: #374151;
+  font-size: .875rem;
+  font-weight: 500;
 }
 
 .performance-card,
