@@ -10,6 +10,9 @@
 * [React 引入](./guide/react.md)
 * [Vue 引入](./guide/vue.md)
 
+## 博客系统
+* [Halo 插件](./blog/halo.md)
+
 ## 额外功能
 
 * [你喜爱的 Badge](./more/badge.md)
