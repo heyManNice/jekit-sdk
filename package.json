@@ -16,6 +16,8 @@
     "build:demos": "npm run build --workspace jekit-demo-cdn && npm run build --workspace jekit-demo-react && npm run build --workspace jekit-demo-vue",
     "build:halo": "node tools/build-halo.mjs",
     "build:integrations": "npm run build:halo",
+    "explainer": "npm run dev --workspace jekit-explainer",
+    "render:explainer": "npm run render --workspace jekit-explainer && npm run render:poster --workspace jekit-explainer",
     "install:playwright": "npx playwright install --with-deps chromium",
     "lint": "eslint apps/docs",
     "typecheck": "npm run typecheck --workspaces --if-present",
@@ -29,6 +31,7 @@
     "packages/*",
     "apps/docs",
     "apps/demos/*",
+    "apps/explainer",
     "functions/*"
   ],
   "devDependencies": {
