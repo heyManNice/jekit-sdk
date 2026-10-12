@@ -51,6 +51,7 @@ async function main() {
         if (!canonical.startsWith(siteOrigin)) problems.push(`${route.path}: canonical 不是站内绝对地址`);
         if (!ogImage.startsWith("https://")) problems.push(`${route.path}: og:image 不是 HTTPS 绝对地址`);
         if (count(html, /<h1\b/gi) !== 1) problems.push(`${route.path}: 应当且只能有一个 H1`);
+        if (!/<link\s+rel="icon"/i.test(html)) problems.push(`${route.path}: 缺少 rel="icon" 站点图标声明`);
         if (!/<meta\s+property="og:title"/i.test(html)) problems.push(`${route.path}: 缺少 og:title`);
         if (!/<meta\s+property="og:description"/i.test(html)) problems.push(`${route.path}: 缺少 og:description`);
         if (!/<meta\s+name="twitter:title"/i.test(html)) problems.push(`${route.path}: 缺少 twitter:title`);

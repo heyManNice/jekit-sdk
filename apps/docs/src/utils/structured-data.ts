@@ -2,7 +2,8 @@ import { DEFAULT_OG_IMAGE, GITHUB_REPO, SITE_NAME, SITE_ORIGIN } from "@/config/
 import type { StructuredData } from "./meta";
 
 const organizationId = `${SITE_ORIGIN}/#organization`;
-const siteLogo = `${SITE_ORIGIN}/favicon.ico`;
+// 结构化数据里的 logo 需要方形且边长不小于 112px，不能用 16/32 的小图标
+const siteLogo = `${SITE_ORIGIN}/icons/icon-192.png`;
 
 function publisher() {
     return {
